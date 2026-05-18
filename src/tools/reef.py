@@ -1,13 +1,13 @@
 """🐚 Reef Tool — NFT Rewards & DeFi"""
 
 import httpx
-from mcp.server import Server
+from mcp.server.fastmcp import FastMCP
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 REEF_RPC = "https://rpc.reefscan.com"
 
-def register_reef_tools(app: Server):
+def register_reef_tools(app: FastMCP):
 
     @app.tool()
     async def get_reef_balance(wallet: str) -> dict:

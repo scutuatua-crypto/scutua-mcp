@@ -1,12 +1,12 @@
 """💰 Valuation Tool — Honey Score & Total Assets"""
 
-from mcp.server import Server
+from mcp.server.fastmcp import FastMCP
 from src.utils.logger import get_logger
 from src.utils.formatters import format_usd
 
 logger = get_logger(__name__)
 
-def register_valuation_tools(app: Server):
+def register_valuation_tools(app: FastMCP):
 
     @app.tool()
     async def calculate_honey_score(sol: float, dot: float, reef: float, stables: float) -> dict:

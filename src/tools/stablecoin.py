@@ -1,7 +1,7 @@
 """💵 Stablecoin Tool — USDT/USDC Multi-Chain"""
 
 import httpx
-from mcp.server import Server
+from mcp.server.fastmcp import FastMCP
 from src.utils.logger import get_logger
 from src.utils.formatters import format_usd
 
@@ -12,7 +12,7 @@ STABLECOIN_APIS = {
     "ethereum": "https://api.etherscan.io/api",
 }
 
-def register_stablecoin_tools(app: Server):
+def register_stablecoin_tools(app: FastMCP):
 
     @app.tool()
     async def get_stable_balance(wallet: str, chain: str = "solana") -> dict:

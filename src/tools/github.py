@@ -2,13 +2,13 @@
 
 import os
 from github import Github
-from mcp.server import Server
+from mcp.server.fastmcp import FastMCP
 from src.utils.logger import get_logger
 from src.utils.security import mask_secret
 
 logger = get_logger(__name__)
 
-def register_github_tools(app: Server):
+def register_github_tools(app: FastMCP):
     g = Github(os.getenv("GH_TOKEN"))
 
     @app.tool()

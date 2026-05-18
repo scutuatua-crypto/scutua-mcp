@@ -5,8 +5,7 @@ Powered by: โนเกีย 3310 พลังลม + Claude AI 💙
 """
 
 import asyncio
-from mcp.server import Server
-from mcp.server.stdio import stdio_server
+from mcp.server.fastmcp import FastMCP
 from src.tools.github import register_github_tools
 from src.tools.solana import register_solana_tools
 from src.tools.polkadot import register_polkadot_tools
@@ -18,7 +17,7 @@ from src.utils.security import verify_env
 
 logger = get_logger(__name__)
 
-app = Server("scutua-mcp")
+app = FastMCP("scutua-mcp")
 
 def bootstrap():
     verify_env()
@@ -32,8 +31,7 @@ def bootstrap():
 
 async def main():
     bootstrap()
-    async with stdio_server() as (read, write):
-        await app.run(read, write, app.create_initialization_options())
+    await app.run_stdio_async()
 
 if __name__ == "__main__":
     asyncio.run(main())
