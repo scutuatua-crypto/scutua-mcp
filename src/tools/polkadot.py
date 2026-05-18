@@ -2,12 +2,12 @@
 
 import os
 from substrateinterface import SubstrateInterface
-from mcp.server import Server
+from mcp.server.fastmcp import FastMCP
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-def register_polkadot_tools(app: Server):
+def register_polkadot_tools(app: FastMCP):
 
     @app.tool()
     async def get_dot_balance(wallet: str) -> dict:

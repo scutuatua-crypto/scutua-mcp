@@ -2,14 +2,14 @@
 
 import os
 import httpx
-from mcp.server import Server
+from mcp.server.fastmcp import FastMCP
 from src.utils.logger import get_logger
 from src.utils.formatters import format_usd
 
 logger = get_logger(__name__)
 SOLSCAN_API = "https://pro-api.solscan.io/v2.0"
 
-def register_solana_tools(app: Server):
+def register_solana_tools(app: FastMCP):
 
     @app.tool()
     async def get_solana_balance(wallet: str) -> dict:
