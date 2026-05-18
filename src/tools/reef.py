@@ -1,29 +1,32 @@
 """🐚 Reef Tool — NFT Rewards & DeFi"""
 
-import os
 import httpx
 from mcp.server import Server
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
+REEF_RPC = "https://rpc.reefscan.com"
 
 def register_reef_tools(app: Server):
 
     @app.tool()
-    async def get_reef_rewards(wallet: str) -> dict:
-        """Get Reef staking rewards and NFT status"""
+    async def get_reef_balance(wallet: str) -> dict:
+        """Get Reef balance from chain"""
         try:
-            key = os.getenv("REEF_KEY")
             async with httpx.AsyncClient() as client:
-                r = await client.get(
-                    "https://api.reef.io/v1/rewards",
-                    params={"address": wallet},
-                    headers={"Authorization": f"Bearer {key}"}
+                r = await client.post(
+                    REEF_RPC,
+                    json={
+                        "jsonrpc": "2.0",
+                        "method": "eth_getBalance",
+                        "params": [wallet, "latest"],
+                        "id": 1
+                    }
                 )
                 data = r.json()
-                logger.info(f"🐚 Reef rewards fetched for {wallet[:8]}...")
-                return data
+                balance = int(data["result"], 16) / 1e18
+                logger.info(f"🐚 Reef balance: {balance}")
+                return {"wallet": wallet[:8] + "...", "reef": balance}
         except Exception as e:
             logger.error(f"Reef error: {str(e)}")
             return {}
-
