@@ -25,10 +25,16 @@ Connecting GitHub, Solana, Polkadot, Reef, and Stablecoin data into one secure i
 ---
 
 ## 📂 Structure
-src/
-├── main.py          # Entry point
-├── tools/           # Chain & GitHub integrations
-└── utils/           # Security · Logger · Formatters
+## 📂 Structure
+
+**src/**
+- `main.py` — Entry point
+- `tools/` — Chain & GitHub integrations
+  - github.py · solana.py · polkadot.py
+  - reef.py · valuation.py · stablecoin.py
+- `utils/` — Security · Logger · Formatters
+  - security.py · logger.py · formatters.py
+
 
 ---
 
