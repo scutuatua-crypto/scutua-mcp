@@ -25,7 +25,6 @@ Connecting GitHub, Solana, Polkadot, Reef, and Stablecoin data into one secure i
 ---
 
 ## 📂 Structure
-## 📂 Structure
 
 **src/**
 - `main.py` — Entry point
