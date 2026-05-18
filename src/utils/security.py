@@ -3,7 +3,7 @@
 import os
 import re
 
-REQUIRED_ENV = ["GITHUB_TOKEN", "SOLANA_API"]
+REQUIRED_ENV = ["GH_TOKEN", "SOLANA_API"]
 
 def verify_env():
     """ตรวจสอบ env ครบก่อน boot"""
