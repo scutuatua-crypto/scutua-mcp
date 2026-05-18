@@ -9,7 +9,7 @@ from src.utils.security import mask_secret
 logger = get_logger(__name__)
 
 def register_github_tools(app: Server):
-    g = Github(os.getenv("GITHUB_TOKEN"))
+    g = Github(os.getenv("GH_TOKEN"))
 
     @app.tool()
     async def list_repos() -> list:
@@ -39,4 +39,3 @@ def register_github_tools(app: Server):
         except Exception as e:
             logger.error(f"Repo error: {mask_secret(str(e))}")
             return {}
-
