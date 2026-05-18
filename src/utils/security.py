@@ -3,7 +3,7 @@
 import os
 import re
 
-REQUIRED_ENV = ["GITHUB_TOKEN", "SOLANA_API", "REEF_KEY"]
+REQUIRED_ENV = ["GITHUB_TOKEN", "SOLANA_API"]
 
 def verify_env():
     """ตรวจสอบ env ครบก่อน boot"""
@@ -14,4 +14,3 @@ def verify_env():
 def mask_secret(text: str) -> str:
     """ปิดบัง token ใน logs"""
     return re.sub(r"(ghp_|dckr_pat_|Bearer )\S+", r"\1***MASKED***", text)
-
