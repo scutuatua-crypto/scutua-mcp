@@ -1,56 +1,37 @@
 # 🐋 Scutua-MCP
 
-> **Model Context Protocol Server** — WhaleTrucker Ecosystem  
-> Built with 🐍 Python | Zero-Trust Security | Multi-Chain Ready
+[![Deploy](https://img.shields.io/badge/Render-Live-brightgreen?logo=render)](https://scutua-mcp.onrender.com)
+[![MCP](https://img.shields.io/badge/MCP-1.27.1-blue?logo=python)](https://modelcontextprotocol.io)
+[![Python](https://img.shields.io/badge/Python-3.11+-yellow?logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-purple)](LICENSE)
+[![Claude](https://img.shields.io/badge/Claude.ai-Connected-orange?logo=anthropic)](https://claude.ai)
+
+> **Model Context Protocol Server** — WhaleTrucker Ecosystem
+> Built with Python | Zero-Trust Security | Multi-Chain Ready
+> Live: `https://scutua-mcp.onrender.com/sse`
 
 ---
 
-## 🚀 Overview
+## Overview
 
-Scutua-MCP is a private MCP server powering the WhaleTrucker Ecosystem.  
-Connecting GitHub, Solana, Polkadot, Reef, and Stablecoin data into one secure interface.
-
----
-
-## 🛠 Tech Stack
-
-| Layer | Tool |
-|-------|------|
-| Language | Python 3.11+ |
-| Protocol | MCP SDK |
-| Chains | Solana · Polkadot · Reef · EVM |
-| Security | Zero-Trust · Encrypted Secrets |
-| Logging | Structured · No-Leak Logger |
+Scutua-MCP is a private MCP server powering the WhaleTrucker Ecosystem.
+Connecting GitHub, Solana, Polkadot, Reef, and Stablecoin data into one secure AI-ready interface.
 
 ---
 
-## 📂 Structure
+## Quick Connect
 
-**src/**
-- `main.py` — Entry point
-- `tools/` — Chain & GitHub integrations
-  - github.py · solana.py · polkadot.py
-  - reef.py · valuation.py · stablecoin.py
-- `utils/` — Security · Logger · Formatters
-  - security.py · logger.py · formatters.py
+### Claude.ai
+1. Settings → Customize → Connectors → **Add custom connector**
+2. Name: `Scutua-MCP`
+3. URL: `https://scutua-mcp.onrender.com/sse`
 
-
----
-
-## 🔐 Security
-
-- ✅ No private keys in repo
-- ✅ Secrets via `.env` only
-- ✅ Zero-trust access control
-- ✅ Automated secret scanning
-
----
-
-## 🐋 WhaleTrucker Standard
-
-> *"No Money, No Honey"* 🚚💿  
-> **Powered by: โนเกีย 3310 พลังลม + Claude AI** 💙💨
-
----
-
-*Built with ❤️ by scutuatua-crypto | Solo Developer | Crypto Enthusiast*
+### VS Code / Cursor
+```json
+{
+  "mcpServers": {
+    "scutua-mcp": {
+      "url": "https://scutua-mcp.onrender.com/sse"
+    }
+  }
+}
