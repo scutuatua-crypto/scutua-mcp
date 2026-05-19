@@ -15,6 +15,9 @@ from src.tools.stablecoin import register_stablecoin_tools
 from src.tools.ton import register_ton_tools
 from src.tools.cosmos import register_cosmos_tools
 from src.tools.base import register_base_tools
+from src.tools.dashboard import register_dashboard_tools
+from src.tools.alerts import register_alert_tools
+from src.tools.analytics import register_analytics_tools
 from src.tools.price import register_price_tools
 from src.tools.whale import register_whale_tools
 from src.tools.portfolio import register_portfolio_tools
@@ -36,6 +39,9 @@ def bootstrap():
     register_ton_tools(app)
     register_cosmos_tools(app)
     register_base_tools(app)
+    register_dashboard_tools(app)
+    register_alert_tools(app)
+    register_analytics_tools(app)
     register_price_tools(app)
     register_whale_tools(app)
     register_portfolio_tools(app)
