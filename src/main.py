@@ -3,7 +3,6 @@
 Zero-Trust Multi-Chain MCP Server
 Powered by: โนเกีย 3310 พลังลม + Claude AI 💙
 """
-
 import asyncio
 import os
 from mcp.server.fastmcp import FastMCP
@@ -13,13 +12,14 @@ from src.tools.polkadot import register_polkadot_tools
 from src.tools.reef import register_reef_tools
 from src.tools.valuation import register_valuation_tools
 from src.tools.stablecoin import register_stablecoin_tools
+from src.tools.price import register_price_tools
+from src.tools.whale import register_whale_tools
+from src.tools.portfolio import register_portfolio_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
 logger = get_logger(__name__)
-
 port = int(os.environ.get("PORT", 10000))
-
 app = FastMCP("scutua-mcp", host="0.0.0.0", port=port)
 
 def bootstrap():
@@ -30,6 +30,9 @@ def bootstrap():
     register_reef_tools(app)
     register_valuation_tools(app)
     register_stablecoin_tools(app)
+    register_price_tools(app)
+    register_whale_tools(app)
+    register_portfolio_tools(app)
     logger.info("🐋 Scutua-MCP server ready")
 
 async def main():
