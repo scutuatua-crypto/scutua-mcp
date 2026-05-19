@@ -18,6 +18,11 @@ from src.tools.base import register_base_tools
 from src.tools.dashboard import register_dashboard_tools
 from src.tools.alerts import register_alert_tools
 from src.tools.analytics import register_analytics_tools
+from src.tools.defi import register_defi_tools
+from src.tools.nft import register_nft_tools
+from src.tools.gas import register_gas_tools
+from src.tools.news import register_news_tools
+from src.tools.converter import register_converter_tools
 from src.tools.price import register_price_tools
 from src.tools.whale import register_whale_tools
 from src.tools.portfolio import register_portfolio_tools
@@ -42,6 +47,11 @@ def bootstrap():
     register_dashboard_tools(app)
     register_alert_tools(app)
     register_analytics_tools(app)
+    register_defi_tools(app)
+    register_nft_tools(app)
+    register_gas_tools(app)
+    register_news_tools(app)
+    register_converter_tools(app)
     register_price_tools(app)
     register_whale_tools(app)
     register_portfolio_tools(app)
