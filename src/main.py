@@ -23,6 +23,10 @@ from src.tools.nft import register_nft_tools
 from src.tools.gas import register_gas_tools
 from src.tools.news import register_news_tools
 from src.tools.converter import register_converter_tools
+from src.tools.staking import register_staking_tools
+from src.tools.arbitrage import register_arbitrage_tools
+from src.tools.wallet import register_wallet_tools
+from src.tools.yield_optimizer import register_yield_tools
 from src.tools.price import register_price_tools
 from src.tools.whale import register_whale_tools
 from src.tools.portfolio import register_portfolio_tools
@@ -52,6 +56,10 @@ def bootstrap():
     register_gas_tools(app)
     register_news_tools(app)
     register_converter_tools(app)
+    register_staking_tools(app)
+    register_arbitrage_tools(app)
+    register_wallet_tools(app)
+    register_yield_tools(app)
     register_price_tools(app)
     register_whale_tools(app)
     register_portfolio_tools(app)
