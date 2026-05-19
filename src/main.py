@@ -59,6 +59,9 @@ from src.tools.tax_report import register_tax_report_tools
 from src.tools.dominance import register_dominance_tools
 from src.tools.crosschain import register_crosschain_tools
 from src.tools.points import register_points_tools
+from src.tools.jupiter import register_jupiter_tools
+from src.tools.drift import register_drift_tools
+from src.tools.mango import register_mango_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
