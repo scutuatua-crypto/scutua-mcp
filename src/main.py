@@ -65,6 +65,11 @@ from src.tools.mango import register_mango_tools
 from src.tools.pump_fun import register_pump_fun_tools
 from src.tools.raydium import register_raydium_tools
 from src.tools.marinade import register_marinade_tools
+from src.tools.uniswap import register_uniswap_tools
+from src.tools.lido import register_lido_tools
+from src.tools.ens import register_ens_tools
+from src.tools.aave_live import register_aave_live_tools
+from src.tools.fear_greed import register_fear_greed_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
