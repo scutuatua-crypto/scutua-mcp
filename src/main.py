@@ -34,6 +34,11 @@ from src.tools.bridge import register_bridge_tools
 from src.tools.tax import register_tax_tools
 from src.tools.signal import register_signal_tools
 from src.tools.nft_floor import register_nft_floor_tools
+from src.tools.liquidation import register_liquidation_tools
+from src.tools.social import register_social_tools
+from src.tools.validator import register_validator_tools
+from src.tools.mempool import register_mempool_tools
+from src.tools.watchlist import register_watchlist_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
