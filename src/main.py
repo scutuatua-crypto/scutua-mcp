@@ -39,6 +39,11 @@ from src.tools.social import register_social_tools
 from src.tools.validator import register_validator_tools
 from src.tools.mempool import register_mempool_tools
 from src.tools.watchlist import register_watchlist_tools
+from src.tools.perp import register_perp_tools
+from src.tools.onchain import register_onchain_tools
+from src.tools.dex import register_dex_tools
+from src.tools.options import register_options_tools
+from src.tools.rwa import register_rwa_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
