@@ -54,6 +54,11 @@ from src.tools.copy_trade import register_copy_trade_tools
 from src.tools.etf import register_etf_tools
 from src.tools.heatmap import register_heatmap_tools
 from src.tools.exploit import register_exploit_tools
+from src.tools.narrative import register_narrative_tools
+from src.tools.tax_report import register_tax_report_tools
+from src.tools.dominance import register_dominance_tools
+from src.tools.crosschain import register_crosschain_tools
+from src.tools.points import register_points_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
