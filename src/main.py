@@ -29,6 +29,11 @@ from src.tools.yield_optimizer import register_yield_tools
 from src.tools.price import register_price_tools
 from src.tools.whale import register_whale_tools
 from src.tools.portfolio import register_portfolio_tools
+from src.tools.lending import register_lending_tools
+from src.tools.bridge import register_bridge_tools
+from src.tools.tax import register_tax_tools
+from src.tools.signal import register_signal_tools
+from src.tools.nft_floor import register_nft_floor_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
@@ -60,6 +65,11 @@ def bootstrap():
     register_price_tools(app)
     register_whale_tools(app)
     register_portfolio_tools(app)
+    register_lending_tools(app)
+    register_bridge_tools(app)
+    register_tax_tools(app)
+    register_signal_tools(app)
+    register_nft_floor_tools(app)
     logger.info("🐋 Scutua-MCP server ready")
 async def main():
     bootstrap()
