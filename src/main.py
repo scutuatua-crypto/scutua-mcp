@@ -2,7 +2,6 @@
 🐋 Scutua-MCP — WhaleTrucker Ecosystem
 Zero-Trust Multi-Chain MCP Server
 Powered by: โนเกีย 3310 พลังลม + Claude AI 💙
-"""
 import asyncio
 import os
 from mcp.server.fastmcp import FastMCP
@@ -36,7 +35,6 @@ from src.utils.security import verify_env
 logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
 app = FastMCP("scutua-mcp", host="0.0.0.0", port=port)
-
 def bootstrap():
     verify_env()
     register_github_tools(app)
@@ -59,15 +57,12 @@ def bootstrap():
     register_staking_tools(app)
     register_arbitrage_tools(app)
     register_wallet_tools(app)
-    register_yield_tools(app)
     register_price_tools(app)
     register_whale_tools(app)
     register_portfolio_tools(app)
     logger.info("🐋 Scutua-MCP server ready")
-
 async def main():
     bootstrap()
     await app.run_sse_async()
-
 if __name__ == "__main__":
     asyncio.run(main())
