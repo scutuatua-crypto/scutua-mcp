@@ -44,6 +44,11 @@ from src.tools.onchain import register_onchain_tools
 from src.tools.dex import register_dex_tools
 from src.tools.options import register_options_tools
 from src.tools.rwa import register_rwa_tools
+from src.tools.insurance import register_insurance_tools
+from src.tools.launchpad import register_launchpad_tools
+from src.tools.dao import register_dao_tools
+from src.tools.airdrop import register_airdrop_tools
+from src.tools.macro import register_macro_tools
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
