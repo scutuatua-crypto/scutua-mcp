@@ -1,5 +1,5 @@
 mcp>=1.0.0
-python-dotenv>=1.0.0
+python-dotenv>=1.2.2
 PyGithub>=2.1.1
 httpx>=0.27.0
 solana>=0.34.0
