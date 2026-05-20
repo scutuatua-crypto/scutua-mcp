@@ -5,7 +5,7 @@ Powered by: โนเกีย 3310 พลังลม + Claude AI 💙
 """
 import asyncio
 import os
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 from src.tools.github import register_github_tools
 from src.tools.solana import register_solana_tools
 from src.tools.polkadot import register_polkadot_tools
