@@ -1,0 +1,8 @@
+{
+  "name": "scutua-mcp",
+  "description": "WhaleTrucker MCP Server — Multi-Chain Ecosystem | Solana, Polkadot, Reef, DeFi",
+  "version": "1.0.0",
+  "url": "https://scutua-mcp.onrender.com/sse",
+  "author": "scutuatua-crypto",
+  "license": "MIT"
+}
