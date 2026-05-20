@@ -107,15 +107,13 @@ def bootstrap():
     register_signal_tools(app)
     register_nft_floor_tools(app)
     logger.info("🐋 Scutua-MCP server ready")
+# Smithery server-card endpoint
+@app.get("/.well-known/mcp/server-card.json")
+async def server_card():
+    return {"name": "scutua-mcp", "version": "1.0.0", "description": "WhaleTrucker MCP Server"}
+
 async def main():
     bootstrap()
     await app.run_sse_async()
 if __name__ == "__main__":
     asyncio.run(main())
-
-# Serve server-card.json for Smithery
-from starlette.staticfiles import StaticFiles
-import os
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-if os.path.exists(static_dir):
-    app.mount("/.well-known", StaticFiles(directory=os.path.join(static_dir, ".well-known")), name="well-known")
