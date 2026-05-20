@@ -112,22 +112,10 @@ def bootstrap():
     register_tax_tools(app)
     register_signal_tools(app)
     register_nft_floor_tools(app)
-    logger.info("🐋 Scutua-MCP server ready")
-# Smithery server-card endpoint
-@app.get("/.well-known/mcp/server-card.json")
-async def server_card():
-    return {"name": "scutua-mcp", "version": "1.0.0", "description": "WhaleTrucker MCP Server"}
-
 
 # Mount server-card route
 from starlette.routing import Route
 from starlette.responses import JSONResponse
-from starlette.applications import Starlette
-
-async def server_card(request):
-    return JSONResponse({"name": "scutua-mcp", "version": "1.0.0", "description": "WhaleTrucker MCP Server"})
-
-app.http_app.routes.append(Route("/.well-known/mcp/server-card.json", server_card))
 
 async def main():
     bootstrap()
