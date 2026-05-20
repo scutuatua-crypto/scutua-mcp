@@ -50,7 +50,7 @@ async def _closes(token, days=30):
 def register_signal_tools(app: FastMCP):
     @app.tool()
     async def get_trading_signals(token: str) -> str:
-        \"\"\"Get RSI and MACD buy/sell signals for a token (BTC,ETH,SOL,DOT,ATOM,TON,BNB,AVAX)\"\"\"
+        """Get RSI and MACD buy/sell signals for a token (BTC,ETH,SOL,DOT,ATOM,TON,BNB,AVAX)"""
         t=token.upper().strip(); c=await _closes(t) or MOCK_CLOSES.get(t)
         if not c or len(c)<14: return f"❌ No data for {t}. Supported: {', '.join(CG_IDS)}"
         src="Live" if await _closes(t) else "Mock"
@@ -58,14 +58,14 @@ def register_signal_tools(app: FastMCP):
         return f"📡 Signals — {t}\nPrice: ${c[-1]:,.4f}  RSI: {rsi}  MACD: {macd['macd']}  Histogram: {macd['histogram']}\nOverall: {overall}\n" + "\n".join(f"  • {s}" for s in sigs)
     @app.tool()
     async def get_rsi(token: str, period: int = 14) -> str:
-        \"\"\"Get RSI value for a token.\"\"\"
+        """Get RSI value for a token."""
         t=token.upper().strip(); c=await _closes(t,days=60) or MOCK_CLOSES.get(t)
         if not c: return f"❌ No data for {t}."
         rsi=_rsi(c,period); zone="🟢 Oversold" if rsi<30 else "🔴 Overbought" if rsi>70 else "⚪ Neutral"
         return f"📊 RSI({period}) — {t}\nRSI: {rsi}  Zone: {zone}"
     @app.tool()
     async def scan_signals_all() -> str:
-        \"\"\"Scan trading signals for all major tokens.\"\"\"
+        """Scan trading signals for all major tokens."""
         lines=["📡 Signal Scan\n","Token    RSI   MACD       Overall","-------- ----- ---------- ----------"]
         for t in ["BTC","ETH","SOL","DOT","ATOM"]:
             c=MOCK_CLOSES.get(t,[])

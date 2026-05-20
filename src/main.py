@@ -2,6 +2,7 @@
 🐋 Scutua-MCP — WhaleTrucker Ecosystem
 Zero-Trust Multi-Chain MCP Server
 Powered by: โนเกีย 3310 พลังลม + Claude AI 💙
+"""
 import asyncio
 import os
 from mcp.server.fastmcp import FastMCP

@@ -23,7 +23,7 @@ def _calc_pnl(trades, method="FIFO"):
 def register_tax_tools(app: FastMCP):
     @app.tool()
     async def calculate_pnl(token: str, trades_csv: str, method: str = "FIFO") -> str:
-        \"\"\"Calculate realized P&L. trades_csv format: type,amount,price,date per line. method: FIFO/LIFO/HIFO\"\"\"
+        """Calculate realized P&L. trades_csv format: type,amount,price,date per line. method: FIFO/LIFO/HIFO"""
         method = method.upper()
         if method not in ("FIFO","LIFO","HIFO"): return "❌ Method must be FIFO/LIFO/HIFO"
         trades = []
@@ -42,7 +42,7 @@ def register_tax_tools(app: FastMCP):
         return "\n".join(out)
     @app.tool()
     async def estimate_tax_liability(realized_pnl_usd: float, holding_days: int, income_bracket: str = "medium", country: str = "US") -> str:
-        \"\"\"Estimate tax on crypto gains. income_bracket: low/medium/high. country: US/TH\"\"\"
+        """Estimate tax on crypto gains. income_bracket: low/medium/high. country: US/TH"""
         if realized_pnl_usd <= 0: return "✅ No taxable gain."
         c, b = country.upper(), income_bracket.lower()
         if c == "US":
@@ -54,7 +54,7 @@ def register_tax_tools(app: FastMCP):
         return f"🧾 Tax Estimate — {c}\nType: {gt} ({holding_days}d)  Rate: {rate*100:.1f}%\nGross: ${realized_pnl_usd:,.2f}  Tax: ${tax:,.2f}  Net: ${realized_pnl_usd-tax:,.2f}\nNote: Consult a tax professional."
     @app.tool()
     async def compare_cost_methods(token: str, trades_csv: str) -> str:
-        \"\"\"Compare P&L across FIFO, LIFO, HIFO methods.\"\"\"
+        """Compare P&L across FIFO, LIFO, HIFO methods."""
         trades = []
         for line in trades_csv.strip().splitlines():
             p = [x.strip() for x in line.split(",")]
