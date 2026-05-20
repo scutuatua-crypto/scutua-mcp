@@ -112,3 +112,10 @@ async def main():
     await app.run_sse_async()
 if __name__ == "__main__":
     asyncio.run(main())
+
+# Serve server-card.json for Smithery
+from starlette.staticfiles import StaticFiles
+import os
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/.well-known", StaticFiles(directory=os.path.join(static_dir, ".well-known")), name="well-known")
