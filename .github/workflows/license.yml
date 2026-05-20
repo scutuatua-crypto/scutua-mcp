@@ -1,0 +1,12 @@
+name: License Check
+on:
+  push:
+    branches: [main]
+jobs:
+  license:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ ! -f LICENSE ]; then echo "LICENSE missing!"; exit 1; fi
+          echo "LICENSE OK ✅"
