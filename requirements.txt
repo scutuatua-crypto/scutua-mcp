@@ -1,6 +1,6 @@
 mcp>=1.0.0
 python-dotenv>=1.2.2
-PyGithub>=2.1.1
+PyGithub>=2.9.1
 httpx>=0.28.1
 solana>=0.34.0
 substrate-interface>=1.7.9
