@@ -120,6 +120,6 @@ from starlette.responses import JSONResponse
 
 async def main():
     bootstrap()
-    await app.run_sse_async()
+    await app.run_http_async()
 if __name__ == "__main__":
     asyncio.run(main())
