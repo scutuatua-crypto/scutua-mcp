@@ -77,11 +77,11 @@ logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
 app = FastMCP("scutua-mcp", host="0.0.0.0", port=port)
 
+
 @app.custom_route("/.well-known/mcp/server-card.json", methods=["GET"])
 async def server_card(request):
     from starlette.responses import JSONResponse
-    return JSONResponse({"name": "scutua-mcp", "version": "1.0.0", "description": "WhaleTrucker MCP Server — Multi-Chain Ecosystem"})
-
+    return JSONResponse({"name": "scutua-mcp", "version": "1.0.0", "description": "WhaleTrucker MCP Server"})
 def bootstrap():
     verify_env()
     register_github_tools(app)
