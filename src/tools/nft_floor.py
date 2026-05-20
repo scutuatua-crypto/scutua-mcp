@@ -16,7 +16,7 @@ MOCK_NFTS = {
 def register_nft_floor_tools(app: FastMCP):
     @app.tool()
     async def get_nft_floor(collection: str) -> str:
-        \"\"\"Get floor price for an NFT collection. e.g. boredapeyachtclub, madlads, azuki, cryptopunks\"\"\"
+        """Get floor price for an NFT collection. e.g. boredapeyachtclub, madlads, azuki, cryptopunks"""
         slug=collection.lower().strip().replace(" ","")
         mock=MOCK_NFTS.get(slug)
         if not mock: return f"❌ '{collection}' not found. Try: {', '.join(MOCK_NFTS)}"
@@ -25,7 +25,7 @@ def register_nft_floor_tools(app: FastMCP):
         return f"🎨 {mock['name']}\nChain: {mock['chain'].title()}  Floor: {floor}\nVol 24h: {mock['volume_24h']}  Owners: {mock['owners']:,}"
     @app.tool()
     async def list_nft_collections() -> str:
-        \"\"\"List all tracked NFT collections.\"\"\"
+        """List all tracked NFT collections."""
         lines=["🎨 NFT Collections\n",f"{'Name':<30} {'Chain':<10} {'Floor':>14} {'Vol 24h':>10}","─"*68]
         for slug,d in MOCK_NFTS.items():
             floor=f"{d.get('floor_eth','?')} ETH" if d['chain']=="ethereum" else f"{d.get('floor_sol','?')} SOL"
@@ -33,7 +33,7 @@ def register_nft_floor_tools(app: FastMCP):
         return "\n".join(lines)
     @app.tool()
     async def compare_nft_floors(collections: str) -> str:
-        \"\"\"Compare floors for comma-separated collection slugs.\"\"\"
+        """Compare floors for comma-separated collection slugs."""
         slugs=[s.strip().lower() for s in collections.split(",")]
         lines=["🎨 NFT Comparison\n",f"{'Name':<30} {'Floor':>14} {'Owners':>8}","─"*56]
         for s in slugs:

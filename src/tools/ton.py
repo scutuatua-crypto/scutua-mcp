@@ -14,5 +14,7 @@ def register_ton_tools(app: FastMCP):
                 nano = int(data["result"])
                 ton = nano / 1e9
                 return f"TON Balance: {ton:.4f} TON"
-            return "Error fet
+            return f"TON Balance: {ton:.4f} TON"
+        except Exception as e:
+            return "Error fetching balance"
 

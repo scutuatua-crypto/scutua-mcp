@@ -15,7 +15,7 @@ MOCK_BRIDGES = {
 def register_bridge_tools(app: FastMCP):
     @app.tool()
     async def estimate_bridge_fee(from_chain: str, to_chain: str, token: str = "USDC", amount: float = 1000) -> str:
-        \"\"\"Estimate bridge fees between two chains. Args: from_chain, to_chain, token (default USDC), amount USD (default 1000)\"\"\"
+        """Estimate bridge fees between two chains. Args: from_chain, to_chain, token (default USDC), amount USD (default 1000)"""
         f, t = from_chain.lower().strip(), to_chain.lower().strip()
         data = MOCK_BRIDGES.get((f,t)) or MOCK_BRIDGES.get((t,f))
         source = "Mock (fallback)"
@@ -27,7 +27,7 @@ def register_bridge_tools(app: FastMCP):
         return "\n".join(lines)
     @app.tool()
     async def cheapest_bridge(from_chain: str, to_chain: str) -> str:
-        \"\"\"Find cheapest bridge between two chains.\"\"\"
+        """Find cheapest bridge between two chains."""
         f, t = from_chain.lower().strip(), to_chain.lower().strip()
         data = MOCK_BRIDGES.get((f,t)) or MOCK_BRIDGES.get((t,f))
         if not data: return f"❌ No data for {f}→{t}."
@@ -35,5 +35,5 @@ def register_bridge_tools(app: FastMCP):
         return f"💸 Cheapest Bridge\n{f.upper()} → {t.upper()}\nBridge: {best['bridge']}\nFee: ${best['fee_usd']:.2f}\nTime: ~{best['time_min']} min"
     @app.tool()
     async def list_supported_chains() -> str:
-        \"\"\"List all chains supported for bridge estimation.\"\"\"
+        """List all chains supported for bridge estimation."""
         return "🌉 Supported Chains\n" + "\n".join(f"  {k}" for k in CHAIN_IDS)
