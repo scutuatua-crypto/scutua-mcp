@@ -76,7 +76,7 @@ from src.utils.security import verify_env
 
 logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
-app = FastMCP("scutua-mcp", host="0.0.0.0", port=port)
+app = FastMCP("scutua-mcp")
 
 
 @app.custom_route("/.well-known/mcp/server-card.json", methods=["GET"])
@@ -120,6 +120,6 @@ from starlette.responses import JSONResponse
 
 async def main():
     bootstrap()
-    await app.run_sse_async()
+    await app.run_http_async(host="0.0.0.0", port=port)
 if __name__ == "__main__":
     asyncio.run(main())
