@@ -7,7 +7,6 @@ import asyncio
 import os
 from fastmcp import FastMCP
 from src.utils.logger import get_logger
-from src.utils.security import verify_env
 
 # Import Domain Registry
 from src.tools.chains import register_chain_tools
@@ -162,14 +161,11 @@ def register_operation_tools(mcp_app):
     register_ens_tools(mcp_app)
 
 def bootstrap():
-    verify_env()
-    
-    # Initialize structured registry sequentially
+    # Sequential modular registration
     register_chain_tools(app)
     register_protocol_tools(app)
     register_analytics_tools(app)
     register_operation_tools(app)
-    
     logger.info("🐋 Scutua-MCP V2: Core Framework Loaded Successfully.")
 
 async def main():
