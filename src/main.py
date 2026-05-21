@@ -7,12 +7,15 @@ import asyncio
 import os
 from fastmcp import FastMCP
 from src.utils.logger import get_logger
-from src.utils.security import verify_env
 
-# Import Domain Registry
-from src.tools.chains import register_chain_tools
-
-# Import Remaining Legacy Tools
+# Import ALL Tools Directly from Original Legacy Folder (src/tools/)
+from src.tools.solana import register_solana_tools
+from src.tools.polkadot import register_polkadot_tools
+from src.tools.reef import register_reef_tools
+from src.tools.ton import register_ton_tools
+from src.tools.cosmos import register_cosmos_tools
+from src.tools.base import register_base_tools
+from src.tools.crosschain import register_crosschain_tools
 from src.tools.github import register_github_tools
 from src.tools.valuation import register_valuation_tools
 from src.tools.stablecoin import register_stablecoin_tools
@@ -76,7 +79,7 @@ logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
 app = FastMCP("scutua-mcp")
 
-# Render Port Scan Destroyer: ดักจับทั้ง GET และ POST สำหรับหน้าแรกกันเซิร์ฟเวอร์เอ๋อ
+# Render Port Scan Destroyer
 @app.custom_route("/", methods=["GET", "POST"])
 async def home_health_check(request):
     from starlette.responses import PlainTextResponse
@@ -101,7 +104,17 @@ async def server_card(request):
         "author": "scutuatua-crypto"
     }, headers=headers)
 
-# Modular Domains Mapping
+# Inline Modular Mapping to prevent Folder Import Errors
+def register_chain_tools(mcp_app):
+    """Domain 1: Layer 1 / Layer 2 Networks"""
+    register_solana_tools(mcp_app)
+    register_polkadot_tools(mcp_app)
+    register_reef_tools(mcp_app)
+    register_ton_tools(mcp_app)
+    register_cosmos_tools(mcp_app)
+    register_base_tools(mcp_app)
+    register_crosschain_tools(mcp_app)
+
 def register_protocol_tools(mcp_app):
     """Domain 2: DeFi / DEX / Smart Contracts"""
     register_jupiter_tools(mcp_app)
@@ -167,7 +180,6 @@ def register_operation_tools(mcp_app):
     register_ens_tools(mcp_app)
 
 def bootstrap():
-    verify_env()
     register_chain_tools(app)
     register_protocol_tools(app)
     register_analytics_tools(app)
