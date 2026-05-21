@@ -158,7 +158,7 @@ def bootstrap():
 
 async def main():
     bootstrap()
-    await app.run_async()
+    await app.run_async(transport="sse", host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
     asyncio.run(main())
