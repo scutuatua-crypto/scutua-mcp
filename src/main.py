@@ -84,7 +84,7 @@ async def server_card(request):
     return JSONResponse({
         "name": "scutua-mcp",
         "version": "1.0.0",
-        "description": "WhaleTrucker MCP Server — Multi-Chain Ecosystem"
+        "description": "WhaleTrucker MCP Server - Multi-Chain Ecosystem"
     })
 
 def bootstrap():
