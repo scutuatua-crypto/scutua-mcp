@@ -7,18 +7,18 @@ import asyncio
 import os
 from fastmcp import FastMCP
 from src.utils.logger import get_logger
+from src.utils.security import verify_env
 
-# Import ALL Tools Directly from Original Legacy Folder (src/tools/)
+# Import all tools from legacy structure
+from src.tools.github import register_github_tools
 from src.tools.solana import register_solana_tools
 from src.tools.polkadot import register_polkadot_tools
 from src.tools.reef import register_reef_tools
+from src.tools.valuation import register_valuation_tools
+from src.tools.stablecoin import register_stablecoin_tools
 from src.tools.ton import register_ton_tools
 from src.tools.cosmos import register_cosmos_tools
 from src.tools.base import register_base_tools
-from src.tools.crosschain import register_crosschain_tools
-from src.tools.github import register_github_tools
-from src.tools.valuation import register_valuation_tools
-from src.tools.stablecoin import register_stablecoin_tools
 from src.tools.dashboard import register_dashboard_tools
 from src.tools.alerts import register_alert_tools
 from src.tools.analytics import register_analytics_tools
@@ -62,6 +62,7 @@ from src.tools.exploit import register_exploit_tools
 from src.tools.narrative import register_narrative_tools
 from src.tools.tax_report import register_tax_report_tools
 from src.tools.dominance import register_dominance_tools
+from src.tools.crosschain import register_crosschain_tools
 from src.tools.points import register_points_tools
 from src.tools.jupiter import register_jupiter_tools
 from src.tools.drift import register_drift_tools
@@ -79,12 +80,6 @@ logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
 app = FastMCP("scutua-mcp")
 
-# Render Port Scan Destroyer
-@app.custom_route("/", methods=["GET", "POST"])
-async def home_health_check(request):
-    from starlette.responses import PlainTextResponse
-    return PlainTextResponse("🐋 WhaleTrucker Gateway Status: ONLINE & STABLE")
-
 @app.custom_route("/.well-known/mcp/server-card.json", methods=["GET", "POST", "OPTIONS"])
 async def server_card(request):
     from starlette.responses import JSONResponse
@@ -98,13 +93,14 @@ async def server_card(request):
         
     return JSONResponse({
         "name": "scutua-mcp",
-        "description": "WhaleTrucker MCP Server - Enterprise Multi-Chain Universe",
+        "description": "WhaleTrucker MCP Server - Ultra Stable Multi-Chain Universe",
         "version": "2.0.0",
         "url": "https://scutua-mcp.onrender.com/sse",
-        "author": "scutuatua-crypto"
+        "author": "scutuatua-crypto",
+        "license": "MIT"
     }, headers=headers)
 
-# Inline Modular Mapping to prevent Folder Import Errors
+# 🛠️ Modular Domains Mapping
 def register_chain_tools(mcp_app):
     """Domain 1: Layer 1 / Layer 2 Networks"""
     register_solana_tools(mcp_app)
@@ -167,7 +163,7 @@ def register_operation_tools(mcp_app):
     register_tax_tools(mcp_app)
     register_tax_report_tools(mcp_app)
     register_converter_tools(mcp_app)
-    register_alert_tools(mcp_app)
+    register_alerts_tools(mcp_app)
     register_dashboard_tools(mcp_app)
     register_social_tools(mcp_app)
     register_wallet_tools(mcp_app)
@@ -180,10 +176,14 @@ def register_operation_tools(mcp_app):
     register_ens_tools(mcp_app)
 
 def bootstrap():
+    verify_env()
+    
+    # Initialize structured registry sequentially
     register_chain_tools(app)
     register_protocol_tools(app)
     register_analytics_tools(app)
     register_operation_tools(app)
+    
     logger.info("🐋 Scutua-MCP V2: Core Framework Loaded Successfully.")
 
 async def main():
