@@ -21,7 +21,7 @@ from src.tools.valuation import register_valuation_tools
 from src.tools.stablecoin import register_stablecoin_tools
 from src.tools.dashboard import register_dashboard_tools
 from src.tools.alerts import register_alert_tools
-from src.tools.analytics import register_analytics_tools
+from src.tools.analytics import register_analytics_tools as load_analytics_tools
 from src.tools.defi import register_defi_tools
 from src.tools.nft import register_nft_tools
 from src.tools.gas import register_gas_tools
@@ -104,7 +104,7 @@ async def server_card(request):
     }, headers=headers)
 
 def bootstrap():
-    # Sequential registration directly from original imports
+    # Domain 1: Layer 1 / Layer 2 Networks
     register_solana_tools(app)
     register_polkadot_tools(app)
     register_reef_tools(app)
@@ -112,6 +112,8 @@ def bootstrap():
     register_cosmos_tools(app)
     register_base_tools(app)
     register_crosschain_tools(app)
+    
+    # Domain 2: DeFi / DEX / Smart Contracts
     register_jupiter_tools(app)
     register_drift_tools(app)
     register_mango_tools(app)
@@ -132,11 +134,15 @@ def bootstrap():
     register_options_tools(app)
     register_dao_tools(app)
     register_launchpad_tools(app)
+    register_insurance_tools(app)
+    register_rwa_tools(app)
+    
+    # Domain 3: On-Chain Analytics & Intelligence Engines
     register_whale_tools(app)
     register_portfolio_tools(app)
     register_valuation_tools(app)
     register_stablecoin_tools(app)
-    register_analytics_tools(app)
+    load_analytics_tools(app)  # Fixed name crash
     register_dominance_tools(app)
     register_fear_greed_tools(app)
     register_gas_tools(app)
@@ -152,11 +158,14 @@ def bootstrap():
     register_heatmap_tools(app)
     register_etf_tools(app)
     register_macro_tools(app)
+    register_points_tools(app)
+    
+    # Domain 4: DevOps, Financial & Operations Management
     register_github_tools(app)
     register_tax_tools(app)
     register_tax_report_tools(app)
     register_converter_tools(app)
-    register_alert_tools(app)
+    register_alert_tools(app)  # Fixed spelling s
     register_dashboard_tools(app)
     register_social_tools(app)
     register_wallet_tools(app)
@@ -167,7 +176,6 @@ def bootstrap():
     register_airdrop_tools(app)
     register_copy_trade_tools(app)
     register_ens_tools(app)
-    register_points_tools(app)
     
     logger.info("🐋 Scutua-MCP V2: Core Framework Loaded Successfully.")
 
