@@ -78,14 +78,27 @@ logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
 app = FastMCP("scutua-mcp")
 
-@app.custom_route("/.well-known/mcp/server-card.json", methods=["GET"])
+@app.custom_route("/.well-known/mcp/server-card.json", methods=["GET", "POST", "OPTIONS"])
 async def server_card(request):
     from starlette.responses import JSONResponse
+    
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "*",
+    }
+    
+    if request.method == "OPTIONS":
+        return JSONResponse({}, headers=headers)
+        
     return JSONResponse({
         "name": "scutua-mcp",
+        "description": "WhaleTrucker MCP Server - Multi-Chain Ecosystem | Solana, Polkadot, Ethereum, Reef",
         "version": "1.0.0",
-        "description": "WhaleTrucker MCP Server - Multi-Chain Ecosystem"
-    })
+        "url": "https://scutua-mcp.onrender.com/sse",
+        "author": "scutuatua-crypto",
+        "license": "MIT"
+    }, headers=headers)
 
 def bootstrap():
     verify_env()
