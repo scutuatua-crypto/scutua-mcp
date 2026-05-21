@@ -78,11 +78,15 @@ logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
 app = FastMCP("scutua-mcp")
 
-
 @app.custom_route("/.well-known/mcp/server-card.json", methods=["GET"])
 async def server_card(request):
     from starlette.responses import JSONResponse
-    return JSONResponse({"name": "scutua-mcp", "version": "1.0.0", "description": "WhaleTrucker MCP Server", "tools": [{"name": "get_ton_balance", "description": "Get TON wallet balance"}]})
+    return JSONResponse({
+        "name": "scutua-mcp",
+        "version": "1.0.0",
+        "description": "WhaleTrucker MCP Server — Multi-Chain Ecosystem"
+    })
+
 def bootstrap():
     verify_env()
     register_github_tools(app)
@@ -113,13 +117,48 @@ def bootstrap():
     register_tax_tools(app)
     register_signal_tools(app)
     register_nft_floor_tools(app)
-
-# Mount server-card route
-from starlette.routing import Route
-from starlette.responses import JSONResponse
+    register_liquidation_tools(app)
+    register_social_tools(app)
+    register_validator_tools(app)
+    register_mempool_tools(app)
+    register_watchlist_tools(app)
+    register_perp_tools(app)
+    register_onchain_tools(app)
+    register_dex_tools(app)
+    register_options_tools(app)
+    register_rwa_tools(app)
+    register_insurance_tools(app)
+    register_launchpad_tools(app)
+    register_dao_tools(app)
+    register_airdrop_tools(app)
+    register_macro_tools(app)
+    register_scam_tools(app)
+    register_copy_trade_tools(app)
+    register_etf_tools(app)
+    register_heatmap_tools(app)
+    register_exploit_tools(app)
+    register_narrative_tools(app)
+    register_tax_report_tools(app)
+    register_dominance_tools(app)
+    register_crosschain_tools(app)
+    register_points_tools(app)
+    register_jupiter_tools(app)
+    register_drift_tools(app)
+    register_mango_tools(app)
+    register_pump_fun_tools(app)
+    register_raydium_tools(app)
+    register_marinade_tools(app)
+    register_uniswap_tools(app)
+    register_lido_tools(app)
+    register_ens_tools(app)
+    register_aave_live_tools(app)
+    register_fear_greed_tools(app)
+    register_yield_tools(app)
+    logger.info("🐋 Scutua-MCP server ready")
 
 async def main():
     bootstrap()
-    await app.run_async(host="0.0.0.0", port=port)
+    await app.run_sse_async()
+
 if __name__ == "__main__":
     asyncio.run(main())
