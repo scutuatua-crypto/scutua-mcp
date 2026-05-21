@@ -9,16 +9,13 @@ from fastmcp import FastMCP
 from src.utils.logger import get_logger
 from src.utils.security import verify_env
 
-# Import all tools from legacy structure
+# Import Domain Registry
+from src.tools.chains import register_chain_tools
+
+# Import Remaining Legacy Tools
 from src.tools.github import register_github_tools
-from src.tools.solana import register_solana_tools
-from src.tools.polkadot import register_polkadot_tools
-from src.tools.reef import register_reef_tools
 from src.tools.valuation import register_valuation_tools
 from src.tools.stablecoin import register_stablecoin_tools
-from src.tools.ton import register_ton_tools
-from src.tools.cosmos import register_cosmos_tools
-from src.tools.base import register_base_tools
 from src.tools.dashboard import register_dashboard_tools
 from src.tools.alerts import register_alert_tools
 from src.tools.analytics import register_analytics_tools
@@ -62,7 +59,6 @@ from src.tools.exploit import register_exploit_tools
 from src.tools.narrative import register_narrative_tools
 from src.tools.tax_report import register_tax_report_tools
 from src.tools.dominance import register_dominance_tools
-from src.tools.crosschain import register_crosschain_tools
 from src.tools.points import register_points_tools
 from src.tools.jupiter import register_jupiter_tools
 from src.tools.drift import register_drift_tools
@@ -100,17 +96,7 @@ async def server_card(request):
         "license": "MIT"
     }, headers=headers)
 
-# 🛠️ Modular Domains Mapping
-def register_chain_tools(mcp_app):
-    """Domain 1: Layer 1 / Layer 2 Networks"""
-    register_solana_tools(mcp_app)
-    register_polkadot_tools(mcp_app)
-    register_reef_tools(mcp_app)
-    register_ton_tools(mcp_app)
-    register_cosmos_tools(mcp_app)
-    register_base_tools(mcp_app)
-    register_crosschain_tools(mcp_app)
-
+# Modular Domains Mapping
 def register_protocol_tools(mcp_app):
     """Domain 2: DeFi / DEX / Smart Contracts"""
     register_jupiter_tools(mcp_app)
