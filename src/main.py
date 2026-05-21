@@ -21,7 +21,7 @@ from src.tools.valuation import register_valuation_tools
 from src.tools.stablecoin import register_stablecoin_tools
 from src.tools.dashboard import register_dashboard_tools
 from src.tools.alerts import register_alert_tools
-from src.tools.analytics import register_analytics_tools  # ตรงตามในรูปเป๊ะ!
+from src.tools.analytics import register_analytics_tools as core_analytics_loader
 from src.tools.defi import register_defi_tools
 from src.tools.nft import register_nft_tools
 from src.tools.gas import register_gas_tools
@@ -103,89 +103,80 @@ async def server_card(request):
         "author": "scutuatua-crypto"
     }, headers=headers)
 
-# เปลี่ยนชื่อฟังก์ชันกลุ่มตรงนี้เพื่อไม่ให้ชนกับคำว่า register_analytics_tools ของไฟล์นู่น
-def trigger_analytics_group(mcp_app):
-    """Domain 3: On-Chain Analytics & Intelligence Engines"""
-    register_whale_tools(mcp_app)
-    register_portfolio_tools(mcp_app)
-    register_valuation_tools(mcp_app)
-    register_stablecoin_tools(mcp_app)
-    register_analytics_tools(mcp_app) # เรียกใช้ฟังก์ชันจากไฟล์ในรูปเป๊ะๆ
-    register_dominance_tools(mcp_app)
-    register_fear_greed_tools(mcp_app)
-    register_gas_tools(mcp_app)
-    register_news_tools(mcp_app)
-    register_price_tools(mcp_app)
-    register_nft_floor_tools(mcp_app)
-    register_onchain_tools(mcp_app)
-    register_mempool_tools(mcp_app)
-    register_scam_tools(mcp_app)
-    register_arbitrage_tools(mcp_app)
-    register_exploit_tools(mcp_app)
-    register_narrative_tools(mcp_app)
-    register_heatmap_tools(mcp_app)
-    register_etf_tools(mcp_app)
-    register_macro_tools(mcp_app)
-    register_points_tools(mcp_app)
-
-def trigger_operation_group(mcp_app):
-    """Domain 4: DevOps, Financial & Operations Management"""
-    register_github_tools(mcp_app)
-    register_tax_tools(mcp_app)
-    register_tax_report_tools(mcp_app)
-    register_converter_tools(mcp_app)
-    register_alert_tools(mcp_app)
-    register_dashboard_tools(mcp_app)
-    register_social_tools(mcp_app)
-    register_wallet_tools(mcp_app)
-    register_signal_tools(mcp_app)
-    register_liquidation_tools(mcp_app)
-    register_validator_tools(mcp_app)
-    register_watchlist_tools(mcp_app)
-    register_airdrop_tools(mcp_app)
-    register_copy_trade_tools(mcp_app)
-    register_ens_tools(mcp_app)
-
-def trigger_protocol_group(mcp_app):
-    """Domain 2: DeFi / DEX / Smart Contracts"""
-    register_jupiter_tools(mcp_app)
-    register_drift_tools(mcp_app)
-    register_mango_tools(mcp_app)
-    register_pump_fun_tools(mcp_app)
-    register_raydium_tools(mcp_app)
-    register_marinade_tools(mcp_app)
-    register_uniswap_tools(mcp_app)
-    register_lido_tools(mcp_app)
-    register_aave_live_tools(mcp_app)
-    register_defi_tools(mcp_app)
-    register_nft_tools(mcp_app)
-    register_staking_tools(mcp_app)
-    register_yield_tools(mcp_app)
-    register_lending_tools(mcp_app)
-    register_bridge_tools(mcp_app)
-    register_perp_tools(mcp_app)
-    register_dex_tools(mcp_app)
-    register_options_tools(mcp_app)
-    register_dao_tools(mcp_app)
-    register_launchpad_tools(mcp_app)
-    register_insurance_tools(mcp_app)
-    register_rwa_tools(mcp_app)
-
-def trigger_chain_group(mcp_app):
-    """Domain 1: Layer 1 / Layer 2 Networks"""
-    register_solana_tools(mcp_app)
-    register_polkadot_tools(mcp_app)
-    register_reef_tools(mcp_app)
-    register_ton_tools(mcp_app)
-    register_cosmos_tools(mcp_app)
-    register_base_tools(mcp_app)
-    register_crosschain_tools(mcp_app)
-
 def bootstrap():
-    trigger_chain_group(app)
-    trigger_protocol_group(app)
-    trigger_analytics_group(app)
-    trigger_operation_group(app)
+    # 1. Networks
+    register_solana_tools(app)
+    register_polkadot_tools(app)
+    register_reef_tools(app)
+    register_ton_tools(app)
+    register_cosmos_tools(app)
+    register_base_tools(app)
+    register_crosschain_tools(app)
+    
+    # 2. Protocols & DeFi
+    register_jupiter_tools(app)
+    register_drift_tools(app)
+    register_mango_tools(app)
+    register_pump_fun_tools(app)
+    register_raydium_tools(app)
+    register_marinade_tools(app)
+    register_uniswap_tools(app)
+    register_lido_tools(app)
+    register_aave_live_tools(app)
+    register_defi_tools(app)
+    register_nft_tools(app)
+    register_staking_tools(app)
+    register_yield_tools(app)
+    register_lending_tools(app)
+    register_bridge_tools(app)
+    register_perp_tools(app)
+    register_dex_tools(app)
+    register_options_tools(app)
+    register_dao_tools(app)
+    register_launchpad_tools(app)
+    register_insurance_tools(app)
+    register_rwa_tools(app)
+    
+    # 3. Analytics & Engines
+    register_whale_tools(app)
+    register_portfolio_tools(app)
+    register_valuation_tools(app)
+    register_stablecoin_tools(app)
+    core_analytics_loader(app)  # ใช้ชื่อแยกขาดถาวร ลบคำสาป ImportError ลิกล็อก
+    register_dominance_tools(app)
+    register_fear_greed_tools(app)
+    register_gas_tools(app)
+    register_news_tools(app)
+    register_price_tools(app)
+    register_nft_floor_tools(app)
+    register_onchain_tools(app)
+    register_mempool_tools(app)
+    register_scam_tools(app)
+    register_arbitrage_tools(app)
+    register_exploit_tools(app)
+    register_narrative_tools(app)
+    register_heatmap_tools(app)
+    register_etf_tools(app)
+    register_macro_tools(app)
+    register_points_tools(app)
+    
+    # 4. DevOps & Operations
+    register_github_tools(app)
+    register_tax_tools(app)
+    register_tax_report_tools(app)
+    register_converter_tools(app)
+    register_alert_tools(app)
+    register_dashboard_tools(app)
+    register_social_tools(app)
+    register_wallet_tools(app)
+    register_signal_tools(app)
+    register_liquidation_tools(app)
+    register_validator_tools(app)
+    register_watchlist_tools(app)
+    register_airdrop_tools(app)
+    register_copy_trade_tools(app)
+    register_ens_tools(app)
+    
     logger.info("🐋 Scutua-MCP V2: Core Framework Loaded Successfully.")
 
 async def main():
