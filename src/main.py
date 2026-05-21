@@ -148,7 +148,7 @@ def register_operation_tools(mcp_app):
     register_tax_tools(mcp_app)
     register_tax_report_tools(mcp_app)
     register_converter_tools(mcp_app)
-    register_alerts_tools(mcp_app)
+    register_alert_tools(mcp_app)
     register_dashboard_tools(mcp_app)
     register_social_tools(mcp_app)
     register_wallet_tools(mcp_app)
