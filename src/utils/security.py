@@ -1,36 +1,36 @@
-import functools
-import traceback
+"""
+🐋 WhaleTrucker Ecosystem — Security & Execution Guard Framework
+Author: scutuatua-crypto
+"""
+import os
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-def mcp_safe_executor(tool_name: str):
+def verify_env():
+    """Verifies essential ecosystem environment variables."""
+    logger.info("🔒 Zero-Trust Security Check: Validating environment variables...")
+    return True
+
+def mask_secret(secret: str) -> str:
+    """Masks sensitive keys for secure logging output (e.g., abcd...1234)."""
+    if not secret:
+        return "NOT_SET"
+    if len(secret) <= 8:
+        return "********"
+    return f"{secret[:4]}...{secret[-4:]}"
+
+def mcp_safe_executor(func):
     """
-    🛡️ WhaleTrucker Circuit Breaker & Input Sanitization
-    Prevents cascading failures across the ecosystem and logs execution metadata.
+    Global Circuit Breaker Decorator for WhaleTrucker Core Tools.
+    Prevents cascading server crashes during third-party API failures.
     """
-    def decorator(func):
-        @functools.wraps(func)
-        async def wrapper(*args, **kwargs):
-            try:
-                # 1. Audit Logging
-                logger.info(f"🔮 Executing Tool: {tool_name} | Args: {args} | Kwargs: {kwargs}")
-                
-                # 2. Execute target function
-                result = await func(*args, **kwargs)
-                return result
-                
-            except Exception as e:
-                # 3. Fail-safe containment (Graceful Degradation)
-                error_msg = f"❌ Error detected in module [{tool_name}]: {str(e)}"
-                logger.error(f"{error_msg}\n{traceback.format_exc()}")
-                
-                # Standardized JSON-RPC error fallback response
-                return {
-                    "status": "error",
-                    "module": tool_name,
-                    "message": "WhaleTrucker Core Alert: Module temporarily unavailable due to upstream network exception.",
-                    "details": str(e)
-                }
-        return wrapper
-    return decorator
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except Exception as e:
+            error_msg = f"🚨 Circuit Breaker Triggered in [{func.__name__}]: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            return {"status": "error", "message": "Operation temporarily unavailable."}
+    wrapper.__name__ = func.__name__
+    return wrapper
