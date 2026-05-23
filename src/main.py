@@ -73,6 +73,13 @@ from src.tools.lido import register_lido_tools
 from src.tools.ens import register_ens_tools
 from src.tools.aave_live import register_aave_live_tools
 from src.tools.fear_greed import register_fear_greed_tools
+from src.tools.market import (
+    register_coingecko_tools,
+    register_cmc_tools,
+    register_trending_tools,
+    register_sentiment_tools,
+    register_fear_index_tools,
+)
 
 logger = get_logger(__name__)
 port = int(os.environ.get("PORT", 10000))
@@ -167,6 +174,11 @@ def bootstrap():
     register_airdrop_tools(app)
     register_copy_trade_tools(app)
     register_ens_tools(app)
+    register_coingecko_tools(app)
+    register_cmc_tools(app)
+    register_trending_tools(app)
+    register_sentiment_tools(app)
+    register_fear_index_tools(app)
     logger.info("🐋 Scutua-MCP V2: Core Framework Loaded Successfully.")
 
 async def main():
