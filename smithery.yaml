@@ -1,4 +1,7 @@
 startCommand:
   type: http
-  configSchema: {}
+  configSchema:
+    type: object
+    properties: {}
+    required: []
   exampleConfig: {}
