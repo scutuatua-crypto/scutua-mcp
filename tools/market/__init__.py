@@ -1,11 +1,12 @@
-"""
-Market Intelligence Universe Initialization — Scutua-MCP (Dimension 5)
-Handles local context registration for isolation.
-"""
-from src.tools.market.coingecko import register_coingecko_tools
+from tools.market.coingecko import register_coingecko_tools
+from tools.market.cmc import register_cmc_tools
+from tools.market.trending import register_trending_tools
+from tools.market.sentiment import register_sentiment_tools
+from tools.market.fear_index import register_fear_index_tools
 
 def register_market_tools(app):
-    """
-    Directly boots and mounts Dimension 5 sub-modules.
-    """
     register_coingecko_tools(app)
+    register_cmc_tools(app)
+    register_trending_tools(app)
+    register_sentiment_tools(app)
+    register_fear_index_tools(app)
