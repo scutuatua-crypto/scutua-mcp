@@ -1,14 +1,11 @@
 """
 Market Intelligence Universe Initialization — Scutua-MCP (Dimension 5)
-Strict local isolation using relative imports to bypass cloud deployment path bugs.
+Handles local context registration for isolation.
 """
-from mcp.server.fastmcp import FastMCP
+from src.tools.market.coingecko import register_coingecko_tools
 
-# Force strict local resolution inside Dimension 5
-from .coingecko import register_coingecko_tools
-
-def register_market_tools(app: FastMCP) -> None:
+def register_market_tools(app):
     """
-    Centralized registration hub for all Dimension 5 data feeds.
+    Directly boots and mounts Dimension 5 sub-modules.
     """
     register_coingecko_tools(app)
