@@ -8,7 +8,6 @@ import os
 from fastmcp import FastMCP
 from src.utils.logger import get_logger
 
-# Import ALL Tools Directly from Original Legacy Folder
 from src.tools.solana import register_solana_tools
 from src.tools.polkadot import register_polkadot_tools
 from src.tools.reef import register_reef_tools
@@ -94,17 +93,15 @@ async def server_card(request):
     }
     if request.method == "OPTIONS":
         return JSONResponse({}, headers=headers)
-        
     return JSONResponse({
         "name": "scutua-mcp",
         "description": "WhaleTrucker MCP Server - Ultra Stable Multi-Chain Universe",
         "version": "2.0.0",
-        "url": "https://scutua-mcp.onrender.com/sse",
+        "url": "https://scutua-mcp.onrender.com/mcp",
         "author": "scutuatua-crypto"
     }, headers=headers)
 
 def bootstrap():
-    # 1. Networks
     register_solana_tools(app)
     register_polkadot_tools(app)
     register_reef_tools(app)
@@ -112,8 +109,6 @@ def bootstrap():
     register_cosmos_tools(app)
     register_base_tools(app)
     register_crosschain_tools(app)
-    
-    # 2. Protocols & DeFi
     register_jupiter_tools(app)
     register_drift_tools(app)
     register_mango_tools(app)
@@ -136,13 +131,11 @@ def bootstrap():
     register_launchpad_tools(app)
     register_insurance_tools(app)
     register_rwa_tools(app)
-    
-    # 3. Analytics & Engines
     register_whale_tools(app)
     register_portfolio_tools(app)
     register_valuation_tools(app)
     register_stablecoin_tools(app)
-    core_analytics_loader(app)  # ใช้ชื่อแยกขาดถาวร ลบคำสาป ImportError ลิกล็อก
+    core_analytics_loader(app)
     register_dominance_tools(app)
     register_fear_greed_tools(app)
     register_gas_tools(app)
@@ -159,8 +152,6 @@ def bootstrap():
     register_etf_tools(app)
     register_macro_tools(app)
     register_points_tools(app)
-    
-    # 4. DevOps & Operations
     register_github_tools(app)
     register_tax_tools(app)
     register_tax_report_tools(app)
@@ -176,12 +167,11 @@ def bootstrap():
     register_airdrop_tools(app)
     register_copy_trade_tools(app)
     register_ens_tools(app)
-    
     logger.info("🐋 Scutua-MCP V2: Core Framework Loaded Successfully.")
 
 async def main():
     bootstrap()
-    await app.run_async(transport="sse", host="0.0.0.0", port=port)
+    await app.run_async(transport="streamable-http", host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
     asyncio.run(main())
