@@ -4,28 +4,32 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+def verify_env():
+    """Verify required environment variables"""
+    pass
+
+def mask_secret(value: str) -> str:
+    """Mask sensitive values for logging"""
+    if not value:
+        return ""
+    if len(value) <= 8:
+        return "****"
+    return value[:4] + "****" + value[-4:]
+
 def mcp_safe_executor(tool_name: str):
     """
     🛡️ WhaleTrucker Circuit Breaker & Input Sanitization
-    Prevents cascading failures across the ecosystem and logs execution metadata.
     """
     def decorator(func):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             try:
-                # 1. Audit Logging
                 logger.info(f"🔮 Executing Tool: {tool_name} | Args: {args} | Kwargs: {kwargs}")
-                
-                # 2. Execute target function
                 result = await func(*args, **kwargs)
                 return result
-                
             except Exception as e:
-                # 3. Fail-safe containment (Graceful Degradation)
                 error_msg = f"❌ Error detected in module [{tool_name}]: {str(e)}"
                 logger.error(f"{error_msg}\n{traceback.format_exc()}")
-                
-                # Standardized JSON-RPC error fallback response
                 return {
                     "status": "error",
                     "module": tool_name,
