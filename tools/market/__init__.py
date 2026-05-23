@@ -1,19 +1,19 @@
 """
 Market Intelligence Universe Initialization — Scutua-MCP (Dimension 5)
-Fixes absolute sub-module routing paths for cloud runtime environments.
+Uses absolute clean relative pathing to bypass environment routing bugs.
 """
 from mcp.server.fastmcp import FastMCP
 
-# Dimension 5 Absolute Node Imports
-from src.tools.market.coingecko import register_coingecko_tools
-from src.tools.market.cmc import register_cmc_tools
-from src.tools.market.trending import register_trending_tools
-from src.tools.market.sentiment import register_sentiment_tools
-from src.tools.market.fear_index import register_fear_index_tools
+# Force relative import to strict local files to avoid src/src mismatch
+from .coingecko import register_coingecko_tools
+from .cmc import register_cmc_tools
+from .trending import register_trending_tools
+from .sentiment import register_sentiment_tools
+from .fear_index import register_fear_index_tools
 
 def register_market_tools(app: FastMCP) -> None:
     """
-    Sequentially registers all core market metrics under the standard fastmcp application context.
+    Registers Dimension 5 modules cleanly without global path dependency.
     """
     register_coingecko_tools(app)
     register_cmc_tools(app)
