@@ -1,15 +1,12 @@
-"""
-Master Tools Registry — Scutua-MCP Central Hub
-Aggregates all 5 operational dimensions cleanly.
-"""
-from mcp.server.fastmcp import FastMCP
+from src.tools.coingecko import register_coingecko_tools
+from src.tools.cmc import register_cmc_tools
+from src.tools.trending import register_trending_tools
+from src.tools.sentiment import register_sentiment_tools
+from src.tools.fear_index import register_fear_index_tools
 
-# Route cleanly to the Dimension 5 package initialization
-from src.tools.market import register_market_tools
-
-def register_master_tools(app: FastMCP) -> None:
-    """
-    Global bootstrap trigger for aggregating all modular tool dimensions.
-    """
-    # Execute Dimension 5 Integration
-    register_market_tools(app)
+def register_market_tools(app):
+    register_coingecko_tools(app)
+    register_cmc_tools(app)
+    register_trending_tools(app)
+    register_sentiment_tools(app)
+    register_fear_index_tools(app)
