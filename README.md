@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-yellow?logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-purple)](LICENSE)
 [![Claude](https://img.shields.io/badge/Claude.ai-Connected-orange?logo=anthropic)](https://claude.ai)
-[![Smithery](https://smithery.ai/badge/@scutuatua/scutua-mcp)](https://smithery.ai/server/@scutuatua/scutua-mcp)
+[![smithery badge](https://smithery.ai/badge/scutuatua/scutua-mcp)](https://smithery.ai/servers/scutuatua/scutua-mcp)
 
 > **Model Context Protocol Server** — WhaleTrucker Ecosystem
 > Built with Python | Zero-Trust Security | Multi-Chain Ready
