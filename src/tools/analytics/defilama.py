@@ -1,39 +1,52 @@
 """
-🧠 DeFiLlama Analytics Tools — WhaleTrucker Ecosystem
+DeFiLlama Analytics Tools — Scutua-MCP
 """
-from fastmcp import FastMCP
 import httpx
+from src.utils.cache import get_cached, set_cached
+from src.utils.logger import get_logger
 
-def register_defilama_tools(app: FastMCP):
+logger = get_logger(__name__)
+
+BASE_URL = "https://api.llama.fi"
+
+async def _llama_get(endpoint: str) -> dict:
+    cache_key = f"defilama:{endpoint}"
+    cached = get_cached(cache_key)
+    if cached:
+        return cached
+    try:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(f"{BASE_URL}{endpoint}", timeout=10)
+            r.raise_for_status()
+            data = r.json()
+            set_cached(cache_key, data, ttl=120)
+            return data
+    except Exception as e:
+        logger.error(f"DeFiLlama error: {e}")
+        return {"error": str(e)}
+
+def register_defilama_tools(app):
 
     @app.tool()
     async def get_protocol_tvl(protocol: str) -> dict:
         """Get TVL history for a DeFi protocol from DeFiLlama"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get(f"https://api.llama.fi/protocol/{protocol}")
-        return r.json()
+        return await _llama_get(f"/protocol/{protocol}")
 
     @app.tool()
     async def get_top_protocols() -> dict:
         """Get top DeFi protocols by TVL"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get("https://api.llama.fi/protocols")
-        protocols = r.json()[:20]
+        data = await _llama_get("/protocols")
+        if "error" in data:
+            return data
+        protocols = data[:20]
         return {"protocols": [{"name": p.get("name"), "tvl": p.get("tvl"), "chain": p.get("chain")} for p in protocols]}
 
     @app.tool()
     async def get_chain_tvl(chain: str) -> dict:
         """Get total TVL for a specific blockchain"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get(f"https://api.llama.fi/v2/historicalChainTvl/{chain}")
-        return {"chain": chain, "history": r.json()[-30:]}
+        data = await _llama_get(f"/v2/historicalChainTvl/{chain}")
+        if "error" in data:
+            return data
+        return {"chain": chain, "history": data[-30:]}
 
-    @app.tool()
-    async def get_yields() -> dict:
-        """Get top yield farming opportunities from DeFiLlama"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get("https://yields.llama.fi/pools")
-        pools = r.json().get("data", [])
-        top = sorted(pools, key=lambda x: x.get("apy", 0), reverse=True)[:20]
-        return {"pools": top}
-
+    @app.
