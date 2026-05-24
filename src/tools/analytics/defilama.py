@@ -49,4 +49,16 @@ def register_defilama_tools(app):
             return data
         return {"chain": chain, "history": data[-30:]}
 
-    @app.
+    @app.tool()
+    async def get_yields() -> dict:
+        """Get top yield farming opportunities from DeFiLlama"""
+        try:
+            async with httpx.AsyncClient() as client:
+                r = await client.get("https://yields.llama.fi/pools", timeout=10)
+                r.raise_for_status()
+                pools = r.json().get("data", [])
+                top = sorted(pools, key=lambda x: x.get("apy", 0), reverse=True)[:20]
+                return {"pools": top}
+        except Exception as e:
+            logger.error(f"DeFiLlama yields error: {e}")
+            return {"error": str(e)}
