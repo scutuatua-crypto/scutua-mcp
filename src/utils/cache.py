@@ -35,3 +35,8 @@ class MemoryCache:
 
 cache = MemoryCache()
 
+def get_cached(key: str) -> Optional[Any]:
+    return cache.get(key)
+
+def set_cached(key: str, value: Any, ttl: Optional[int] = None) -> None:
+    cache.set(key, value, ttl)
