@@ -2,7 +2,7 @@ from .whale import register_whale_tools
 from .portfolio import register_portfolio_tools
 from .valuation import register_valuation_tools
 from .stablecoin import register_stablecoin_tools
-from .analytics import register_analytics_tools
+from .analytics import register_analytics_tools as register_core_analytics
 from .dominance import register_dominance_tools
 from .fear_greed import register_fear_greed_tools
 from .gas import register_gas_tools
@@ -26,7 +26,7 @@ def register_analytics_tools(app):
     register_portfolio_tools(app)
     register_valuation_tools(app)
     register_stablecoin_tools(app)
-    register_analytics_tools(app)
+    register_core_analytics(app)
     register_dominance_tools(app)
     register_fear_greed_tools(app)
     register_gas_tools(app)
