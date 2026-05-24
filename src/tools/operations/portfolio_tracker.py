@@ -1,10 +1,38 @@
 """
-🛠️ Portfolio Tracker Tools — WhaleTrucker Ecosystem
+Portfolio Tracker Tools — Scutua-MCP
 """
-from fastmcp import FastMCP
+import os
 import httpx
+from src.utils.cache import get_cached, set_cached
+from src.utils.logger import get_logger
 
-def register_portfolio_tracker_tools(app: FastMCP):
+logger = get_logger(__name__)
+
+ZERION_API_KEY = os.getenv("ZERION_API_KEY", "")
+BASE_URL = "https://api.zerion.io/v1"
+
+async def _zerion_get(endpoint: str) -> dict:
+    cache_key = f"zerion:{endpoint}"
+    cached = get_cached(cache_key)
+    if cached:
+        return cached
+    try:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(
+                f"{BASE_URL}{endpoint}",
+                headers={"Authorization": f"Basic {ZERION_API_KEY}"},
+                params={"currency": "usd"},
+                timeout=10
+            )
+            r.raise_for_status()
+            data = r.json()
+            set_cached(cache_key, data, ttl=60)
+            return data
+    except Exception as e:
+        logger.error(f"Zerion error: {e}")
+        return {"error": str(e)}
+
+def register_portfolio_tracker_tools(app):
 
     @app.tool()
     async def get_portfolio_value(addresses: list[str], chains: list[str] = ["ethereum", "solana"]) -> dict:
@@ -12,21 +40,4 @@ def register_portfolio_tracker_tools(app: FastMCP):
         results = {}
         for address in addresses:
             results[address] = {"address": address, "chains": chains, "status": "tracked"}
-        return {"portfolios": results, "total_wallets": len(addresses)}
-
-    @app.tool()
-    async def track_pnl(address: str, chain: str = "ethereum") -> dict:
-        """Track PnL for a wallet address"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get(f"https://api.zerion.io/v1/wallets/{address}/portfolio/?currency=usd",
-                headers={"Authorization": "Basic "})
-        return {"address": address, "chain": chain, "pnl": r.json()}
-
-    @app.tool()
-    async def get_token_allocation(address: str) -> dict:
-        """Get token allocation breakdown for a wallet"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get(f"https://api.zerion.io/v1/wallets/{address}/positions/?currency=usd",
-                headers={"Authorization": "Basic "})
-        return {"address": address, "allocation": r.json()}
-
+        return {"portfolios
