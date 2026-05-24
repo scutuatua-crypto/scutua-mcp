@@ -1,38 +1,67 @@
 """
-🌐 BNB Chain Tools — WhaleTrucker Ecosystem
+BNB Chain Tools — Scutua-MCP
 """
-from fastmcp import FastMCP
+import os
 import httpx
+from src.utils.cache import get_cached, set_cached
+from src.utils.logger import get_logger
 
-def register_bnb_tools(app: FastMCP):
+logger = get_logger(__name__)
+
+BSCSCAN_API_KEY = os.getenv("BSCSCAN_API_KEY", "")
+BASE_URL = "https://api.bscscan.com/api"
+
+async def _bscscan_get(params: dict) -> dict:
+    cache_key = f"bscscan:{str(params)}"
+    cached = get_cached(cache_key)
+    if cached:
+        return cached
+    try:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(BASE_URL, params=params, timeout=10)
+            r.raise_for_status()
+            data = r.json()
+            set_cached(cache_key, data, ttl=60)
+            return data
+    except Exception as e:
+        logger.error(f"BscScan error: {e}")
+        return {"error": str(e)}
+
+def register_bnb_tools(app):
 
     @app.tool()
     async def get_bnb_balance(address: str) -> dict:
         """Get BNB balance on BNB Chain"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get(
-                "https://api.bscscan.com/api",
-                params={"module": "account", "action": "balance", "address": address, "tag": "latest"}
-            )
-        data = r.json()
+        data = await _bscscan_get({
+            "module": "account", "action": "balance",
+            "address": address, "tag": "latest",
+            "apikey": BSCSCAN_API_KEY
+        })
+        if "error" in data:
+            return data
         return {"address": address, "balance_wei": data.get("result"), "chain": "bnb"}
 
     @app.tool()
     async def get_bnb_gas_price() -> dict:
         """Get current BNB Chain gas price"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get("https://api.bscscan.com/api?module=gastracker&action=gasoracle")
-        data = r.json().get("result", {})
-        return {"gas_price": data.get("ProposeGasPrice"), "chain": "bnb"}
+        data = await _bscscan_get({
+            "module": "gastracker", "action": "gasoracle",
+            "apikey": BSCSCAN_API_KEY
+        })
+        if "error" in data:
+            return data
+        result = data.get("result", {})
+        return {"gas_price": result.get("ProposeGasPrice"), "chain": "bnb"}
 
     @app.tool()
     async def get_bnb_tx_history(address: str, limit: int = 10) -> dict:
         """Get recent transactions on BNB Chain"""
-        async with httpx.AsyncClient() as client:
-            r = await client.get(
-                "https://api.bscscan.com/api",
-                params={"module": "account", "action": "txlist", "address": address, "page": 1, "offset": limit, "sort": "desc"}
-            )
-        txs = r.json().get("result", [])
-        return {"address": address, "transactions": txs[:limit], "chain": "bnb"}
-
+        data = await _bscscan_get({
+            "module": "account", "action": "txlist",
+            "address": address, "page": 1,
+            "offset": limit, "sort": "desc",
+            "apikey": BSCSCAN_API_KEY
+        })
+        if "error" in data:
+            return data
+        return {"address": address, "transactions": data.get("result", [])[:limit], "chain": "bnb"}
