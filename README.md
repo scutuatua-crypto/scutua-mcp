@@ -22,13 +22,69 @@ Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.
 
 ## Architecture — 5 Dimensions
 
-| Dimension | Folder | Coverage |
-|-----------|--------|----------|
-| 🌐 Multi-Chain Universe | `src/tools/chains/` | Solana, Polkadot, Reef, TON, Cosmos, Base, CrossChain |
-| ⚡ DeFi Protocol Universe | `src/tools/protocols/` | Jupiter, Drift, Uniswap, Lido, Aave, Curve, Compound, GMX, and more |
-| 🧠 Intelligence & Analytics | `src/tools/analytics/` | Whale tracking, Portfolio, Price feeds, Fear & Greed, LunarCrush |
-| 🛠️ Operations & DevOps | `src/tools/operations/` | GitHub, Tax, Wallet, Alerts, Telegram, Dune Analytics |
-| 📊 Market Intelligence | `src/tools/market/` | CoinGecko, CMC, Trending, Sentiment, ETF, NFT floors |
+| Dimension | Folder | Tools | Coverage |
+|-----------|--------|-------|----------|
+| 🌐 Multi-Chain Universe | `src/tools/chains/` | 11 | Solana, Ethereum, Arbitrum, Optimism, BNB, Polkadot, Reef, TON, Cosmos, Base, CrossChain |
+| ⚡ DeFi Protocol Universe | `src/tools/protocols/` | 26 | Jupiter, Drift, Uniswap, Lido, Aave, Curve, Compound, GMX, Pendle, and more |
+| 🧠 Intelligence & Analytics | `src/tools/analytics/` | 26 | Whale tracking, Birdeye, DeFiLlama, Nansen, Dune, Price feeds, Fear & Greed |
+| 🛠️ Operations & DevOps | `src/tools/operations/` | 17 | GitHub, Tax, Wallet, Alerts, Telegram, Discord, Portfolio Tracker |
+| 📊 Market Intelligence | `src/tools/market/` | 8 | CoinGecko, CMC, Trending, Sentiment, Kaito, LunarCrush, Alternative.me |
+
+---
+
+## Project Structure
+
+```
+src/
+├── tools/
+│   ├── registry.py                # Master registry
+│   ├── chains/                    # 🌐 Dimension 1 (11 chains)
+│   │   ├── solana.py
+│   │   ├── ethereum.py
+│   │   ├── arbitrum.py
+│   │   ├── optimism.py
+│   │   ├── bnb.py
+│   │   ├── polkadot.py
+│   │   ├── reef.py
+│   │   ├── ton.py
+│   │   ├── cosmos.py
+│   │   ├── base.py
+│   │   └── crosschain.py
+│   ├── protocols/                 # ⚡ Dimension 2 (26 protocols)
+│   │   ├── jupiter.py / drift.py / mango.py / pump_fun.py
+│   │   ├── raydium.py / marinade.py / uniswap.py / lido.py
+│   │   ├── aave_live.py / curve.py / compound.py / gmx.py
+│   │   ├── pendle.py / defi.py / nft.py / staking.py
+│   │   ├── yield_optimizer.py / lending.py / bridge.py
+│   │   └── perp.py / dex.py / options.py / dao.py / launchpad.py / insurance.py / rwa.py
+│   ├── analytics/                 # 🧠 Dimension 3 (26 tools)
+│   │   ├── whale.py / portfolio.py / valuation.py / stablecoin.py
+│   │   ├── analytics.py / dominance.py / fear_greed.py / gas.py
+│   │   ├── news.py / price.py / nft_floor.py / onchain.py
+│   │   ├── mempool.py / signal.py / liquidation.py / arbitrage.py
+│   │   ├── exploit.py / narrative.py / heatmap.py / etf.py
+│   │   ├── macro.py / points.py
+│   │   └── birdeye.py / defilama.py / nansen.py / dune.py
+│   ├── operations/                # 🛠️ Dimension 4 (17 tools)
+│   │   ├── github.py / tax.py / tax_report.py / converter.py
+│   │   ├── alerts.py / dashboard.py / social.py / wallet.py
+│   │   ├── validator.py / watchlist.py / airdrop.py / copy_trade.py
+│   │   ├── scam.py / ens.py
+│   │   └── telegram.py / discord.py / portfolio_tracker.py
+│   └── market/                    # 📊 Dimension 5 (8 tools)
+│       ├── coingecko.py / cmc.py / trending.py
+│       ├── sentiment.py / fear_index.py
+│       └── kaito.py / lunarcrush.py / alternative.py
+├── utils/
+│   ├── logger.py / security.py / cache.py
+│   ├── rate_limiter.py / validator.py
+├── config/
+│   └── settings.py
+├── tests/
+│   ├── test_chains.py / test_protocols.py
+│   ├── test_analytics.py / test_operations.py / test_market.py
+└── main.py
+```
 
 ---
 
@@ -54,7 +110,6 @@ Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.
 - ✅ Transport: Streamable HTTP (FastMCP 3.3.1)  
 - ✅ Architecture: 5-Dimensional V2  
 - ✅ CI/CD: GitHub Actions (1,298+ runs)  
-- ✅ README: Synced  
 
 ---
 
@@ -74,3 +129,7 @@ Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.
     }
   }
 }
+```
+
+### Smithery
+[https://smithery.ai/servers/scutuatua/scutua-mcp](https://smithery.ai/servers/scutuatua/scutua-mcp)
