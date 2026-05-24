@@ -20,6 +20,11 @@ from .dao import register_dao_tools
 from .launchpad import register_launchpad_tools
 from .insurance import register_insurance_tools
 from .rwa import register_rwa_tools
+# --- NEW ---
+from .curve import register_curve_tools
+from .compound import register_compound_tools
+from .gmx import register_gmx_tools
+from .pendle import register_pendle_tools
 
 def register_protocols_tools(app):
     register_jupiter_tools(app)
@@ -44,3 +49,8 @@ def register_protocols_tools(app):
     register_launchpad_tools(app)
     register_insurance_tools(app)
     register_rwa_tools(app)
+    # --- NEW ---
+    register_curve_tools(app)
+    register_compound_tools(app)
+    register_gmx_tools(app)
+    register_pendle_tools(app)
