@@ -1,4 +1,3 @@
-cat > README.md << 'READMEEOF'
 # 🐋 Scutua-MCP
 
 [![Deploy](https://img.shields.io/badge/Render-Live-brightgreen?logo=render)](https://scutua-mcp.onrender.com)
@@ -8,15 +7,15 @@ cat > README.md << 'READMEEOF'
 [![Claude](https://img.shields.io/badge/Claude.ai-Connected-orange?logo=anthropic)](https://claude.ai)
 [![smithery badge](https://smithery.ai/badge/scutuatua/scutua-mcp)](https://smithery.ai/servers/scutuatua/scutua-mcp)
 
-> **Model Context Protocol Server** — WhaleTrucker Ecosystem V2
-> Built with Python | FastMCP 3.3.1 | Streamable HTTP Transport
+> **Model Context Protocol Server** — WhaleTrucker Ecosystem V2  
+> Built with Python | FastMCP 3.3.1 | Streamable HTTP Transport  
 > Live: `https://scutua-mcp.onrender.com/mcp`
 
 ---
 
 ## Overview
 
-Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.
+Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.  
 **130 tools** across 5 dimensions: Multi-Chain, DeFi Protocols, Analytics, Operations, and Market Intelligence — connected to Claude.ai and Smithery.
 
 ---
@@ -30,6 +29,32 @@ Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.
 | 🧠 Intelligence & Analytics | `src/tools/analytics/` | Whale tracking, Portfolio, Price feeds, Fear & Greed, LunarCrush |
 | 🛠️ Operations & DevOps | `src/tools/operations/` | GitHub, Tax, Wallet, Alerts, Telegram, Dune Analytics |
 | 📊 Market Intelligence | `src/tools/market/` | CoinGecko, CMC, Trending, Sentiment, ETF, NFT floors |
+
+---
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `BIRDEYE_API_KEY` | Birdeye — Solana token data |
+| `DUNE_API_KEY` | Dune Analytics — on-chain queries |
+| `GH_TOKEN` | GitHub — repo operations |
+| `LUNARCRUSH_API_KEY` | LunarCrush — social sentiment |
+| `SOLANA_API` | Solana RPC endpoint |
+| `TELEGRAM_BOT_TOKEN` | Telegram bot alerts |
+| `TELEGRAM_CHANNEL_ID` | Telegram channel target |
+
+---
+
+## Status
+
+- ✅ Render: Live  
+- ✅ Smithery: Published  
+- ✅ Claude.ai: Connected (130 tools)  
+- ✅ Transport: Streamable HTTP (FastMCP 3.3.1)  
+- ✅ Architecture: 5-Dimensional V2  
+- ✅ CI/CD: GitHub Actions (1,298+ runs)  
+- ✅ README: Synced  
 
 ---
 
