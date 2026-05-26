@@ -1,0 +1,75 @@
+{
+  "name": "Scutua + WhaleTrucker Ecosystem",
+  "version": "3.3.1",
+  "tagline": "no money · no cry · just build",
+  "built_by": "scutuatua-crypto",
+  "deployed_from": "iPad. No PC required. 😤",
+  "stats": {
+    "repos": 80,
+    "tools": 152,
+    "platforms_live": 4,
+    "chains": 11,
+    "ci_cd_runs": 1300,
+    "smithery_score": 84
+  },
+  "projects": [
+    {
+      "id": "scutua-mcp",
+      "name": "Scutua-MCP",
+      "description": "World's first Agentic DeFi MCP — 152 tools, 7 dimensions",
+      "url": "https://scutua-mcp.onrender.com/mcp",
+      "status": "live",
+      "tier": 1,
+      "dimension": "core"
+    },
+    {
+      "id": "solana-monitor",
+      "name": "Solana Monitor",
+      "description": "Real-time SOL balance, SPL tokens, tiered reward system",
+      "url": "https://github.com/scutuatua-crypto/solana-monitor",
+      "status": "live",
+      "tier": 1,
+      "dimension": "chain"
+    },
+    {
+      "id": "whaletrucker-elite",
+      "name": "WhaleTrucker Elite",
+      "description": "Bitcoin command center — live price, portfolio, DeFi radar",
+      "url": "https://github.com/scutuatua-crypto/whaletrucker-reef",
+      "status": "live",
+      "tier": 2,
+      "dimension": "defi"
+    },
+    {
+      "id": "assetflow",
+      "name": "AssetFlow",
+      "description": "Asset management and portfolio tracker",
+      "url": "https://assetflow-app-iota.vercel.app",
+      "status": "live",
+      "tier": 2,
+      "dimension": "portfolio"
+    },
+    {
+      "id": "asset-platform",
+      "name": "Asset Platform",
+      "description": "Advanced asset tracking and analytics",
+      "url": "https://asset-platform-vercel.app",
+      "status": "live",
+      "tier": 2,
+      "dimension": "portfolio"
+    },
+    {
+      "id": "command-hub",
+      "name": "Scutua Command Hub",
+      "description": "All projects · One place",
+      "url": "https://scutuatua-crypto.github.io",
+      "status": "live",
+      "tier": 1,
+      "dimension": "hub"
+    }
+  ],
+  "chains_supported": [
+    "Solana", "Ethereum", "Arbitrum", "Optimism",
+    "BNB", "Reef", "TON", "Polkadot", "Cosmos", "Base", "CrossChain"
+  ]
+}
