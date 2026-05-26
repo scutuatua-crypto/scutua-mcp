@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Scutua-MCP — WhaleTrucker Ecosystem V5</title>
+  <title>Scutua-MCP — WhaleTrucker Ecosystem V6</title>
   <style>
     * {
       box-sizing: border-box;
@@ -23,53 +23,51 @@
       position: relative;
     }
 
-    /* Premium Whale Static Background Container */
-    .whale-background-hero {
+    /* Top Area Layout for Hero Background Artwork */
+    .whale-hero-section {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 460px;
+      height: 450px;
       z-index: 1;
-      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      background: radial-gradient(circle at 50% 30%, #0c2340 0%, #030914 75%);
+      background: radial-gradient(circle at 50% 35%, #0b2240 0%, #030914 80%);
+      overflow: hidden;
     }
 
-    /* Deep Water Horizon Line Effect */
-    .whale-background-hero::after {
-      content: '';
+    /* Seamless Horizontal Deep Blue Ocean Horizon Line */
+    .ocean-horizon-layer {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 140px;
-      background: linear-gradient(to bottom, rgba(0, 185, 245, 0.15) 0%, rgba(3, 9, 20, 1) 90%);
-      border-top: 2px solid rgba(45, 210, 250, 0.4);
-      box-shadow: 0 -10px 30px rgba(0, 185, 245, 0.1);
+      height: 120px;
+      background: linear-gradient(to bottom, rgba(0, 185, 245, 0.18) 0%, rgba(3, 9, 20, 1) 85%);
+      border-top: 2.5px solid rgba(45, 210, 250, 0.5);
+      box-shadow: 0 -8px 25px rgba(0, 185, 245, 0.15);
       z-index: 3;
     }
 
-    /* Render Static 3D-Look Whale Artwork via CSS Composite Vector Shapes */
-    .static-whale-artwork {
-      position: relative;
-      width: 320px;
-      height: 220px;
-      margin-bottom: 40px;
+    /* Vector Whale Engine Shape Box */
+    .true-whale-svg {
+      width: 480px;
+      height: 320px;
+      margin-bottom: 25px;
       z-index: 2;
-      filter: drop-shadow(0 0 45px rgba(90, 232, 255, 0.45));
+      filter: drop-shadow(0 0 50px rgba(90, 232, 255, 0.45));
     }
 
-    /* Main Container with calculated margins matching your device setup */
+    /* Content Layout Container precisely targeted for iPad alignment */
     .content-container {
       position: relative;
       z-index: 10;
       width: 100%;
       max-width: 650px;
       text-align: center;
-      margin-top: 380px; 
+      margin-top: 375px; 
       padding: 0 20px 40px 20px;
       display: flex;
       flex-direction: column;
@@ -174,51 +172,64 @@
 </head>
 <body>
 
-  <div class="whale-background-hero">
-    <svg class="static-whale-artwork" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <div class="whale-hero-section">
+    <div class="ocean-horizon-layer"></div>
+    
+    <svg class="true-whale-svg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="whaleBodyGrad" x1="0%" y1="0%" x2="100%" y2="50%">
-          <stop offset="0%" stop-color="#021533"/>
-          <stop offset="35%" stop-color="#0a4375"/>
-          <stop offset="70%" stop-color="#198ec4"/>
-          <stop offset="90%" stop-color="#55daf7"/>
-          <stop offset="100%" stop-color="#e8faff"/>
+        <linearGradient id="gloriousWhaleGrad" x1="0%" y1="30%" x2="100%" y2="70%">
+          <stop offset="0%" stop-color="#021a3a"/>
+          <stop offset="25%" stop-color="#094b82"/>
+          <stop offset="60%" stop-color="#148fc9"/>
+          <stop offset="88%" stop-color="#48daf7"/>
+          <stop offset="100%" stop-color="#dffffb"/>
         </linearGradient>
-        <linearGradient id="fountainGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stop-color="rgba(90, 232, 255, 0.85)"/>
-          <stop offset="50%" stop-color="rgba(26, 159, 212, 0.6)"/>
-          <stop offset="100%" stop-color="rgba(139, 92, 246, 0)"/>
+
+        <linearGradient id="gloriousFountainGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stop-color="rgba(165, 243, 252, 0.9)"/>
+          <stop offset="40%" stop-color="rgba(26, 159, 212, 0.7)"/>
+          <stop offset="75%" stop-color="rgba(124, 58, 237, 0.35)"/>
+          <stop offset="100%" stop-color="rgba(255, 255, 255, 0)"/>
         </linearGradient>
       </defs>
 
-      <path d="M 103 40 Q 90 5 70 12 Q 95 -5 103 -12 Q 111 -5 136 12 Q 116 5 103 40 Z" fill="url(#fountainGrad)"/>
-      <circle cx="70" cy="12" r="1.5" fill="#ffffff" opacity="0.9"/>
-      <circle cx="82" cy="5" r="1.2" fill="#ffffff" opacity="0.8"/>
-      <circle cx="103" cy="-12" r="1.8" fill="#ffffff" opacity="0.95"/>
-      <circle cx="124" cy="5" r="1.2" fill="#ffffff" opacity="0.8"/>
-      <circle cx="136" cy="12" r="1.5" fill="#ffffff" opacity="0.9"/>
+      <g id="fountain-canopy">
+        <path d="M 166 100 
+                 Q 150 40, 110 50 
+                 Q 155 25, 166 10 
+                 Q 177 25, 222 50 
+                 Q 182 40, 166 100 Z" 
+              fill="url(#gloriousFountainGrad)"/>
+        <circle cx="110" cy="50" r="2.5" fill="#ffffff" opacity="0.9"/>
+        <circle cx="132" cy="36" r="2.0" fill="#ffffff" opacity="0.85"/>
+        <circle cx="166" cy="10" r="3.2" fill="#ffffff" opacity="0.95"/>
+        <circle cx="200" cy="36" r="2.0" fill="#ffffff" opacity="0.85"/>
+        <circle cx="222" cy="50" r="2.5" fill="#ffffff" opacity="0.9"/>
+        <circle cx="148" cy="22" r="1.5" fill="#67e8f9" opacity="0.7"/>
+        <circle cx="184" cy="22" r="1.5" fill="#67e8f9" opacity="0.7"/>
+      </g>
 
-      <path d="M 155 58 
-               C 150 42, 138 36, 115 34 
-               C 92 32, 65 42, 30 44 
-               C 5 46, -18 35, -34 18 
-               C -40 12, -45 15, -40 29 
-               C -30 62, -18 68, -24 81 
-               C -19 79, -10 68, 2 65 
-               C 18 63, 30 77, 54 79 
-               C 87 81, 140 77, 155 58 Z" 
-            fill="url(#whaleBodyGrad)"/>
+      <path d="M 245 118 
+               C 238 92, 215 82, 175 80 
+               C 138 78, 92 92, 45 95 
+               C 10 97, -25 82, -45 58 
+               C -55 45, -62 50, -54 70 
+               C -38 118, -20 128, -28 148 
+               C -20 145, -7 130, 10 125 
+               C 32 122, 50 142, 85 145 
+               C 135 148, 220 143, 245 118 Z" 
+            fill="url(#gloriousWhaleGrad)"/>
 
-      <path d="M 65 72 C 90 77, 120 73, 145 60" stroke="rgba(255,255,255,0.2)" stroke-width="0.8" fill="none"/>
-      <path d="M 75 74 C 98 78, 124 73, 147 59" stroke="rgba(255,255,255,0.2)" stroke-width="0.8" fill="none"/>
-      <path d="M 85 75 C 106 78, 128 72, 149 57" stroke="rgba(255,255,255,0.15)" stroke-width="0.8" fill="none"/>
+      <path d="M 95 136 C 135 142, 185 137, 228 120" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1.2" fill="none"/>
+      <path d="M 110 139 C 148 144, 192 138, 232 118" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1.2" fill="none"/>
+      <path d="M 125 141 C 160 145, 200 136, 236 115" stroke="rgba(255, 255, 255, 0.16)" stroke-width="1.0" fill="none"/>
 
-      <path d="M 125 55 C 131 53, 140 53, 146 56" stroke="rgba(255,255,255,0.35)" stroke-width="1" fill="none"/>
+      <path d="M 195 114 C 205 111, 220 111, 230 115" stroke="rgba(255, 255, 255, 0.4)" stroke-width="1.5" fill="none"/>
 
-      <path d="M 85 70 C 72 87, 61 90, 56 85 C 61 75, 74 70, 85 69 Z" fill="#063561" stroke="rgba(90, 232, 255, 0.4)" stroke-width="0.7"/>
+      <path d="M 130 132 C 110 158, 95 162, 88 155 C 95 140, 115 132, 130 131 Z" fill="#052f59" stroke="rgba(90, 232, 255, 0.5)" stroke-width="1"/>
 
-      <circle cx="132" cy="47" r="1.8" fill="#010712"/>
-      <circle cx="132.8" cy="46.4" r="0.5" fill="#ffffff"/>
+      <circle cx="206" cy="103" r="2.5" fill="#020914"/>
+      <circle cx="207.2" cy="101.8" r="0.8" fill="#ffffff"/>
     </svg>
   </div>
 
