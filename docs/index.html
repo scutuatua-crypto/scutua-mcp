@@ -28,7 +28,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 380px;
+      height: 400px;
       z-index: 1;
       display: block;
     }
@@ -39,7 +39,7 @@
       width: 100%;
       max-width: 650px;
       text-align: center;
-      margin-top: 320px; 
+      margin-top: 340px; 
       padding: 0 20px 40px 20px;
       display: flex;
       flex-direction: column;
@@ -181,8 +181,8 @@
     const ctx = canvas.getContext('2d');
 
     let displayW = window.innerWidth;
-    const displayH = 380;
-    let WATER_Y = displayH * 0.72;
+    const displayH = 400;
+    let WATER_Y = displayH * 0.74;
 
     function resizeEngine() {
       displayW = window.innerWidth;
@@ -200,34 +200,37 @@
     let fountainParticles = [];
 
     function updateFountain(sourceX, sourceY) {
-      if (Math.random() < 0.75) {
+      if (Math.random() < 0.85) {
         fountainParticles.push({
-          x: sourceX + (Math.random() - 0.5) * 6,
+          x: sourceX + (Math.random() - 0.5) * 4,
           y: sourceY,
-          vx: (Math.random() - 0.5) * 2.5,
-          vy: -6 - Math.random() * 4.5,
+          vx: (Math.random() - 0.5) * 3.5,
+          vy: -8 - Math.random() * 5.5,
           life: 1.0,
-          decay: 0.012 + Math.random() * 0.015,
-          r: 1.5 + Math.random() * 3,
-          colorHue: 185 + Math.random() * 35
+          decay: 0.01 + Math.random() * 0.015,
+          r: 1.2 + Math.random() * 2.8,
+          colorHue: 185 + Math.random() * 30
         });
       }
 
       fountainParticles = fountainParticles.filter(p => p.life > 0);
       for (const p of fountainParticles) {
         ctx.save();
-        ctx.globalAlpha = p.life * 0.9;
+        ctx.globalAlpha = p.life * 0.85;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.colorHue}, 90%, 75%, 0.95)`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = `rgba(90, 235, 255, 0.6)`;
+        ctx.fillStyle = `hsla(${p.colorHue}, 95%, 78%, 0.9)`;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = `rgba(90, 240, 255, 0.7)`;
         ctx.fill();
         ctx.restore();
 
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.22;
+        p.vy += 0.28; 
+        if (p.vy > -2) {
+          p.vx += (p.vx > 0 ? 0.08 : -0.08);
+        }
         p.life -= p.decay;
       }
     }
@@ -235,7 +238,7 @@
     function drawWater() {
       ctx.save();
       const grad = ctx.createLinearGradient(0, WATER_Y, 0, displayH);
-      grad.addColorStop(0, 'rgba(1, 15, 38, 0.8)');
+      grad.addColorStop(0, 'rgba(1, 12, 32, 0.85)');
       grad.addColorStop(1, 'rgba(3, 9, 20, 1)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, WATER_Y, displayW, displayH - WATER_Y);
@@ -243,90 +246,90 @@
       ctx.beginPath();
       ctx.moveTo(0, WATER_Y);
       for (let x = 0; x <= displayW; x += 5) {
-        const wave = Math.sin((x * 0.012) + t * 0.03) * 5 + Math.sin((x * 0.025) + t * 0.02) * 2.5;
+        const wave = Math.sin((x * 0.012) + t * 0.035) * 4.5 + Math.sin((x * 0.025) + t * 0.025) * 2;
         ctx.lineTo(x, WATER_Y + wave);
       }
       ctx.lineTo(displayW, displayH);
       ctx.lineTo(0, displayH);
       ctx.closePath();
       
-      const surfaceGrad = ctx.createLinearGradient(0, WATER_Y - 8, 0, WATER_Y + 20);
-      surfaceGrad.addColorStop(0, 'rgba(0, 190, 255, 0.5)');
-      surfaceGrad.addColorStop(1, 'rgba(1, 15, 38, 0)');
+      const surfaceGrad = ctx.createLinearGradient(0, WATER_Y - 6, 0, WATER_Y + 15);
+      surfaceGrad.addColorStop(0, 'rgba(0, 180, 240, 0.45)');
+      surfaceGrad.addColorStop(1, 'rgba(1, 12, 32, 0)');
       ctx.fillStyle = surfaceGrad;
       ctx.fill();
 
       ctx.beginPath();
       for (let x = 0; x <= displayW; x += 4) {
-        const wave = Math.sin((x * 0.012) + t * 0.03) * 5 + Math.sin((x * 0.025) + t * 0.02) * 2.5;
+        const wave = Math.sin((x * 0.012) + t * 0.035) * 4.5 + Math.sin((x * 0.025) + t * 0.025) * 2;
         if (x === 0) ctx.moveTo(x, WATER_Y + wave); else ctx.lineTo(x, WATER_Y + wave);
       }
-      ctx.strokeStyle = 'rgba(54, 211, 252, 0.6)';
-      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = 'rgba(45, 205, 245, 0.55)';
+      ctx.lineWidth = 2.2;
       ctx.stroke();
       ctx.restore();
     }
 
-    function drawGiantWhale(centerX, centerY) {
+    function drawPremiumWhale(centerX, centerY) {
       ctx.save();
       
-      const floatOffset = Math.sin(t * 0.025) * 4;
+      const floatOffset = Math.sin(t * 0.028) * 3.5;
       ctx.translate(centerX, centerY + floatOffset);
       
-      const baseScale = Math.min(displayW / 700, 1.2);
-      ctx.scale(baseScale * 1.8, baseScale * 1.8);
+      const baseScale = Math.min(displayW / 750, 1.1);
+      ctx.scale(baseScale * 1.6, baseScale * 1.6);
 
-      const bodyGrad = ctx.createLinearGradient(-80, -30, 60, 20);
-      bodyGrad.addColorStop(0, '#041c38');
-      bodyGrad.addColorStop(0.4, '#093a6b');
-      bodyGrad.addColorStop(0.7, '#167cb0');
-      bodyGrad.addColorStop(1, '#5ae8ff');
+      const bodyGrad = ctx.createLinearGradient(-100, -40, 60, 20);
+      bodyGrad.addColorStop(0, '#02152b');
+      bodyGrad.addColorStop(0.35, '#07325c');
+      bodyGrad.addColorStop(0.7, '#1473a3');
+      bodyGrad.addColorStop(0.95, '#4be0f7');
+      bodyGrad.addColorStop(1, '#ffffff');
 
-      ctx.shadowBlur = 25;
-      ctx.shadowColor = 'rgba(26, 159, 212, 0.4)';
+      ctx.shadowBlur = 30;
+      ctx.shadowColor = 'rgba(0, 195, 255, 0.35)';
 
       ctx.beginPath();
-      ctx.moveTo(70, -5); 
-      ctx.bezierCurveTo(65, -35, 15, -45, -30, -35); 
-      ctx.bezierCurveTo(-65, -28, -95, -45, -110, -55); 
-      ctx.bezierCurveTo(-105, -25, -100, -5, -115, 15); 
-      ctx.bezierCurveTo(-95, 10, -80, 5, -60, 5); 
-      ctx.bezierCurveTo(-30, 22, 25, 25, 70, -5);
+      ctx.moveTo(70, -2); 
+      ctx.bezierCurveTo(68, -42, 10, -58, -35, -42); 
+      ctx.bezierCurveTo(-65, -34, -100, -32, -125, -48); 
+      ctx.bezierCurveTo(-145, -60, -155, -62, -148, -40); 
+      ctx.bezierCurveTo(-140, -15, -125, -5, -135, 18); 
+      ctx.bezierCurveTo(-125, 12, -115, 0, -95, -2); 
+      ctx.bezierCurveTo(-75, -4, -55, 18, -30, 22); 
+      ctx.bezierCurveTo(15, 26, 60, 18, 70, -2); 
       ctx.fillStyle = bodyGrad;
       ctx.fill();
 
       ctx.shadowBlur = 0;
 
-      ctx.beginPath();
-      ctx.moveTo(-15, -1);
-      ctx.bezierCurveTo(10, 16, 45, 14, 68, -4);
-      ctx.bezierCurveTo(45, 2, 10, 4, -15, -1);
-      ctx.fillStyle = 'rgba(226, 245, 255, 0.25)';
-      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1.2;
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-15 - (i * 8), 12 + (i * 2));
+        ctx.bezierCurveTo(15, 22, 45, 14, 62, -4);
+        ctx.stroke();
+      }
 
       ctx.beginPath();
-      ctx.moveTo(15, 5);
-      ctx.bezierCurveTo(25, -5, 32, -8, 42, -5);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-      ctx.lineWidth = 1.5;
+      ctx.moveTo(3, 10);
+      ctx.bezierCurveTo(-12, 32, -26, 38, -34, 34);
+      ctx.bezierCurveTo(-30, 20, -14, 14, 0, 9);
+      const finGrad = ctx.createLinearGradient(-30, 30, 0, 10);
+      finGrad.addColorStop(0, '#031c36');
+      finGrad.addColorStop(1, '#1473a3');
+      ctx.fillStyle = finGrad;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(90, 230, 255, 0.4)';
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.moveTo(10, 12);
-      ctx.bezierCurveTo(-2, 28, -12, 35, -20, 32);
-      ctx.bezierCurveTo(-18, 22, -8, 16, 5, 11);
-      ctx.fillStyle = '#062d54';
-      ctx.fill();
-      ctx.strokeStyle = '#167cb0';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(48, -18, 3.5, 0, Math.PI * 2);
+      ctx.arc(42, -18, 3.2, 0, Math.PI * 2);
       ctx.fillStyle = '#020b17';
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(49.5, -19, 1, 0, Math.PI * 2);
+      ctx.arc(43.5, -19, 0.9, 0, Math.PI * 2);
       ctx.fillStyle = '#ffffff';
       ctx.fill();
 
@@ -337,16 +340,17 @@
       ctx.clearRect(0, 0, displayW, displayH);
       
       const whaleX = displayW / 2;
-      const whaleY = WATER_Y - 5;
+      const whaleY = WATER_Y - 4;
 
-      const baseScale = Math.min(displayW / 700, 1.2);
-      const floatOffset = Math.sin(t * 0.025) * 4;
-      const blowholeX = whaleX + (12 * baseScale * 1.8);
-      const blowholeY = whaleY + floatOffset - (38 * baseScale * 1.8);
+      const baseScale = Math.min(displayW / 750, 1.1);
+      const floatOffset = Math.sin(t * 0.028) * 3.5;
+      
+      const blowholeX = whaleX + (18 * baseScale * 1.6);
+      const blowholeY = whaleY + floatOffset - (46 * baseScale * 1.6);
 
       updateFountain(blowholeX, blowholeY);
       drawWater();
-      drawGiantWhale(whaleX, whaleY);
+      drawPremiumWhale(whaleX, whaleY);
 
       t++;
       requestAnimationFrame(frame);
