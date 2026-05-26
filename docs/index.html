@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Scutua-MCP — WhaleTrucker Ecosystem V2</title>
   <style>
-    /* ─── CORE CLEAN ARCHITECTURE ─── */
+    /* ─── ORIGINAL WHALETRUCKER FULL-SCREEN ARCHITECTURE ─── */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -20,68 +20,73 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 40px 20px;
       overflow-x: hidden;
+      position: relative;
     }
-    .container {
+
+    /* แคนวาสคลื่นยาวเต็มหน้าจอตามสเปกดั้งเดิม */
+    #whaleCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 500px;
+      height: 280px;
+      z-index: 1;
+      display: block;
+    }
+
+    /* ดันคอนเทนต์หลักลงมาให้อยู่ใต้จังหวะวาฬกระโดดพอดี */
+    .content-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 600px;
       text-align: center;
+      margin-top: 240px; /* ระยะปลอดภัยไม่ให้บังคลื่นน้ำ */
+      padding: 0 20px 40px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* ─── CANVAS CONTAINER ─── */
-    .canvas-wrapper {
-      position: relative;
-      width: 220px;
-      height: 160px;
-      margin-bottom: 20px;
-    }
-    canvas {
-      display: block;
-      width: 220px;
-      height: 160px;
-    }
-
-    /* ─── BRANDING TYPOGRAPHY ─── */
+    /* ─── ORIGINAL TYPOGRAPHY & GRADIENT ─── */
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       font-weight: 800;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       background: linear-gradient(135deg, #5ae8ff 0%, #1a9fd4 50%, #0d5fa8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .subtitle {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      letter-spacing: 0.25em;
+      letter-spacing: 0.22em;
       color: #64748b;
       text-transform: uppercase;
-      margin-bottom: 30px;
+      margin-bottom: 35px;
+      line-height: 1.5;
     }
     .subtitle span {
       color: #1a9fd4;
     }
 
-    /* ─── BADGES GRID ─── */
+    /* ─── ORIGINAL PREMIUM BADGES GRID ─── */
     .badges-grid {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
-      max-width: 420px;
-      margin-bottom: 35px;
+      gap: 12px;
+      max-width: 500px;
+      margin-bottom: 40px;
     }
     .badge {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.75rem;
       font-weight: 600;
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 6px;
       border: 1px solid transparent;
       text-transform: uppercase;
@@ -95,6 +100,37 @@
     .badge-claude  { background: rgba(15, 118, 110, 0.1); border-color: rgba(15, 118, 110, 0.3); color: #2dd4bf; width: 65%; justify-content: center; }
     .badge-cicd    { background: rgba(4, 120, 87, 0.1);   border-color: rgba(4, 120, 87, 0.3);   color: #10b981; width: 60%; justify-content: center; }
 
+    /* ─── ORIGINAL ECOSYSTEM INFOGRAPHIC COUNTER ─── */
+    .stats-footer {
+      width: 100%;
+      max-width: 500px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 25px;
+      margin-top: 20px;
+    }
+    .stat-box {
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-family: ui-monospace, monospace;
+    }
+    .stat-lbl {
+      font-size: 0.55rem;
+      color: #475569;
+      text-transform: uppercase;
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+    .color-tools { color: #5ae8ff; }
+    .color-dims  { color: #a78bfa; }
+    .color-score { color: #34d399; }
+    .color-runs  { color: #f97316; }
+    .color-chain { color: #38bdf8; }
+
     /* ─── LIVE LINK ─── */
     .live-link {
       display: inline-flex;
@@ -103,27 +139,22 @@
       color: #64748b;
       font-size: 0.85rem;
       text-decoration: none;
-      transition: color 0.2s ease;
       font-family: ui-monospace, SFMono-Regular, monospace;
+      margin-top: 10px;
     }
     .live-link a {
       color: #1a9fd4;
       text-decoration: underline;
     }
-    .live-link a:hover {
-      color: #5ae8ff;
-    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="canvas-wrapper">
-      <canvas id="whaleCanvas"></canvas>
-    </div>
+  <canvas id="whaleCanvas"></canvas>
 
+  <div class="content-container">
     <h1>Scutua-MCP</h1>
-    <div class="subtitle">Model Context Protocol Server – <span>WhaleTrucker Ecosystem V2</span></div>
+    <div class="subtitle">Model Context Protocol Server – <br><span>WhaleTrucker Ecosystem V2</span></div>
 
     <div class="badges-grid">
       <div class="badge badge-render">✅ Render Live</div>
@@ -139,44 +170,57 @@
     <div class="live-link">
       🔗 Live: <a href="https://scutua-mcp.onrender.com/mcp" target="_blank">https://scutua-mcp.onrender.com/mcp</a>
     </div>
+
+    <div class="stats-footer">
+      <div class="stat-box"><div class="stat-val color-tools">157</div><div class="stat-lbl">Total Tools</div></div>
+      <div class="stat-box"><div class="stat-val color-dims">8</div><div class="stat-lbl">Dimensions</div></div>
+      <div class="stat-box"><div class="stat-val color-score">84</div><div class="stat-lbl">Smithery Score</div></div>
+      <div class="stat-box"><div class="stat-val color-runs">1.5K+</div><div class="stat-lbl">CI/CD Runs</div></div>
+      <div class="stat-box"><div class="stat-val color-chain">11</div><div class="stat-lbl">Chains</div></div>
+    </div>
   </div>
 
   <script>
   (function() {
     const canvas = document.getElementById('whaleCanvas');
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
-    const BASE_W = 220;
-    const BASE_H = 160;
-    let WATER_Y = BASE_H * 0.72;
 
-    function initCanvasScale() {
+    // ดึงความกว้างหน้าจอจริงเพื่อกระจายคลื่นตามต้นฉบับ 900 บรรทัด
+    let displayW = window.innerWidth;
+    const displayH = 280;
+    let WATER_Y = displayH * 0.65;
+
+    function resizeEngine() {
+      displayW = window.innerWidth;
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = BASE_W * dpr;
-      canvas.height = BASE_H * dpr;
+      
+      // ล็อคความสมดุลของการวาดพิกเซล ป้องกันการค้างและจอขาวบน iPadOS / iOS
+      canvas.width = displayW * dpr;
+      canvas.height = displayH * dpr;
+      
       ctx.resetTransform();
       ctx.scale(dpr, dpr);
     }
 
-    initCanvasScale();
-    window.addEventListener('resize', initCanvasScale);
+    resizeEngine();
+    window.addEventListener('resize', resizeEngine);
 
     let t = 0;
-    const CYCLE = 200; 
+    const CYCLE = 240; 
     let splashParticles = [];
 
     function spawnSplash(x, y, entering) {
-      const count = entering ? 20 : 15;
+      const count = entering ? 22 : 16;
       for (let i = 0; i < count; i++) {
-        const angle = entering ? (Math.PI * 1.2 + (Math.random() - 0.5) * 1.0) : (Math.PI * 1.7 + (Math.random() - 0.5) * 1.0);
-        const speed = 1.5 + Math.random() * 3.5;
+        const angle = entering ? (Math.PI * 1.25 + (Math.random() - 0.5) * 0.9) : (Math.PI * 1.75 + (Math.random() - 0.5) * 0.9);
+        const speed = 2.0 + Math.random() * 4.0;
         splashParticles.push({
           x: x, y: y,
-          vx: Math.cos(angle) * speed + (entering ? 0.8 : -0.5), 
-          vy: Math.sin(angle) * speed - 1,
-          life: 1, decay: 0.025 + Math.random() * 0.03,
-          r: 1.2 + Math.random() * 2.5, entering: entering
+          vx: Math.cos(angle) * speed + (entering ? 0.6 : -0.6),
+          vy: Math.sin(angle) * speed - 0.8,
+          life: 1.0, decay: 0.02 + Math.random() * 0.025,
+          r: 1.5 + Math.random() * 2.5, entering: entering
         });
       }
     }
@@ -185,34 +229,38 @@
 
     function drawWater() {
       ctx.save();
-      const grad = ctx.createLinearGradient(0, WATER_Y, 0, BASE_H);
-      grad.addColorStop(0, 'rgba(0,100,160,0.55)');
-      grad.addColorStop(1, 'rgba(0,30,70,0.85)');
+      // ไล่เฉดสีน้ำลึกกระจายตัวตามความกว้างหน้าจอจริง
+      const grad = ctx.createLinearGradient(0, WATER_Y, 0, displayH);
+      grad.addColorStop(0, 'rgba(0,40,90,0.6)');
+      grad.addColorStop(1, 'rgba(3,9,20,0.95)');
       ctx.fillStyle = grad;
-      ctx.fillRect(0, WATER_Y, BASE_W, BASE_H - WATER_Y);
+      ctx.fillRect(0, WATER_Y, displayW, displayH - WATER_Y);
 
+      // วาดคลื่นใหญ่พาดยาวซ้ายสุดไปขวาสุดของหน้าจอ
       ctx.beginPath();
       ctx.moveTo(0, WATER_Y);
-      for (let x = 0; x <= BASE_W; x += 4) {
-        const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
+      for (let x = 0; x <= displayW; x += 5) {
+        const wave = Math.sin((x * 0.015) + t * 0.04) * 4.0 + Math.sin((x * 0.03) + t * 0.03) * 2.0;
         ctx.lineTo(x, WATER_Y + wave);
       }
-      ctx.lineTo(BASE_W, BASE_H);
-      ctx.lineTo(0, BASE_H);
+      ctx.lineTo(displayW, displayH);
+      ctx.lineTo(0, displayH);
       ctx.closePath();
-      const surfaceGrad = ctx.createLinearGradient(0, WATER_Y - 4, 0, WATER_Y + 10);
-      surfaceGrad.addColorStop(0, 'rgba(0,220,255,0.55)');
-      surfaceGrad.addColorStop(1, 'rgba(0,120,200,0.2)');
+      
+      const surfaceGrad = ctx.createLinearGradient(0, WATER_Y - 5, 0, WATER_Y + 15);
+      surfaceGrad.addColorStop(0, 'rgba(0,190,255,0.45)');
+      surfaceGrad.addColorStop(1, 'rgba(0,40,90,0)');
       ctx.fillStyle = surfaceGrad;
       ctx.fill();
 
+      // เส้นผิวน้ำเรืองแสงขอบคลื่น
       ctx.beginPath();
-      for (let x = 0; x <= BASE_W; x += 3) {
-        const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
+      for (let x = 0; x <= displayW; x += 4) {
+        const wave = Math.sin((x * 0.015) + t * 0.04) * 4.0 + Math.sin((x * 0.03) + t * 0.03) * 2.0;
         if (x === 0) ctx.moveTo(x, WATER_Y + wave); else ctx.lineTo(x, WATER_Y + wave);
       }
-      ctx.strokeStyle = 'rgba(0,240,255,0.45)';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(0,210,255,0.4)';
+      ctx.lineWidth = 2;
       ctx.stroke();
       ctx.restore();
     }
@@ -221,13 +269,13 @@
       splashParticles = splashParticles.filter(p => p.life > 0);
       for (const p of splashParticles) {
         ctx.save();
-        ctx.globalAlpha = p.life * 0.85;
+        ctx.globalAlpha = p.life * 0.9;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.entering ? 'rgba(100,230,255,0.9)' : 'rgba(180,245,255,0.9)';
+        ctx.fillStyle = p.entering ? 'rgba(90,220,255,0.85)' : 'rgba(170,240,255,0.85)';
         ctx.fill();
         ctx.restore();
-        p.x += p.vx; p.y += p.vy; p.vy += 0.13; p.life -= p.decay;
+        p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= p.decay;
       }
     }
 
@@ -235,20 +283,10 @@
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(angle);
-      ctx.scale(1, scaleY);
+      ctx.scale(1.1, scaleY * 1.1); // ขยายขนาดตัวขึ้นเล็กน้อยให้รับกับจอใหญ่
 
-      const bodyLen = 56, bodyH = 20;
-      if (y > WATER_Y - 15) {
-        ctx.save();
-        ctx.globalAlpha = 0.15;
-        ctx.scale(1, 0.2);
-        ctx.beginPath();
-        ctx.ellipse(-4, bodyH * 4, bodyLen * 0.6, bodyH * 1.2, 0, 0, Math.PI * 2);
-        ctx.fillStyle = '#001025';
-        ctx.fill();
-        ctx.restore();
-      }
-
+      const bodyLen = 58, bodyH = 21;
+      
       const bodyGrad = ctx.createRadialGradient(8, -6, 2, 0, 0, bodyLen * 0.7);
       bodyGrad.addColorStop(0, '#5ae8ff');
       bodyGrad.addColorStop(0.3, '#1a9fd4');
@@ -264,14 +302,14 @@
 
       ctx.beginPath();
       ctx.ellipse(0, bodyH * 0.2, bodyLen * 0.35, bodyH * 0.25, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(180,235,255,0.25)';
+      ctx.fillStyle = 'rgba(180,235,255,0.22)';
       ctx.fill();
 
       ctx.beginPath();
       ctx.moveTo(-bodyLen * 0.3, -bodyH * 0.45);
       ctx.bezierCurveTo(-bodyLen * 0.05, -bodyH * 0.75, bodyLen * 0.15, -bodyH * 0.65, bodyLen * 0.3, -bodyH * 0.2);
-      ctx.strokeStyle = 'rgba(180,245,255,0.6)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(180,245,255,0.5)';
+      ctx.lineWidth = 1.8;
       ctx.stroke();
 
       ctx.beginPath();
@@ -287,13 +325,13 @@
       ctx.fill();
 
       if (inWater && progress > 0.65) {
-        const alpha = (1 - (progress - 0.65) / 0.35) * 0.5;
+        const alpha = (1 - (progress - 0.65) / 0.35) * 0.6;
         ctx.save();
         ctx.globalAlpha = alpha;
         ctx.scale(1, 0.28);
         ctx.beginPath();
-        ctx.arc(0, 0, bodyLen * 0.55, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(0,230,255,0.7)';
+        ctx.arc(0, 0, bodyLen * 0.6, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(0,230,255,0.65)';
         ctx.lineWidth = 1.8;
         ctx.stroke();
         ctx.restore();
@@ -302,33 +340,34 @@
     }
 
     function frame() {
-      ctx.clearRect(0, 0, BASE_W, BASE_H);
+      ctx.clearRect(0, 0, displayW, displayH);
       const p = (t % CYCLE) / CYCLE;
       let wx, wy, wAngle, scaleY = 1, inWater = false;
 
-      wx = BASE_W * 0.15 + (BASE_W * 0.70) * p;
+      // ปล่อยวาฬวิ่งฉลุยจากฝั่งซ้ายข้ามไปฝั่งขวาตามขนาดจอจริงดั้งเดิม
+      wx = displayW * 0.15 + (displayW * 0.70) * p;
 
       if (p < 0.15) {
         const ep = p / 0.15;
         const ease = ep * ep * (3 - 2 * ep);
-        wy = WATER_Y + 12 - ease * 58;
-        wAngle = -0.6 + ease * 0.35; 
+        wy = WATER_Y + 15 - ease * 65;
+        wAngle = -0.55 + ease * 0.35; 
         inWater = true;
-        scaleY = 0.65 + ease * 0.35;
+        scaleY = 0.7 + ease * 0.3;
         if (!spawnedExit && ease > 0.35) { spawnSplash(wx, WATER_Y, false); spawnedExit = true; }
       } else if (p < 0.72) {
         const ap = (p - 0.15) / 0.57;
-        wy = (WATER_Y - 10) - 88 * Math.sin(ap * Math.PI);
-        wAngle = -0.25 + ap * 0.8; 
+        wy = (WATER_Y - 12) - 95 * Math.sin(ap * Math.PI);
+        wAngle = -0.22 + ap * 0.75; 
         inWater = false;
         spawnedExit = false; spawnedEntry = false;
       } else {
         const rp = (p - 0.72) / 0.28;
         const ease = rp * rp * (3 - 2 * rp);
-        wy = (WATER_Y - 10) + ease * 68;
-        wAngle = 0.55 + ease * 0.35; 
+        wy = (WATER_Y - 12) + ease * 75;
+        wAngle = 0.53 + ease * 0.35; 
         inWater = ease > 0.25;
-        scaleY = 1 - ease * 0.25;
+        scaleY = 1 - ease * 0.22;
         if (!spawnedEntry && ease > 0.2) { spawnSplash(wx, WATER_Y, true); spawnedEntry = true; }
         if (ease > 0.8) spawnedExit = false;
       }
@@ -344,7 +383,7 @@
     }
 
     frame();
-  }();
+  })();
   </script>
 </body>
 </html>
