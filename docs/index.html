@@ -811,12 +811,10 @@
 
 <div class="divider"></div>
 
-<!-- ─── ECOSYSTEM PROJECTS ─── -->
 <section>
   <div class="section-label">// ECOSYSTEM</div>
   <h2 class="section-title">All Projects — One MCP</h2>
 
-  <!-- TIER 1 -->
   <div class="tier-header tier1-header">
     <span class="tier-header-label">✅ Tier 1 · Safe</span>
     <div class="tier-header-line"></div>
@@ -857,7 +855,6 @@
 
   </div>
 
-  <!-- TIER 2 -->
   <div class="tier-header tier2-header" style="margin-top: 16px;">
     <span class="tier-header-label">⚠️ Tier 2 · Caution</span>
     <div class="tier-header-line"></div>
@@ -908,44 +905,40 @@
 </footer>
 
 <script>
-// ─── WHALE JUMP ANIMATION ───────────────────────────────────────────
+// ─── REAL WHALE LEAP ANIMATION (LEFT TO RIGHT) ──────────────────────
 (function() {
   const canvas = document.getElementById('whaleCanvas');
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   const WATER_Y = H * 0.72;
 
-  // Animation state
   let t = 0;
-  const CYCLE = 220; // frames per full jump
-
-  // Splash particles
+  const CYCLE = 200; // ลูปแอนิเมชันลื่นไหลขึ้น
   let splashParticles = [];
 
   function spawnSplash(x, y, entering) {
-    const count = entering ? 18 : 12;
+    const count = entering ? 20 : 15;
     for (let i = 0; i < count; i++) {
+      // ปรับทิศทางน้ำกระเซ็นตามทิศทางพุ่งจากซ้ายไปขวา
       const angle = entering
-        ? (Math.PI * 1.1 + (Math.random() - 0.5) * 1.2)
-        : (Math.PI * 1.85 + (Math.random() - 0.5) * 0.9 - Math.PI);
+        ? (Math.PI * 1.2 + (Math.random() - 0.5) * 1.0)  // ตอนมุดน้ำ น้ำกระจายไปข้างหน้าและขึ้นบน
+        : (Math.PI * 1.7 + (Math.random() - 0.5) * 1.0); // ตอนโผล่พ้นน้ำ น้ำสาดไปด้านหลังและบน
       const speed = 1.5 + Math.random() * 3.5;
       splashParticles.push({
         x, y,
-        vx: Math.cos(angle) * speed * (entering ? 1 : 0.7),
-        vy: Math.sin(angle) * speed - (entering ? 0 : 1),
+        vx: Math.cos(angle) * speed + (entering ? 0.8 : -0.5), // ใส่แรงเฉื่อยของทิศทาง
+        vy: Math.sin(angle) * speed - 1,
         life: 1,
-        decay: 0.03 + Math.random() * 0.03,
-        r: 1.5 + Math.random() * 2.5,
+        decay: 0.025 + Math.random() * 0.03,
+        r: 1.2 + Math.random() * 2.5,
         entering
       });
     }
   }
 
-  // Track splash trigger
-  let lastPhase = 'air';
+  let spawnedExit = false, spawnedEntry = false;
 
   function drawWater() {
-    // Water body
     ctx.save();
     const grad = ctx.createLinearGradient(0, WATER_Y, 0, H);
     grad.addColorStop(0, 'rgba(0,100,160,0.55)');
@@ -953,12 +946,11 @@
     ctx.fillStyle = grad;
     ctx.fillRect(0, WATER_Y, W, H - WATER_Y);
 
-    // Surface shimmer waves
+    // ผิวน้ำแบบ Dynamic
     ctx.beginPath();
     ctx.moveTo(0, WATER_Y);
     for (let x = 0; x <= W; x += 4) {
-      const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5
-                 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
+      const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
       ctx.lineTo(x, WATER_Y + wave);
     }
     ctx.lineTo(W, H);
@@ -970,12 +962,10 @@
     ctx.fillStyle = surfaceGrad;
     ctx.fill();
 
-    // Highlight line
     ctx.beginPath();
     for (let x = 0; x <= W; x += 3) {
-      const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5
-                 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
-      x === 0 ? ctx.moveTo(x, WATER_Y + wave) : ctx.lineTo(x, WATER_Y + wave);
+      const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
+      if (x === 0) ctx.moveTo(x, WATER_Y + wave); else ctx.lineTo(x, WATER_Y + wave);
     }
     ctx.strokeStyle = 'rgba(0,240,255,0.45)';
     ctx.lineWidth = 1.5;
@@ -990,12 +980,12 @@
       ctx.globalAlpha = p.life * 0.85;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.entering ? 'rgba(0,200,255,0.9)' : 'rgba(160,230,255,0.9)';
+      ctx.fillStyle = p.entering ? 'rgba(100,230,255,0.9)' : 'rgba(180,245,255,0.9)';
       ctx.fill();
       ctx.restore();
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.15; // gravity
+      p.vy += 0.13; // Gravity
       p.life -= p.decay;
     }
   }
@@ -1006,101 +996,101 @@
     ctx.rotate(angle);
     ctx.scale(1, scaleY);
 
-    const bodyLen = 52, bodyH = 22;
+    const bodyLen = 56, bodyH = 20;
 
-    // Shadow / depth (only when in water zone)
-    if (y > WATER_Y - 10) {
+    // เงาใต้ผิวน้ำ
+    if (y > WATER_Y - 15) {
       ctx.save();
-      ctx.globalAlpha = 0.18;
-      ctx.scale(1, 0.25);
+      ctx.globalAlpha = 0.15;
+      ctx.scale(1, 0.2);
       ctx.beginPath();
-      ctx.ellipse(4, bodyH * 4, bodyLen * 0.6, bodyH * 1.1, 0, 0, Math.PI * 2);
-      ctx.fillStyle = '#001830';
+      ctx.ellipse(-4, bodyH * 4, bodyLen * 0.6, bodyH * 1.2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#001025';
       ctx.fill();
       ctx.restore();
     }
 
-    // Body gradient — 3D sheen
-    const bodyGrad = ctx.createRadialGradient(-8, -8, 2, 0, 0, bodyLen * 0.7);
+    // สีตัววาฬไล่ระดับแบบ Cyber Blue 3D Sheen
+    const bodyGrad = ctx.createRadialGradient(8, -6, 2, 0, 0, bodyLen * 0.7);
     bodyGrad.addColorStop(0, '#5ae8ff');
-    bodyGrad.addColorStop(0.35, '#1a9fd4');
+    bodyGrad.addColorStop(0.3, '#1a9fd4');
     bodyGrad.addColorStop(0.7, '#0d5fa8');
-    bodyGrad.addColorStop(1, '#063060');
+    bodyGrad.addColorStop(1, '#052852');
 
-    // Main body
+    // ลำตัววาฬ (หัวหันไปทางขวา คมชัด ทรงพลัง)
     ctx.beginPath();
-    ctx.moveTo(-bodyLen * 0.5, 0);
+    ctx.moveTo(bodyLen * 0.5, 0); // เริ่มที่ส่วนหัวทางขวา
     ctx.bezierCurveTo(
-      -bodyLen * 0.3, -bodyH * 0.9,
-       bodyLen * 0.2, -bodyH * 0.75,
-       bodyLen * 0.5,  0
+       bodyLen * 0.2, -bodyH * 0.85,
+      -bodyLen * 0.3, -bodyH * 0.7,
+      -bodyLen * 0.5,  0 // เรียวไปที่คอดหางทางซ้าย
     );
     ctx.bezierCurveTo(
-       bodyLen * 0.2,  bodyH * 0.5,
-      -bodyLen * 0.3,  bodyH * 0.55,
-      -bodyLen * 0.5,  0
+      -bodyLen * 0.3,  bodyH * 0.5,
+       bodyLen * 0.2,  bodyH * 0.6,
+       bodyLen * 0.5,  0
     );
     ctx.fillStyle = bodyGrad;
     ctx.fill();
 
-    // Belly highlight
-    const bellyGrad = ctx.createLinearGradient(-bodyLen * 0.3, 0, bodyLen * 0.3, 0);
+    // ท้องวาฬสีสว่างพรีเมียม
+    const bellyGrad = ctx.createLinearGradient(-bodyLen * 0.2, 0, bodyLen * 0.2, 0);
     bellyGrad.addColorStop(0, 'rgba(255,255,255,0)');
-    bellyGrad.addColorStop(0.5, 'rgba(200,240,255,0.28)');
+    bellyGrad.addColorStop(0.5, 'rgba(180,235,255,0.25)');
     bellyGrad.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.beginPath();
-    ctx.ellipse(0, bodyH * 0.15, bodyLen * 0.38, bodyH * 0.28, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, bodyH * 0.2, bodyLen * 0.35, bodyH * 0.25, 0, 0, Math.PI * 2);
     ctx.fillStyle = bellyGrad;
     ctx.fill();
 
-    // Sheen top
+    // เส้นสะท้อนแสงด้านหลังตัววาฬ (Back Highlight)
     ctx.beginPath();
-    ctx.moveTo(-bodyLen * 0.3, -bodyH * 0.55);
-    ctx.bezierCurveTo(-bodyLen * 0.1, -bodyH * 0.9, bodyLen * 0.1, -bodyH * 0.8, bodyLen * 0.3, -bodyH * 0.3);
-    ctx.strokeStyle = 'rgba(180,240,255,0.55)';
-    ctx.lineWidth = 2.2;
+    ctx.moveTo(-bodyLen * 0.3, -bodyH * 0.45);
+    ctx.bezierCurveTo(-bodyLen * 0.05, -bodyH * 0.75, bodyLen * 0.15, -bodyH * 0.65, bodyLen * 0.3, -bodyH * 0.2);
+    ctx.strokeStyle = 'rgba(180,245,255,0.6)';
+    ctx.lineWidth = 2;
     ctx.lineCap = 'round';
     ctx.stroke();
 
-    // Tail fin
+    // ครีบหาง (Fluke) สะบัดตามทิศการพุ่งทางซ้าย
     ctx.beginPath();
-    ctx.moveTo(bodyLen * 0.45, 0);
-    ctx.bezierCurveTo(bodyLen * 0.62, -bodyH * 0.8, bodyLen * 0.8, -bodyH * 1.1, bodyLen * 0.75, -bodyH * 0.05);
-    ctx.bezierCurveTo(bodyLen * 0.72,  bodyH * 0.7,  bodyLen * 0.62,  bodyH * 0.8,  bodyLen * 0.45, 0);
-    const tailGrad = ctx.createLinearGradient(bodyLen * 0.45, 0, bodyLen * 0.8, 0);
+    ctx.moveTo(-bodyLen * 0.48, 0);
+    ctx.bezierCurveTo(-bodyLen * 0.65, -bodyH * 0.7, -bodyLen * 0.8, -bodyH * 0.9, -bodyLen * 0.76, -bodyH * 0.05);
+    ctx.bezierCurveTo(-bodyLen * 0.74,  bodyH * 0.6, -bodyLen * 0.65,  bodyH * 0.7, -bodyLen * 0.48, 0);
+    const tailGrad = ctx.createLinearGradient(-bodyLen * 0.48, 0, -bodyLen * 0.78, 0);
     tailGrad.addColorStop(0, '#1a9fd4');
-    tailGrad.addColorStop(1, '#0a4a80');
+    tailGrad.addColorStop(1, '#0a4275');
     ctx.fillStyle = tailGrad;
     ctx.fill();
 
-    // Pectoral fin
+    // ครีบข้าง (Pectoral Fin) พริ้วไปข้างหลัง
     ctx.beginPath();
-    ctx.moveTo(-bodyLen * 0.1, bodyH * 0.2);
-    ctx.bezierCurveTo(bodyLen * 0.05, bodyH * 0.7, bodyLen * 0.15, bodyH * 0.85, bodyLen * 0.1, bodyH * 0.45);
-    ctx.bezierCurveTo(bodyLen * 0.0, bodyH * 0.35, -bodyLen * 0.05, bodyH * 0.3, -bodyLen * 0.1, bodyH * 0.2);
-    ctx.fillStyle = 'rgba(10,80,150,0.75)';
+    ctx.moveTo(bodyLen * 0.05, bodyH * 0.2);
+    ctx.bezierCurveTo(-bodyLen * 0.1, bodyH * 0.7, -bodyLen * 0.2, bodyH * 0.8, -bodyLen * 0.15, bodyH * 0.4);
+    ctx.bezierCurveTo(-bodyLen * 0.05, bodyH * 0.3, bodyLen * 0.0, bodyH * 0.25, bodyLen * 0.05, bodyH * 0.2);
+    ctx.fillStyle = 'rgba(8,65,130,0.8)';
     ctx.fill();
 
-    // Eye
+    // ดวงตาวาฬผู้มีปัญญา (หันไปทางขวา)
     ctx.beginPath();
-    ctx.arc(-bodyLen * 0.28, -bodyH * 0.2, 3.5, 0, Math.PI * 2);
-    ctx.fillStyle = '#001020';
+    ctx.arc(bodyLen * 0.3, -bodyH * 0.15, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#010f20';
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(-bodyLen * 0.28 - 1.2, -bodyH * 0.2 - 1.2, 1.2, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.arc(bodyLen * 0.3 + 1, -bodyH * 0.15 - 1, 1, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
     ctx.fill();
 
-    // Water entry ripple when submerging
-    if (inWater && progress > 0.6) {
-      const alpha = (1 - (progress - 0.6) / 0.4) * 0.5;
+    // เอฟเฟกต์วงน้ำกระเซ็นรอบตัวเมื่อเริ่มมุดน้ำกลับลงไป
+    if (inWater && progress > 0.65) {
+      const alpha = (1 - (progress - 0.65) / 0.35) * 0.5;
       ctx.save();
       ctx.globalAlpha = alpha;
-      ctx.scale(1, 0.3);
+      ctx.scale(1, 0.28);
       ctx.beginPath();
-      ctx.arc(0, 0, bodyLen * 0.5, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(0,220,255,0.8)';
-      ctx.lineWidth = 2;
+      ctx.arc(0, 0, bodyLen * 0.55, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(0,230,255,0.7)';
+      ctx.lineWidth = 1.8;
       ctx.stroke();
       ctx.restore();
     }
@@ -1108,86 +1098,79 @@
     ctx.restore();
   }
 
-  // Blow spout
+  // รูพ่นน้ำด้านบน (Spout) ตอนจุดสูงสุดของพาราโบลา
   function drawSpout(x, y, angle, strength) {
     if (strength <= 0) return;
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(angle - Math.PI / 2 - 0.3);
-    ctx.globalAlpha = strength * 0.7;
-    for (let i = 0; i < 6; i++) {
-      const h = (20 + i * 8) * strength;
-      const spread = i * 3;
+    ctx.rotate(angle - Math.PI / 2 + 0.2); // เบี่ยงไปด้านหลังเล็กน้อยตามลม
+    ctx.globalAlpha = strength * 0.75;
+    for (let i = 0; i < 5; i++) {
+      const h = (18 + i * 7) * strength;
+      const spread = i * 2.5;
       const spoutGrad = ctx.createLinearGradient(0, 0, spread, -h);
-      spoutGrad.addColorStop(0, 'rgba(0,220,255,0.6)');
-      spoutGrad.addColorStop(1, 'rgba(180,240,255,0)');
+      spoutGrad.addColorStop(0, 'rgba(0,225,255,0.65)');
+      spoutGrad.addColorStop(1, 'rgba(200,245,255,0)');
       ctx.beginPath();
-      ctx.moveTo(-2 + i * 0.5, 0);
-      ctx.bezierCurveTo(-spread - i, -h * 0.4, spread + i, -h * 0.7, (i - 2.5) * 4, -h);
-      ctx.lineWidth = 2 - i * 0.2;
+      ctx.moveTo(-1 + i * 0.4, 0);
+      ctx.bezierCurveTo(-spread, -h * 0.4, spread, -h * 0.7, (i - 2) * 3, -h);
+      ctx.lineWidth = 1.8 - i * 0.2;
       ctx.strokeStyle = spoutGrad;
       ctx.stroke();
     }
     ctx.restore();
   }
 
-  let spawnedExit = false, spawnedEntry = false;
-
   function frame() {
     ctx.clearRect(0, 0, W, H);
 
-    // Easing: ease in-out cubic
-    const p = t % CYCLE / CYCLE; // 0..1 progress through cycle
-    // Jump arc: up then down, spending ~60% in air
-    // p=0: emerge, p=0.08: fully out, p=0.5: apex, p=0.85: re-entry, p=1: submerged
-    const jumpP = p; // shorthand
-
+    const p = (t % CYCLE) / CYCLE;
     let wx, wy, wAngle, scaleY = 1, inWater = false, spoutStr = 0;
 
-    // Horizontal travel across scene
-    wx = W * 0.18 + (W * 0.64) * jumpP;
+    // วิถีการเคลื่อนที่แนวนอน: วิ่งจากซ้ายไปขวา (W * 0.15 ถึง W * 0.85)
+    wx = W * 0.15 + (W * 0.70) * p;
 
-    if (jumpP < 0.12) {
-      // Emerging from water
-      const ep = jumpP / 0.12;
+    if (p < 0.15) {
+      // จังหวะโผล่ทะยานขึ้นจากน้ำ (Emerge Phase)
+      const ep = p / 0.15;
       const ease = ep * ep * (3 - 2 * ep);
-      wy = WATER_Y + 10 - ease * 60;
-      wAngle = -0.7 + ease * 0.5;
+      wy = WATER_Y + 12 - ease * 58;
+      wAngle = -0.6 + ease * 0.35; // เชิดหัวขึ้นไปทางขวาบน
       inWater = true;
-      scaleY = 0.6 + ease * 0.4;
-      spoutStr = Math.max(0, ease - 0.5) * 2;
-      if (!spawnedExit && ease > 0.4) { spawnSplash(wx, WATER_Y, false); spawnedExit = true; }
-    } else if (jumpP < 0.75) {
-      // Airborne arc
-      const ap = (jumpP - 0.12) / 0.63;
-      const arcH = 95;
-      // parabola: up then down
+      scaleY = 0.65 + ease * 0.35;
+      if (!spawnedExit && ease > 0.35) { spawnSplash(wx, WATER_Y, false); spawnedExit = true; }
+    } else if (p < 0.72) {
+      // จังหวะลอยตัวกลางอากาศเป็นเส้นโค้งสมบูรณ์แบบ (Airborne Arc)
+      const ap = (p - 0.15) / 0.57;
+      const arcH = 88; // ระดับความสูงในการโดด
       wy = (WATER_Y - 10) - arcH * Math.sin(ap * Math.PI);
-      wAngle = -0.25 + ap * 0.9; // nose rotates from up to down
+      wAngle = -0.25 + ap * 0.8; // ปรับมุมหน้าวาฬให้โค้งตามวิถีพาราโบลาคว่ำลง
       inWater = false;
       scaleY = 1;
       spawnedExit = false;
       spawnedEntry = false;
-      // spout near apex
-      if (ap > 0.35 && ap < 0.65) spoutStr = Math.sin((ap - 0.35) / 0.3 * Math.PI) * 0.8;
+      // พ่นน้ำพราวเสน่ห์ใกล้ๆ จุดสูงสุด
+      if (ap > 0.3 && ap < 0.6) spoutStr = Math.sin((ap - 0.3) / 0.3 * Math.PI) * 0.85;
     } else {
-      // Re-entering water
-      const rp = (jumpP - 0.75) / 0.25;
+      // จังหวะดิ่งมุดน้ำอย่างงดงาม (Re-entry Phase)
+      const rp = (p - 0.72) / 0.28;
       const ease = rp * rp * (3 - 2 * rp);
-      wy = (WATER_Y - 10) + ease * 70;
-      wAngle = 0.65 + ease * 0.4;
-      inWater = ease > 0.3;
-      scaleY = 1 - ease * 0.3;
-      if (!spawnedEntry && ease > 0.25) { spawnSplash(wx, WATER_Y, true); spawnedEntry = true; }
-      if (ease > 0.7) spawnedExit = false;
+      wy = (WATER_Y - 10) + ease * 68;
+      wAngle = 0.55 + ease * 0.35; // หัวปักลงน้ำไปทางขวาล่าง
+      inWater = ease > 0.25;
+      scaleY = 1 - ease * 0.25;
+      if (!spawnedEntry && ease > 0.2) { spawnSplash(wx, WATER_Y, true); spawnedEntry = true; }
+      if (ease > 0.8) spawnedExit = false;
     }
 
-    // Draw layers
+    // จัดลำดับเลเยอร์ Object เรนเดอร์
     drawSplashes();
     drawWater();
-    if (wy < WATER_Y + 8) drawWhale(wx, wy, wAngle, scaleY, inWater, jumpP);
-    drawSpout(wx - 26 * Math.cos(wAngle), wy - 26 * Math.sin(wAngle), wAngle, spoutStr);
-    if (wy >= WATER_Y + 8) drawWhale(wx, wy, wAngle, scaleY, inWater, jumpP);
+    
+    // วาดตัววาฬและท่อพ่นน้ำตามพิกัดและมุมหัวที่คำนวณใหม่
+    if (wy < WATER_Y + 8) drawWhale(wx, wy, wAngle, scaleY, inWater, p);
+    drawSpout(wx + 10 * Math.cos(wAngle) - 4 * Math.sin(wAngle), wy + 10 * Math.sin(wAngle) - 14 * Math.cos(wAngle), wAngle, spoutStr);
+    if (wy >= WATER_Y + 8) drawWhale(wx, wy, wAngle, scaleY, inWater, p);
 
     t++;
     requestAnimationFrame(frame);
