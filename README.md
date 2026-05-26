@@ -29,6 +29,7 @@ Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.
 | 🧠 Intelligence & Analytics | `src/tools/analytics/` | 26 | Whale tracking, Birdeye, DeFiLlama, Nansen, Dune, Price feeds, Fear & Greed |
 | 🛠️ Operations & DevOps | `src/tools/operations/` | 17 | GitHub, Tax, Wallet, Alerts, Telegram, Discord, Portfolio Tracker |
 | 📊 Market Intelligence | `src/tools/market/` | 8 | CoinGecko, CMC, Trending, Sentiment, Kaito, LunarCrush, Alternative.me |
+| 🤖 Agentic Layer | `src/tools/agentic/` | 4 | Arbitrage, Whale Alert, Autopilot, Sentiment |
 
 ---
 
