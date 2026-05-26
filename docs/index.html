@@ -53,6 +53,19 @@
     background: linear-gradient(180deg, #040a18 0%, #03060f 100%);
   }
 
+  .whale-icon {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 18px;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 24px rgba(0,229,255,0.5));
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+  }
+
   .logo {
     font-family: 'Orbitron', monospace;
     font-weight: 900;
@@ -79,6 +92,7 @@
 
   .tagline span { color: var(--cyan); }
 
+  /* ─── BADGES: อ่านง่ายขึ้น ─── */
   .badges {
     display: flex;
     flex-wrap: wrap;
@@ -93,7 +107,7 @@
     gap: 6px;
     padding: 7px 16px;
     border: 1px solid;
-    font-size: 0.78rem;
+    font-size: 0.78rem;        /* ใหญ่ขึ้นจาก 0.72 */
     letter-spacing: 0.06em;
     font-family: 'DM Mono', monospace;
     font-weight: 500;
@@ -103,13 +117,33 @@
 
   .badge:hover { transform: translateY(-2px); }
 
-  .badge-cyan  { border-color: rgba(0,229,255,0.7); color: #00f0ff; background: rgba(0,229,255,0.14); }
+  /* เพิ่ม background opacity + border ให้เด่นขึ้น */
+  .badge-cyan  {
+    border-color: rgba(0,229,255,0.7);
+    color: #00f0ff;
+    background: rgba(0,229,255,0.14);
+  }
   .badge-cyan:hover  { background: rgba(0,229,255,0.22); box-shadow: 0 0 16px rgba(0,229,255,0.25); }
-  .badge-green { border-color: rgba(0,232,122,0.7); color: #00f585; background: rgba(0,232,122,0.14); }
+
+  .badge-green {
+    border-color: rgba(0,232,122,0.7);
+    color: #00f585;
+    background: rgba(0,232,122,0.14);
+  }
   .badge-green:hover { background: rgba(0,232,122,0.22); box-shadow: 0 0 16px rgba(0,232,122,0.25); }
-  .badge-orange{ border-color: rgba(255,122,53,0.7); color: #ff8c4a; background: rgba(255,122,53,0.14); }
+
+  .badge-orange{
+    border-color: rgba(255,122,53,0.7);
+    color: #ff8c4a;
+    background: rgba(255,122,53,0.14);
+  }
   .badge-orange:hover { background: rgba(255,122,53,0.22); box-shadow: 0 0 16px rgba(255,122,53,0.2); }
-  .badge-violet{ border-color: rgba(155,107,255,0.7); color: #b580ff; background: rgba(155,107,255,0.14); }
+
+  .badge-violet{
+    border-color: rgba(155,107,255,0.7);
+    color: #b580ff;
+    background: rgba(155,107,255,0.14);
+  }
   .badge-violet:hover { background: rgba(155,107,255,0.22); box-shadow: 0 0 16px rgba(155,107,255,0.2); }
 
   .live-url { font-size: 0.85rem; color: var(--body); }
@@ -151,6 +185,7 @@
     text-shadow: 0 1px 8px rgba(0,0,0,0.8);
   }
 
+  /* ─── STATS: ตัวเลขใหญ่และอ่านง่าย ─── */
   .stat-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -174,16 +209,17 @@
     font-weight: 700;
     line-height: 1;
     margin-bottom: 10px;
-    text-shadow: 0 0 20px currentColor;
+    text-shadow: 0 0 20px currentColor;   /* glow ให้ตัวเลข pop */
   }
 
   .stat-label {
     font-size: 0.68rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #6a8db0;
+    color: #6a8db0;                        /* สว่างขึ้นจาก --muted */
   }
 
+  /* ─── OVERVIEW ─── */
   .overview-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -194,7 +230,7 @@
   .overview-card p {
     font-size: 0.95rem;
     line-height: 2;
-    color: #c8dff5;
+    color: #c8dff5;                        /* สว่างขึ้น */
     margin-bottom: 14px;
   }
 
@@ -205,6 +241,7 @@
   .hl-orange { color: var(--orange); font-weight: 500; }
   .hl-white  { color: var(--white);  font-weight: 500; }
 
+  /* ─── DIMENSIONS ─── */
   .dim-grid { display: grid; gap: 2px; }
 
   .dim-row {
@@ -275,6 +312,7 @@
   .c8 .dim-name, .c8 .dim-count { color: #b8d4f0; }
   .c8 .dim-bar-fill { background: #b8d4f0; width: 19%; }
 
+  /* ─── WHAT'S NEW ─── */
   .new-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -290,10 +328,25 @@
   }
 
   .new-card:hover { background: var(--surface2); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(155,107,255,0.1); }
-  .new-card .new-icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
-  .new-card .new-name { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--violet); letter-spacing: 0.04em; margin-bottom: 6px; word-break: break-all; }
-  .new-card .new-desc { font-size: 0.75rem; color: #8aabcc; line-height: 1.6; }
 
+  .new-card .new-icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
+
+  .new-card .new-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--violet);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    word-break: break-all;
+  }
+
+  .new-card .new-desc {
+    font-size: 0.75rem;
+    color: #8aabcc;
+    line-height: 1.6;
+  }
+
+  /* ─── FLOW HORIZONTAL ─── */
   .flow {
     display: grid;
     grid-template-columns: 1fr 32px 1fr 32px 1fr 32px 1fr 32px 1fr 32px 1fr;
@@ -318,9 +371,17 @@
   }
 
   .flow-node:hover { background: var(--surface2); transform: translateY(-4px); }
-  .flow-node .flow-step { font-family: 'Orbitron', monospace; font-size: 0.52rem; letter-spacing: 0.2em; opacity: 0.55; }
+
+  .flow-node .flow-step {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.2em;
+    opacity: 0.55;
+  }
+
   .flow-node .flow-label { font-size: 0.78rem; line-height: 1.4; }
   .flow-node .flow-icon  { font-size: 1.3rem; }
+
   .flow-node.primary  { border-top-color: var(--cyan);   color: var(--cyan);   }
   .flow-node.action   { border-top-color: var(--green);  color: var(--green);  }
   .flow-node.execute  { border-top-color: var(--orange); color: var(--orange); }
@@ -335,8 +396,10 @@
     font-size: 1.1rem;
     background: #03060f;
   }
+
   .flow-arrow::before { content: '→'; }
 
+  /* ─── STATUS ─── */
   .status-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -350,7 +413,7 @@
     padding: 16px 18px;
     background: var(--surface);
     font-size: 0.84rem;
-    color: #c0d8f0;
+    color: #c0d8f0;                        /* สว่างขึ้น */
     transition: background 0.2s;
   }
 
@@ -372,6 +435,7 @@
 
   .status-item strong { color: var(--white); font-weight: 600; }
 
+  /* ─── CONNECT ─── */
   .connect-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
@@ -510,92 +574,6 @@
 
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  /* ─── PROJECT CARDS ─── */
-  .proj-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 22px 20px;
-    transition: all 0.25s ease;
-    position: relative;
-  }
-  .proj-card:hover { background: var(--surface2); transform: translateY(-3px); }
-  .tier1 { border-top: 2px solid var(--green); }
-  .tier2 { border-top: 2px solid var(--yellow); }
-  .proj-tier {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-    padding: 3px 8px;
-    display: inline-block;
-    margin-bottom: 12px;
-    border-radius: 2px;
-  }
-  .tier-safe   { background: rgba(0,232,122,0.12); color: var(--green); border: 1px solid rgba(0,232,122,0.35); }
-  .tier-caution{ background: rgba(255,209,102,0.12); color: var(--yellow); border: 1px solid rgba(255,209,102,0.35); }
-  .proj-icon { font-size: 1.8rem; margin-bottom: 10px; }
-  .proj-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    color: #f0f8ff;
-    margin-bottom: 6px;
-  }
-  .proj-desc { font-size: 0.78rem; color: #8aabcc; line-height: 1.6; margin-bottom: 10px; }
-  .proj-link { font-size: 0.7 rEm; color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3); }
-  .proj-link:hover { color: white; border-color: white; }
-
-  /* ─── TIER SECTION HEADERS ─── */
-  .tier-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 0 12px;
-    margin-bottom: 2px;
-  }
-
-  .tier-header-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-
-  .tier-header-line {
-    flex: 1;
-    height: 1px;
-  }
-
-  .tier-header-count {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 0.15em;
-    opacity: 0.7;
-  }
-
-  .tier1-header .tier-header-label { color: var(--green); }
-  .tier1-header .tier-header-line  { background: linear-gradient(90deg, rgba(0,232,122,0.4), transparent); }
-  .tier1-header .tier-header-count { color: var(--green); }
-
-  .tier2-header .tier-header-label { color: var(--yellow); }
-  .tier2-header .tier-header-line  { background: linear-gradient(90deg, rgba(255,209,102,0.4), transparent); }
-  .tier2-header .tier-header-count { color: var(--yellow); }
-
-  /* ─── 3-COLUMN GRIDS ─── */
-  .proj-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    margin-bottom: 28px;
-  }
-
-  @media (max-width: 700px) {
-    .proj-grid-3 { grid-template-columns: 1fr; }
-  }
-  @media (min-width: 701px) and (max-width: 960px) {
-    .proj-grid-3 { grid-template-columns: repeat(2, 1fr); }
-  }
 </style>
 </head>
 <body>
@@ -604,6 +582,7 @@
 <div class="orb orb-2"></div>
 
 <header>
+  <span class="whale-icon">🐋</span>
   <h1 class="logo">SCUTUA-MCP</h1>
   <p class="tagline">Model Context Protocol Server — <span>WhaleTrucker Ecosystem V2</span></p>
 
@@ -658,6 +637,7 @@
 
 <div class="divider"></div>
 
+<!-- WHAT'S NEW -->
 <section>
   <div class="section-label">// WHAT'S NEW</div>
   <h2 class="section-title">Dimension 8 — Now Live 🌌</h2>
@@ -803,25 +783,54 @@
 
 <div class="divider"></div>
 
+<!-- ECOSYSTEM PROJECTS -->
 <section>
   <div class="section-label">// ECOSYSTEM</div>
   <h2 class="section-title">All Projects — One MCP</h2>
 
-  <div class="tier-header tier1-header">
-    <span class="tier-header-label">✅ Tier 1 · Safe</span>
-    <div class="tier-header-line"></div>
-    <span class="tier-header-count">READ ONLY · NO EXECUTION RISK</span>
-  </div>
-  <div class="proj-grid-3">
+  <!-- FEATURED -->
+  <div style="margin-bottom:2px;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.6rem;letter-spacing:0.35em;color:#ffd166;padding:10px 0 8px;opacity:0.9;">⭐ FEATURED</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px;margin-bottom:2px;">
 
-    <div class="proj-card tier1 reveal">
-      <div class="proj-tier tier-safe">✅ TIER 1 · SAFE</div>
-      <div class="proj-icon">🌊</div>
-      <div class="proj-name">Solana Monitor</div>
-      <div class="proj-desc">Real-time SOL balance, SPL tokens, transactions and reward tiers. Solscan v2.</div>
+      <div class="proj-card tier1">
+        <div class="proj-tier tier-safe">✅ TIER 1 · SAFE</div>
+        <div class="proj-icon">🌊</div>
+        <div class="proj-name">Solana Monitor</div>
+        <div class="proj-desc">Real-time SOL balance, SPL tokens, transactions and reward tiers. Solscan v2.</div>
+      </div>
+
+      <div class="proj-card tier2">
+        <div class="proj-tier tier-caution">⚠️ TIER 2 · CAUTION</div>
+        <div class="proj-icon">🐋</div>
+        <div class="proj-name">WhaleTrucker Elite</div>
+        <div class="proj-desc">Bitcoin command center — live price, portfolio valuation, DeFi radar and mission control.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div style="font-family:'Orbitron',monospace;font-size:0.6rem;letter-spacing:0.35em;color:#4d9fff;padding:10px 0 8px;opacity:0.9;">🚀 PROJECTS</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;">
+
+    <div class="proj-card tier2">
+      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
+      <div class="proj-icon">💼</div>
+      <div class="proj-name">AssetFlow</div>
+      <div class="proj-desc">Asset management and portfolio tracker</div>
+      <a class="proj-link" href="https://assetflow-app-iota.vercel.app" target="_blank">assetflow-app-iota.vercel.app</a>
     </div>
 
-    <div class="proj-card tier1 reveal">
+    <div class="proj-card tier2">
+      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
+      <div class="proj-icon">📊</div>
+      <div class="proj-name">Asset Platform</div>
+      <div class="proj-desc">Advanced asset tracking and analytics</div>
+      <a class="proj-link" href="https://asset-platform-iota.vercel.app" target="_blank">asset-platform...vercel.app</a>
+    </div>
+
+    <div class="proj-card tier1">
       <div class="proj-tier tier-safe">✅ Tier 1</div>
       <div class="proj-icon">🔵</div>
       <div class="proj-name">CzoneDive Core</div>
@@ -829,7 +838,15 @@
       <a class="proj-link" href="https://github.io/czonedive-core" target="_blank">github.io/czonedive-core</a>
     </div>
 
-    <div class="proj-card tier1 reveal">
+    <div class="proj-card tier2">
+      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
+      <div class="proj-icon">🌿</div>
+      <div class="proj-name">WhaleTrucker Reef</div>
+      <div class="proj-desc">DeFi Yield Hunter — best APY for $500</div>
+      <a class="proj-link" href="https://github.io/whaletrucker-reef" target="_blank">github.io/whaletrucker-reef</a>
+    </div>
+
+    <div class="proj-card tier1">
       <div class="proj-tier tier-safe">✅ Tier 1</div>
       <div class="proj-icon">📝</div>
       <div class="proj-name">Blog</div>
@@ -837,7 +854,7 @@
       <a class="proj-link" href="https://scutuatua-iorbh.wordpress.com" target="_blank">scutuatua-iorbh.wordpress.com</a>
     </div>
 
-    <div class="proj-card tier1 reveal">
+    <div class="proj-card tier1">
       <div class="proj-tier tier-safe">✅ Tier 1</div>
       <div class="proj-icon">✈️</div>
       <div class="proj-name">Telegram</div>
@@ -846,47 +863,42 @@
     </div>
 
   </div>
-
-  <div class="tier-header tier2-header" style="margin-top: 16px;">
-    <span class="tier-header-label">⚠️ Tier 2 · Caution</span>
-    <div class="tier-header-line"></div>
-    <span class="tier-header-count">EXECUTION · USE DEDICATED WALLET</span>
-  </div>
-  <div class="proj-grid-3">
-
-    <div class="proj-card tier2 reveal">
-      <div class="proj-tier tier-caution">⚠️ TIER 2 · CAUTION</div>
-      <div class="proj-icon">🐋</div>
-      <div class="proj-name">WhaleTrucker Elite</div>
-      <div class="proj-desc">Bitcoin command center — live price, portfolio valuation, DeFi radar and mission control.</div>
-    </div>
-
-    <div class="proj-card tier2 reveal">
-      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
-      <div class="proj-icon">💼</div>
-      <div class="proj-name">AssetFlow</div>
-      <div class="proj-desc">Asset management and portfolio tracker</div>
-      <a class="proj-link" href="https://assetflow-app-iota.vercel.app" target="_blank">assetflow-app-iota.vercel.app</a>
-    </div>
-
-    <div class="proj-card tier2 reveal">
-      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
-      <div class="proj-icon">📊</div>
-      <div class="proj-name">Asset Platform</div>
-      <div class="proj-desc">Advanced asset tracking and analytics</div>
-      <a class="proj-link" href="https://asset-platform-iota.vercel.app" target="_blank">asset-platform...vercel.app</a>
-    </div>
-
-    <div class="proj-card tier2 reveal">
-      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
-      <div class="proj-icon">🌿</div>
-      <div class="proj-name">WhaleTrucker Reef</div>
-      <div class="proj-desc">DeFi Yield Hunter — best APY for $500</div>
-      <a class="proj-link" href="https://github.io/whaletrucker-reef" target="_blank">github.io/whaletrucker-reef</a>
-    </div>
-
-  </div>
 </section>
+
+<style>
+  .proj-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px 20px;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+  .proj-card:hover { background: var(--surface2); transform: translateY(-3px); }
+  .tier1 { border-top: 2px solid var(--green); }
+  .tier2 { border-top: 2px solid var(--yellow); }
+  .proj-tier {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    display: inline-block;
+    margin-bottom: 12px;
+    border-radius: 2px;
+  }
+  .tier-safe   { background: rgba(0,232,122,0.12); color: var(--green); border: 1px solid rgba(0,232,122,0.35); }
+  .tier-caution{ background: rgba(255,209,102,0.12); color: var(--yellow); border: 1px solid rgba(255,209,102,0.35); }
+  .proj-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .proj-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #f0f8ff;
+    margin-bottom: 6px;
+  }
+  .proj-desc { font-size: 0.78rem; color: #8aabcc; line-height: 1.6; margin-bottom: 10px; }
+  .proj-link { font-size: 0.7rem; color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3); }
+  .proj-link:hover { color: white; border-color: white; }
+</style>
 
 <footer>
   <div class="footer-logo">SCUTUA-MCP — WHALETRUCKER V2</div>
