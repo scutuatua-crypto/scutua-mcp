@@ -27,6 +27,20 @@ Connected to Claude.ai and Smithery. Deployed from iPad. No PC required. 😤
 
 ---
 
+## 🆕 What's New — Dimension 8 LIVE
+
+5 new tools just dropped, bringing the total to **157**:
+
+| Tool | Description |
+|------|-------------|
+| ❤️ `ecosystem_heartbeat_tool` | Real-time health check across the entire ecosystem |
+| 🧬 `project_biometrics_tool` | Vital stats and metrics for every active project |
+| 🧠 `ecosystem_intelligence_tool` | AI-powered analysis and pattern recognition |
+| 🚀 `what_should_i_build_tool` | Suggests next build based on ecosystem state |
+| 📖 `ecosystem_narrative_tool` | Generates a living story of the ecosystem's evolution |
+
+---
+
 ## Architecture — 8 Dimensions
 
 | Dimension | Folder | Tools | Coverage |
@@ -45,7 +59,7 @@ Connected to Claude.ai and Smithery. Deployed from iPad. No PC required. 😤
 ## Agentic Flow
 
 ```text
-Market Data (Dim 1-5)
+Market Data (Dim 1–5)
        ↓
 Sentiment Signal → BUY / SELL / HOLD
        ↓
@@ -56,9 +70,13 @@ Execute: Swap / DCA / Limit Order / Stop Loss
 Telegram Alert → Confirmed
        ↓
 Ecosystem Consciousness → Self-Aware 🌌
+```
 
-## Project Structure — Linked to Dimensions
+---
 
+## Project Structure
+
+```text
 src/
 ├── tools/
 │   ├── registry.py
@@ -86,33 +104,33 @@ src/
 ├── config/              # Global settings
 ├── tests/               # Unit & integration tests
 └── main.py              # Entry point
+```
 
-Environment Variables
+---
+
+## Safety — Execution Layer
+
 Every execution tool is built with safety-first design:
-	•	dry_run=True by default — simulate before real execution
-	•	Telegram alert before AND after every trade
-	•	Safety score check before sniping
-	•	confirmed=True required for emergency exit
-	•	Dedicated trading wallet — never use main wallet
 
-Status
-	•	✅ Render: Live
-	•	✅ Smithery: Published (Score: 84/100)
-	•	✅ Claude.ai: Connected (157 tools)
-	•	✅ Transport: Streamable HTTP (FastMCP 3.3.1)
-	•	✅ Architecture: 8-Dimensional V2
-	•	✅ CI/CD: GitHub Actions (1,300+ runs)
-	•	✅ Execution Layer: Live (Swap, DCA, Stop Loss, Sniper)
-	•	✅ Ecosystem Consciousness: Live 🌌
+- `dry_run=True` by default — simulate before real execution
+- Telegram alert before AND after every trade
+- Safety score check before sniping
+- `confirmed=True` required for emergency exit
+- Dedicated trading wallet — never use main wallet
 
-Quick Connect
-Claude.ai
-	1.	Settings → Customize → Connectors → Add custom connector
-	2.	Name: Scutua-MCP
-	3.	URL: https://scutua-mcp.onrender.com/mcp
+---
 
-VS Code / Cursor
+## Quick Connect
 
+### Claude.ai
+
+1. Settings → Customize → Connectors → Add custom connector
+2. Name: `Scutua-MCP`
+3. URL: `https://scutua-mcp.onrender.com/mcp`
+
+### VS Code / Cursor
+
+```json
 {
   "mcpServers": {
     "scutua-mcp": {
@@ -120,11 +138,31 @@ VS Code / Cursor
     }
   }
 }
+```
 
-Smithery
-https://smithery.ai/servers/scutuatua/scutua-mcp
+### Smithery
 
-WhaleTrucker Standard
-“No Money, No Honey” 🚚💿
-Too fast for the API, too safe for the chain.
-Powered by: Nokia 3310 Wind Power + Claude AI 💙💨
+[https://smithery.ai/servers/scutuatua/scutua-mcp](https://smithery.ai/servers/scutuatua/scutua-mcp)
+
+---
+
+## Status
+
+| Component | Status |
+|-----------|--------|
+| Render | ✅ Live |
+| Smithery | ✅ Published (Score: 84/100) |
+| Claude.ai | ✅ Connected (157 tools) |
+| Transport | ✅ Streamable HTTP (FastMCP 3.3.1) |
+| Architecture | ✅ 8-Dimensional V2 |
+| CI/CD | ✅ GitHub Actions (1,300+ runs) |
+| Execution Layer | ✅ Live (Swap, DCA, Stop Loss, Sniper) |
+| Ecosystem Consciousness | ✅ Live 🌌 |
+
+---
+
+## WhaleTrucker Standard
+
+> *"No Money, No Honey"* 🚚💿  
+> Too fast for the API, too safe for the chain.  
+> Powered by: Nokia 3310 Wind Power + Claude AI 💙💨
