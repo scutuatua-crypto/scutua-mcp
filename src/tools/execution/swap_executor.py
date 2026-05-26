@@ -14,7 +14,7 @@ from fastmcp import FastMCP
 mcp = FastMCP("swap-executor")
 
 SOLANA_RPC = os.getenv("SOLANA_API", "https://api.mainnet-beta.solana.com")
-JUPITER_API = "https://lite-api.jup.ag/v6"
+JUPITER_API = "https://lite-api.jup.ag/swap/v1"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "")
 
