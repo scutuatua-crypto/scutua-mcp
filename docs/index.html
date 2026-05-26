@@ -1,30 +1,32 @@
 <script>
-// ─── REAL WHALE LEAP ANIMATION (RESPONSIVE & RETINA READY) ──────────────────────
+// ─── PREMIUM WHALE LEAP ANIMATION (MOBILE-FIRST RESPONSIVE) ──────────────────────
 (function() {
   const canvas = document.getElementById('whaleCanvas');
+  if (!canvas) return; // ป้องกันสคริปต์เออร์เรอร์หากหาแคนวาสไม่เจอ
+  
   const ctx = canvas.getContext('2d');
   
-  let W, H, WATER_Y;
-  
-  // ฟังก์ชันปรับขนาดตาม Device Pixel Ratio ป้องกันปลาเบลอและหลุดพิกัดบน iPad/iPhone
-  function resizeCanvas() {
+  // ล็อกขนาดมาตรฐานสำหรับโปรเจกต์บอส
+  const BASE_W = 220;
+  const BASE_H = 160;
+  let WATER_Y = BASE_H * 0.72;
+
+  // ฟังก์ชันจัดการขนาดหน้าจอและแก้ปัญหาวาฬเบลอบนจอ Retina
+  function initCanvasScale() {
     const dpr = window.devicePixelRatio || 1;
-    // ดึงขนาดที่แท้จริงจากโครงสร้าง CSS หรือ Attribute
-    const rectWidth = 220; 
-    const rectHeight = 160;
+    canvas.width = BASE_W * dpr;
+    canvas.height = BASE_H * dpr;
     
-    canvas.width = rectWidth * dpr;
-    canvas.height = rectHeight * dpr;
+    // รีเซ็ตและสเกลคอนเท็กซ์ใหม่ให้คมชัด
+    ctx.resetTransform();
     ctx.scale(dpr, dpr);
-    
-    W = rectWidth;
-    H = rectHeight;
-    WATER_Y = H * 0.72; // ล็อกตำแหน่งผิวน้ำให้คงที่สัมพันธ์กับ Canvas เสมอ
   }
-  
-  resizeCanvas();
-  // ดักจับเหตุการณ์หากบอสมีการหมุนจอแท็บเล็ต/มือถือ
-  window.addEventListener('resize', resizeCanvas);
+
+  initCanvasScale();
+  // ดักจับจังหวะสลับจอแนวตั้ง-แนวนอนบน iPad
+  window.addEventListener('resize', () => {
+    initCanvasScale();
+  });
 
   let t = 0;
   const CYCLE = 200; 
@@ -38,13 +40,14 @@
         : (Math.PI * 1.7 + (Math.random() - 0.5) * 1.0); 
       const speed = 1.5 + Math.random() * 3.5;
       splashParticles.push({
-        x, y,
+        x: x,
+        y: y,
         vx: Math.cos(angle) * speed + (entering ? 0.8 : -0.5), 
         vy: Math.sin(angle) * speed - 1,
         life: 1,
         decay: 0.025 + Math.random() * 0.03,
         r: 1.2 + Math.random() * 2.5,
-        entering
+        entering: entering
       });
     }
   }
@@ -53,20 +56,20 @@
 
   function drawWater() {
     ctx.save();
-    const grad = ctx.createLinearGradient(0, WATER_Y, 0, H);
+    const grad = ctx.createLinearGradient(0, WATER_Y, 0, BASE_H);
     grad.addColorStop(0, 'rgba(0,100,160,0.55)');
     grad.addColorStop(1, 'rgba(0,30,70,0.85)');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, WATER_Y, W, H - WATER_Y);
+    ctx.fillRect(0, WATER_Y, BASE_W, BASE_H - WATER_Y);
 
     ctx.beginPath();
     ctx.moveTo(0, WATER_Y);
-    for (let x = 0; x <= W; x += 4) {
+    for (let x = 0; x <= BASE_W; x += 4) {
       const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
       ctx.lineTo(x, WATER_Y + wave);
     }
-    ctx.lineTo(W, H);
-    ctx.lineTo(0, H);
+    ctx.lineTo(BASE_W, BASE_H);
+    ctx.lineTo(0, BASE_H);
     ctx.closePath();
     const surfaceGrad = ctx.createLinearGradient(0, WATER_Y - 4, 0, WATER_Y + 10);
     surfaceGrad.addColorStop(0, 'rgba(0,220,255,0.55)');
@@ -75,7 +78,7 @@
     ctx.fill();
 
     ctx.beginPath();
-    for (let x = 0; x <= W; x += 3) {
+    for (let x = 0; x <= BASE_W; x += 3) {
       const wave = Math.sin((x * 0.04) + t * 0.06) * 2.5 + Math.sin((x * 0.09) + t * 0.04) * 1.2;
       if (x === 0) ctx.moveTo(x, WATER_Y + wave); else ctx.lineTo(x, WATER_Y + wave);
     }
@@ -224,12 +227,12 @@
   }
 
   function frame() {
-    ctx.clearRect(0, 0, W, H);
+    ctx.clearRect(0, 0, BASE_W, BASE_H);
 
     const p = (t % CYCLE) / CYCLE;
     let wx, wy, wAngle, scaleY = 1, inWater = false, spoutStr = 0;
 
-    wx = W * 0.15 + (W * 0.70) * p;
+    wx = BASE_W * 0.15 + (BASE_W * 0.70) * p;
 
     if (p < 0.15) {
       const ep = p / 0.15;
