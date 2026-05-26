@@ -20,7 +20,7 @@ Scutua-MCP is a production MCP server powering the WhaleTrucker Ecosystem.
 
 ---
 
-## Architecture — 5 Dimensions
+## Architecture — 6 Dimensions
 
 | Dimension | Folder | Tools | Coverage |
 |-----------|--------|-------|----------|
