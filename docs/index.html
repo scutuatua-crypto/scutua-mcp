@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Scutua-MCP — WhaleTrucker Ecosystem V2</title>
+  <title>Scutua-MCP — WhaleTrucker Ecosystem V3</title>
   <style>
     * {
       box-sizing: border-box;
@@ -28,7 +28,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 400px;
+      height: 420px;
       z-index: 1;
       display: block;
     }
@@ -181,8 +181,8 @@
     const ctx = canvas.getContext('2d');
 
     let displayW = window.innerWidth;
-    const displayH = 400;
-    let WATER_Y = displayH * 0.74;
+    const displayH = 420;
+    let WATER_Y = displayH * 0.72;
 
     function resizeEngine() {
       displayW = window.innerWidth;
@@ -200,16 +200,16 @@
     let fountainParticles = [];
 
     function updateFountain(sourceX, sourceY) {
-      if (Math.random() < 0.85) {
+      if (Math.random() < 0.90) {
         fountainParticles.push({
-          x: sourceX + (Math.random() - 0.5) * 4,
+          x: sourceX,
           y: sourceY,
-          vx: (Math.random() - 0.5) * 3.5,
-          vy: -8 - Math.random() * 5.5,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: -9 - Math.random() * 5,
           life: 1.0,
-          decay: 0.01 + Math.random() * 0.015,
-          r: 1.2 + Math.random() * 2.8,
-          colorHue: 185 + Math.random() * 30
+          decay: 0.008 + Math.random() * 0.012,
+          r: 1.5 + Math.random() * 2.5,
+          colorHue: 190 + Math.random() * 25
         });
       }
 
@@ -219,17 +219,18 @@
         ctx.globalAlpha = p.life * 0.85;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.colorHue}, 95%, 78%, 0.9)`;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = `rgba(90, 240, 255, 0.7)`;
+        ctx.fillStyle = `hsla(${p.colorHue}, 95%, 80%, 0.9)`;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = `rgba(90, 245, 255, 0.8)`;
         ctx.fill();
         ctx.restore();
 
         p.x += p.vx;
         p.y += p.vy;
         p.vy += 0.28; 
-        if (p.vy > -2) {
-          p.vx += (p.vx > 0 ? 0.08 : -0.08);
+
+        if (p.vy > -3) {
+          p.vx += (p.vx > 0 ? 0.15 : -0.15);
         }
         p.life -= p.decay;
       }
@@ -238,7 +239,7 @@
     function drawWater() {
       ctx.save();
       const grad = ctx.createLinearGradient(0, WATER_Y, 0, displayH);
-      grad.addColorStop(0, 'rgba(1, 12, 32, 0.85)');
+      grad.addColorStop(0, 'rgba(1, 12, 32, 0.88)');
       grad.addColorStop(1, 'rgba(3, 9, 20, 1)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, WATER_Y, displayW, displayH - WATER_Y);
@@ -246,7 +247,7 @@
       ctx.beginPath();
       ctx.moveTo(0, WATER_Y);
       for (let x = 0; x <= displayW; x += 5) {
-        const wave = Math.sin((x * 0.012) + t * 0.035) * 4.5 + Math.sin((x * 0.025) + t * 0.025) * 2;
+        const wave = Math.sin((x * 0.012) + t * 0.035) * 4 + Math.sin((x * 0.025) + t * 0.025) * 1.5;
         ctx.lineTo(x, WATER_Y + wave);
       }
       ctx.lineTo(displayW, displayH);
@@ -254,82 +255,95 @@
       ctx.closePath();
       
       const surfaceGrad = ctx.createLinearGradient(0, WATER_Y - 6, 0, WATER_Y + 15);
-      surfaceGrad.addColorStop(0, 'rgba(0, 180, 240, 0.45)');
+      surfaceGrad.addColorStop(0, 'rgba(0, 185, 245, 0.45)');
       surfaceGrad.addColorStop(1, 'rgba(1, 12, 32, 0)');
       ctx.fillStyle = surfaceGrad;
       ctx.fill();
 
       ctx.beginPath();
       for (let x = 0; x <= displayW; x += 4) {
-        const wave = Math.sin((x * 0.012) + t * 0.035) * 4.5 + Math.sin((x * 0.025) + t * 0.025) * 2;
+        const wave = Math.sin((x * 0.012) + t * 0.035) * 4 + Math.sin((x * 0.025) + t * 0.025) * 1.5;
         if (x === 0) ctx.moveTo(x, WATER_Y + wave); else ctx.lineTo(x, WATER_Y + wave);
       }
-      ctx.strokeStyle = 'rgba(45, 205, 245, 0.55)';
+      ctx.strokeStyle = 'rgba(45, 210, 250, 0.6)';
       ctx.lineWidth = 2.2;
       ctx.stroke();
       ctx.restore();
     }
 
-    function drawPremiumWhale(centerX, centerY) {
+    function drawMasterpieceWhale(centerX, centerY) {
       ctx.save();
       
-      const floatOffset = Math.sin(t * 0.028) * 3.5;
+      const floatOffset = Math.sin(t * 0.025) * 3;
       ctx.translate(centerX, centerY + floatOffset);
       
       const baseScale = Math.min(displayW / 750, 1.1);
-      ctx.scale(baseScale * 1.6, baseScale * 1.6);
+      ctx.scale(baseScale * 1.8, baseScale * 1.8);
 
-      const bodyGrad = ctx.createLinearGradient(-100, -40, 60, 20);
-      bodyGrad.addColorStop(0, '#02152b');
-      bodyGrad.addColorStop(0.35, '#07325c');
-      bodyGrad.addColorStop(0.7, '#1473a3');
-      bodyGrad.addColorStop(0.95, '#4be0f7');
-      bodyGrad.addColorStop(1, '#ffffff');
+      const whaleGrad = ctx.createLinearGradient(-120, -35, 60, 15);
+      whaleGrad.addColorStop(0, '#021024');
+      whaleGrad.addColorStop(0.25, '#052d54');
+      whaleGrad.addColorStop(0.6, '#106fa1');
+      whaleGrad.addColorStop(0.85, '#3ec9eb');
+      whaleGrad.addColorStop(1, '#e6faff');
 
-      ctx.shadowBlur = 30;
-      ctx.shadowColor = 'rgba(0, 195, 255, 0.35)';
+      ctx.shadowBlur = 35;
+      ctx.shadowColor = 'rgba(0, 200, 255, 0.4)';
 
       ctx.beginPath();
-      ctx.moveTo(70, -2); 
-      ctx.bezierCurveTo(68, -42, 10, -58, -35, -42); 
-      ctx.bezierCurveTo(-65, -34, -100, -32, -125, -48); 
-      ctx.bezierCurveTo(-145, -60, -155, -62, -148, -40); 
-      ctx.bezierCurveTo(-140, -15, -125, -5, -135, 18); 
-      ctx.bezierCurveTo(-125, 12, -115, 0, -95, -2); 
-      ctx.bezierCurveTo(-75, -4, -55, 18, -30, 22); 
-      ctx.bezierCurveTo(15, 26, 60, 18, 70, -2); 
-      ctx.fillStyle = bodyGrad;
+      ctx.moveTo(75, 4); 
+      
+      ctx.bezierCurveTo(70, -15, 55, -24, 25, -26); 
+      ctx.bezierCurveTo(-5, -28, -40, -15, -85, -12); 
+      ctx.bezierCurveTo(-115, -10, -145, -25, -165, -45); 
+      
+      ctx.bezierCurveTo(-172, -52, -178, -50, -172, -32); 
+      ctx.bezierCurveTo(-160, 5, -145, 12, -152, 28); 
+      ctx.bezierCurveTo(-146, 26, -135, 12, -120, 8); 
+      
+      ctx.bezierCurveTo(-100, 6, -85, 24, -55, 26); 
+      ctx.bezierCurveTo(-15, 28, 55, 25, 75, 4); 
+      ctx.closePath();
+      ctx.fillStyle = whaleGrad;
       ctx.fill();
 
       ctx.shadowBlur = 0;
 
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-      ctx.lineWidth = 1.2;
-      for (let i = 0; i < 4; i++) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1.0;
+      for (let i = 0; i < 5; i++) {
         ctx.beginPath();
-        ctx.moveTo(-15 - (i * 8), 12 + (i * 2));
-        ctx.bezierCurveTo(15, 22, 45, 14, 62, -4);
+        ctx.moveTo(-35 - (i * 9), 16 + (i * 1.5));
+        ctx.bezierCurveTo(0, 24, 35, 18, 65, 2);
         ctx.stroke();
       }
 
       ctx.beginPath();
-      ctx.moveTo(3, 10);
-      ctx.bezierCurveTo(-12, 32, -26, 38, -34, 34);
-      ctx.bezierCurveTo(-30, 20, -14, 14, 0, 9);
-      const finGrad = ctx.createLinearGradient(-30, 30, 0, 10);
-      finGrad.addColorStop(0, '#031c36');
-      finGrad.addColorStop(1, '#1473a3');
-      ctx.fillStyle = finGrad;
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(90, 230, 255, 0.4)';
+      ctx.moveTo(42, -2);
+      ctx.bezierCurveTo(48, -4, 58, -4, 66, 0);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = 1.2;
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(42, -18, 3.2, 0, Math.PI * 2);
-      ctx.fillStyle = '#020b17';
+      ctx.moveTo(-15, 14);
+      ctx.bezierCurveTo(-32, 34, -46, 38, -52, 32);
+      ctx.bezierCurveTo(-46, 20, -30, 15, -15, 13);
+      const finGrad = ctx.createLinearGradient(-50, 32, -15, 13);
+      finGrad.addColorStop(0, '#021830');
+      finGrad.addColorStop(1, '#106fa1');
+      ctx.fillStyle = finGrad;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(90, 235, 255, 0.5)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(46, -10, 2.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#010812';
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(43.5, -19, 0.9, 0, Math.PI * 2);
+      ctx.arc(47.2, -10.8, 0.8, 0, Math.PI * 2);
       ctx.fillStyle = '#ffffff';
       ctx.fill();
 
@@ -340,17 +354,17 @@
       ctx.clearRect(0, 0, displayW, displayH);
       
       const whaleX = displayW / 2;
-      const whaleY = WATER_Y - 4;
+      const whaleY = WATER_Y - 10;
 
       const baseScale = Math.min(displayW / 750, 1.1);
-      const floatOffset = Math.sin(t * 0.028) * 3.5;
+      const floatOffset = Math.sin(t * 0.025) * 3;
       
-      const blowholeX = whaleX + (18 * baseScale * 1.6);
-      const blowholeY = whaleY + floatOffset - (46 * baseScale * 1.6);
+      const blowholeX = whaleX + (12 * baseScale * 1.8);
+      const blowholeY = whaleY + floatOffset - (27 * baseScale * 1.8);
 
       updateFountain(blowholeX, blowholeY);
       drawWater();
-      drawPremiumWhale(whaleX, whaleY);
+      drawMasterpieceWhale(whaleX, whaleY);
 
       t++;
       requestAnimationFrame(frame);
