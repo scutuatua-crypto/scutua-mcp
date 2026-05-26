@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Scutua-MCP — WhaleTrucker Ecosystem V2</title>
   <style>
-    /* ─── ORIGINAL PREMIUM DARK ARCHITECTURE ─── */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -24,32 +23,29 @@
       position: relative;
     }
 
-    /* แคนวาสคลื่นยาวเต็มหน้าจอตามสเปกดั้งเดิม */
     #whaleCanvas {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 320px; /* ขยายพื้นที่รองรับจังหวะวาฬกระโดดสูง */
+      height: 340px;
       z-index: 1;
       display: block;
     }
 
-    /* จัดโครงสร้างคอนเทนต์หลักให้อยู่กึ่งกลางและรับกับผิวน้ำพอดี */
     .content-container {
       position: relative;
       z-index: 10;
       width: 100%;
       max-width: 650px;
       text-align: center;
-      margin-top: 260px; /* ดันลงมาใต้ระดับผิวน้ำ */
-      padding: 0 20px 30px 20px;
+      margin-top: 275px; 
+      padding: 0 20px 40px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* ─── PREMIUM TYPOGRAPHY ─── */
     h1 {
       font-size: 2.8rem;
       font-weight: 800;
@@ -73,7 +69,6 @@
       color: #1a9fd4;
     }
 
-    /* ─── BADGES GRID ─── */
     .badges-grid {
       display: flex;
       flex-wrap: wrap;
@@ -100,7 +95,6 @@
     .badge-claude  { background: rgba(15, 118, 110, 0.1); border-color: rgba(15, 118, 110, 0.3); color: #2dd4bf; width: 65%; justify-content: center; }
     .badge-cicd    { background: rgba(4, 120, 87, 0.1);   border-color: rgba(4, 120, 87, 0.3);   color: #10b981; width: 60%; justify-content: center; }
 
-    /* ─── LIVE LINK ─── */
     .live-link {
       display: inline-flex;
       align-items: center;
@@ -116,7 +110,6 @@
       text-decoration: underline;
     }
 
-    /* ─── INFOGRAPHIC COUNTER (ข้อมูล 5 ช่องของบอส กลับมาแล้วครับ!) ─── */
     .stats-footer {
       width: 100%;
       max-width: 580px;
@@ -188,17 +181,14 @@
     const ctx = canvas.getContext('2d');
 
     let displayW = window.innerWidth;
-    const displayH = 320;
-    let WATER_Y = displayH * 0.68; // ปรับระดับผิวน้ำให้พอดีสายตาบนจอ iPad
+    const displayH = 340;
+    let WATER_Y = displayH * 0.65;
 
     function resizeEngine() {
       displayW = window.innerWidth;
       const dpr = window.devicePixelRatio || 1;
-      
-      // ล็อคขนาดพิกเซลสัมพันธ์กับตัวอุปกรณ์จริง ป้องกันการ Crash จอขาว
       canvas.width = displayW * dpr;
       canvas.height = displayH * dpr;
-      
       ctx.resetTransform();
       ctx.scale(dpr, dpr);
     }
@@ -207,25 +197,40 @@
     window.addEventListener('resize', resizeEngine);
 
     let t = 0;
-    const CYCLE = 240; 
-    let splashParticles = [];
+    let fountainParticles = [];
 
-    function spawnSplash(x, y, entering) {
-      const count = entering ? 25 : 18;
-      for (let i = 0; i < count; i++) {
-        const angle = entering ? (Math.PI * 1.25 + (Math.random() - 0.5) * 0.9) : (Math.PI * 1.75 + (Math.random() - 0.5) * 0.9);
-        const speed = 2.2 + Math.random() * 4.2;
-        splashParticles.push({
-          x: x, y: y,
-          vx: Math.cos(angle) * speed + (entering ? 0.5 : -0.5),
-          vy: Math.sin(angle) * speed - 0.7,
-          life: 1.0, decay: 0.02 + Math.random() * 0.02,
-          r: 1.5 + Math.random() * 2.5, entering: entering
+    function updateFountain(sourceX, sourceY) {
+      if (Math.random() < 0.6) {
+        fountainParticles.push({
+          x: sourceX + (Math.random() - 0.5) * 4,
+          y: sourceY - 12,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: -4.5 - Math.random() * 3.5,
+          life: 1.0,
+          decay: 0.015 + Math.random() * 0.02,
+          r: 1.2 + Math.random() * 2.5,
+          colorHue: 180 + Math.random() * 40
         });
       }
-    }
 
-    let spawnedExit = false, spawnedEntry = false;
+      fountainParticles = fountainParticles.filter(p => p.life > 0);
+      for (const p of fountainParticles) {
+        ctx.save();
+        ctx.globalAlpha = p.life * 0.85;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.colorHue}, 90%, 75%, 0.9)`;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `rgba(90, 230, 255, 0.5)`;
+        ctx.fill();
+        ctx.restore();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.18;
+        p.life -= p.decay;
+      }
+    }
 
     function drawWater() {
       ctx.save();
@@ -235,7 +240,6 @@
       ctx.fillStyle = grad;
       ctx.fillRect(0, WATER_Y, displayW, displayH - WATER_Y);
 
-      // วาดโครงสร้างคลื่นพาดยาวข้ามฝั่งซ้าย-ขวาเต็มจอ
       ctx.beginPath();
       ctx.moveTo(0, WATER_Y);
       for (let x = 0; x <= displayW; x += 5) {
@@ -263,29 +267,14 @@
       ctx.restore();
     }
 
-    function drawSplashes() {
-      splashParticles = splashParticles.filter(p => p.life > 0);
-      for (const p of splashParticles) {
-        ctx.save();
-        ctx.globalAlpha = p.life * 0.9;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.entering ? 'rgba(90,230,255,0.9)' : 'rgba(180,245,255,0.9)';
-        ctx.fill();
-        ctx.restore();
-        p.x += p.vx; p.y += p.vy; p.vy += 0.13; p.life -= p.decay;
-      }
-    }
-
-    // ─── HIGH-QUALITY WHALE VECTOR (ปรับสเกลขนาดให้เห็นเด่นชัดขึ้นบนจอ iPad) ───
-    function drawWhale(x, y, angle, scaleY, inWater, progress) {
+    function drawWhale(x, y) {
       ctx.save();
       ctx.translate(x, y);
-      ctx.rotate(angle);
-      ctx.scale(1.4, scaleY * 1.4); // เพิ่มขนาดวาฬเป็น 1.4 เท่าให้ตัวใหญ่อลังการตามต้นฉบับ
+      const floatOffset = Math.sin(t * 0.035) * 2.5;
+      ctx.translate(0, floatOffset);
+      ctx.scale(1.5, 1.5);
 
-      const bodyLen = 60, bodyH = 22;
-      
+      const bodyLen = 65, bodyH = 23;
       const bodyGrad = ctx.createRadialGradient(8, -6, 2, 0, 0, bodyLen * 0.7);
       bodyGrad.addColorStop(0, '#5ae8ff');
       bodyGrad.addColorStop(0.3, '#1a9fd4');
@@ -301,7 +290,7 @@
 
       ctx.beginPath();
       ctx.ellipse(0, bodyH * 0.2, bodyLen * 0.35, bodyH * 0.25, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(180,235,255,0.25)';
+      ctx.fillStyle = 'rgba(180,235,255,0.28)';
       ctx.fill();
 
       ctx.beginPath();
@@ -323,61 +312,19 @@
       ctx.fillStyle = '#010f20';
       ctx.fill();
 
-      // ฟองอากาศเอฟเฟกต์ใต้ผิวน้ำ
-      if (inWater && progress > 0.65) {
-        const alpha = (1 - (progress - 0.65) / 0.35) * 0.6;
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.scale(1, 0.28);
-        ctx.beginPath();
-        ctx.arc(0, 0, bodyLen * 0.6, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(0,230,255,0.7)';
-        ctx.lineWidth = 1.8;
-        ctx.stroke();
-        ctx.restore();
-      }
       ctx.restore();
     }
 
     function frame() {
       ctx.clearRect(0, 0, displayW, displayH);
-      const p = (t % CYCLE) / CYCLE;
-      let wx, wy, wAngle, scaleY = 1, inWater = false;
+      const whaleX = displayW / 2;
+      const whaleY = WATER_Y + 4;
 
-      // ระบบพิกัดวิ่งข้ามฝั่งสลับหน้าจอ Responsive เต็มระบบ
-      wx = displayW * 0.12 + (displayW * 0.76) * p;
+      const currentFloatY = whaleY + Math.sin(t * 0.035) * 2.5;
+      updateFountain(whaleX + 22, currentFloatY - 12);
 
-      if (p < 0.15) {
-        const ep = p / 0.15;
-        const ease = ep * ep * (3 - 2 * ep);
-        wy = WATER_Y + 15 - ease * 70;
-        wAngle = -0.55 + ease * 0.35; 
-        inWater = true;
-        scaleY = 0.7 + ease * 0.3;
-        if (!spawnedExit && ease > 0.35) { spawnSplash(wx, WATER_Y, false); spawnedExit = true; }
-      } else if (p < 0.72) {
-        const ap = (p - 0.15) / 0.57;
-        wy = (WATER_Y - 15) - 105 * Math.sin(ap * Math.PI); // ปรับระดับกระโดดให้สูงโค้งพ้นน้ำชัดเจน
-        wAngle = -0.25 + ap * 0.8; 
-        inWater = false;
-        spawnedExit = false; spawnedEntry = false;
-      } else {
-        const rp = (p - 0.72) / 0.28;
-        const ease = rp * rp * (3 - 2 * rp);
-        wy = (WATER_Y - 15) + ease * 80;
-        wAngle = 0.55 + ease * 0.35; 
-        inWater = ease > 0.25;
-        scaleY = 1 - ease * 0.25;
-        if (!spawnedEntry && ease > 0.2) { spawnSplash(wx, WATER_Y, true); spawnedEntry = true; }
-        if (ease > 0.8) spawnedExit = false;
-      }
-
-      drawSplashes();
       drawWater();
-      
-      // ตรวจสอบระดับความลึกในการเรนเดอร์ตัววาฬก่อนหลังทับผิวน้ำ
-      if (wy < WATER_Y + 10) drawWhale(wx, wy, wAngle, scaleY, inWater, p);
-      if (wy >= WATER_Y + 10) drawWhale(wx, wy, wAngle, scaleY, inWater, p);
+      drawWhale(whaleX, whaleY);
 
       t++;
       requestAnimationFrame(frame);
