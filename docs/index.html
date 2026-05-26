@@ -750,6 +750,125 @@
   </div>
 </section>
 
+<div class="divider"></div>
+
+<!-- ECOSYSTEM PROJECTS -->
+<section>
+  <div class="section-label">// ECOSYSTEM</div>
+  <h2 class="section-title">All Projects — One MCP</h2>
+
+  <!-- FEATURED -->
+  <div style="margin-bottom:2px;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.6rem;letter-spacing:0.35em;color:#ffd166;padding:10px 0 8px;opacity:0.9;">⭐ FEATURED</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px;margin-bottom:2px;">
+
+      <div class="proj-card tier1">
+        <div class="proj-tier tier-safe">✅ TIER 1 · SAFE</div>
+        <div class="proj-icon">🌊</div>
+        <div class="proj-name">Solana Monitor</div>
+        <div class="proj-desc">Real-time SOL balance, SPL tokens, transactions and reward tiers. Solscan v2.</div>
+      </div>
+
+      <div class="proj-card tier2">
+        <div class="proj-tier tier-caution">⚠️ TIER 2 · CAUTION</div>
+        <div class="proj-icon">🐋</div>
+        <div class="proj-name">WhaleTrucker Elite</div>
+        <div class="proj-desc">Bitcoin command center — live price, portfolio valuation, DeFi radar and mission control.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div style="font-family:'Orbitron',monospace;font-size:0.6rem;letter-spacing:0.35em;color:#4d9fff;padding:10px 0 8px;opacity:0.9;">🚀 PROJECTS</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;">
+
+    <div class="proj-card tier2">
+      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
+      <div class="proj-icon">💼</div>
+      <div class="proj-name">AssetFlow</div>
+      <div class="proj-desc">Asset management and portfolio tracker</div>
+      <a class="proj-link" href="https://assetflow-app-iota.vercel.app" target="_blank">assetflow-app-iota.vercel.app</a>
+    </div>
+
+    <div class="proj-card tier2">
+      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
+      <div class="proj-icon">📊</div>
+      <div class="proj-name">Asset Platform</div>
+      <div class="proj-desc">Advanced asset tracking and analytics</div>
+      <a class="proj-link" href="https://asset-platform-iota.vercel.app" target="_blank">asset-platform...vercel.app</a>
+    </div>
+
+    <div class="proj-card tier1">
+      <div class="proj-tier tier-safe">✅ Tier 1</div>
+      <div class="proj-icon">🔵</div>
+      <div class="proj-name">CzoneDive Core</div>
+      <div class="proj-desc">Core crypto zone platform</div>
+      <a class="proj-link" href="https://github.io/czonedive-core" target="_blank">github.io/czonedive-core</a>
+    </div>
+
+    <div class="proj-card tier2">
+      <div class="proj-tier tier-caution">⚠️ Tier 2</div>
+      <div class="proj-icon">🌿</div>
+      <div class="proj-name">WhaleTrucker Reef</div>
+      <div class="proj-desc">DeFi Yield Hunter — best APY for $500</div>
+      <a class="proj-link" href="https://github.io/whaletrucker-reef" target="_blank">github.io/whaletrucker-reef</a>
+    </div>
+
+    <div class="proj-card tier1">
+      <div class="proj-tier tier-safe">✅ Tier 1</div>
+      <div class="proj-icon">📝</div>
+      <div class="proj-name">Blog</div>
+      <div class="proj-desc">Crypto insights and project updates</div>
+      <a class="proj-link" href="https://scutuatua-iorbh.wordpress.com" target="_blank">scutuatua-iorbh.wordpress.com</a>
+    </div>
+
+    <div class="proj-card tier1">
+      <div class="proj-tier tier-safe">✅ Tier 1</div>
+      <div class="proj-icon">✈️</div>
+      <div class="proj-name">Telegram</div>
+      <div class="proj-desc">Community and live alerts</div>
+      <a class="proj-link" href="https://t.me/scutua01" target="_blank">t.me/scutua01</a>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .proj-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px 20px;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+  .proj-card:hover { background: var(--surface2); transform: translateY(-3px); }
+  .tier1 { border-top: 2px solid var(--green); }
+  .tier2 { border-top: 2px solid var(--yellow); }
+  .proj-tier {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    display: inline-block;
+    margin-bottom: 12px;
+    border-radius: 2px;
+  }
+  .tier-safe   { background: rgba(0,232,122,0.12); color: var(--green); border: 1px solid rgba(0,232,122,0.35); }
+  .tier-caution{ background: rgba(255,209,102,0.12); color: var(--yellow); border: 1px solid rgba(255,209,102,0.35); }
+  .proj-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .proj-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #f0f8ff;
+    margin-bottom: 6px;
+  }
+  .proj-desc { font-size: 0.78rem; color: #8aabcc; line-height: 1.6; margin-bottom: 10px; }
+  .proj-link { font-size: 0.7rem; color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3); }
+  .proj-link:hover { color: white; border-color: white; }
+</style>
+
 <footer>
   <div class="footer-logo">SCUTUA-MCP — WHALETRUCKER V2</div>
   <p class="footer-motto">"No Money, No Honey" 🚚💿</p>
