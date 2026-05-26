@@ -346,51 +346,58 @@
     line-height: 1.6;
   }
 
-  /* ─── FLOW ─── */
+  /* ─── FLOW HORIZONTAL ─── */
   .flow {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
+    display: grid;
+    grid-template-columns: 1fr 32px 1fr 32px 1fr 32px 1fr 32px 1fr 32px 1fr;
+    align-items: stretch;
+    overflow-x: auto;
   }
 
   .flow-node {
     background: var(--surface);
     border: 1px solid var(--border);
-    padding: 16px 36px;
-    font-size: 0.88rem;
+    border-top: 3px solid;
+    padding: 22px 12px;
+    font-size: 0.76rem;
     font-family: 'DM Mono', monospace;
-    letter-spacing: 0.03em;
     text-align: center;
-    min-width: 300px;
     transition: all 0.25s;
-  }
-
-  .flow-node:hover { background: var(--surface2); transform: scale(1.02); }
-
-  .flow-node.primary  { border-left: 3px solid var(--cyan);   color: var(--cyan);   }
-  .flow-node.action   { border-left: 3px solid var(--green);  color: var(--green);  }
-  .flow-node.execute  { border-left: 3px solid var(--orange); color: var(--orange); }
-  .flow-node.notify   { border-left: 3px solid var(--blue);   color: var(--blue);   }
-  .flow-node.conscious{ border-left: 3px solid var(--violet); color: var(--violet); }
-
-  .flow-arrow {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 6px 0;
-    color: var(--muted);
-    font-size: 0.8rem;
+    justify-content: center;
+    gap: 8px;
   }
 
-  .flow-arrow::before {
-    content: '';
-    width: 1px;
-    height: 18px;
-    background: var(--border);
-    display: block;
-    margin-bottom: 3px;
+  .flow-node:hover { background: var(--surface2); transform: translateY(-4px); }
+
+  .flow-node .flow-step {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.2em;
+    opacity: 0.55;
   }
+
+  .flow-node .flow-label { font-size: 0.78rem; line-height: 1.4; }
+  .flow-node .flow-icon  { font-size: 1.3rem; }
+
+  .flow-node.primary  { border-top-color: var(--cyan);   color: var(--cyan);   }
+  .flow-node.action   { border-top-color: var(--green);  color: var(--green);  }
+  .flow-node.execute  { border-top-color: var(--orange); color: var(--orange); }
+  .flow-node.notify   { border-top-color: var(--blue);   color: var(--blue);   }
+  .flow-node.conscious{ border-top-color: var(--violet); color: var(--violet); }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2a4a6a;
+    font-size: 1.1rem;
+    background: #03060f;
+  }
+
+  .flow-arrow::before { content: '→'; }
 
   /* ─── STATUS ─── */
   .status-grid {
@@ -686,17 +693,41 @@
   <div class="section-label">// AGENTIC FLOW</div>
   <h2 class="section-title">Get → Think → Act → Know</h2>
   <div class="flow">
-    <div class="flow-node primary reveal">📡 Market Data — Dimensions 1–5</div>
-    <div class="flow-arrow">▼</div>
-    <div class="flow-node action reveal">📈 Sentiment Signal → BUY / SELL / HOLD</div>
-    <div class="flow-arrow">▼</div>
-    <div class="flow-node primary reveal">🧠 Claude AI Decision Engine</div>
-    <div class="flow-arrow">▼</div>
-    <div class="flow-node execute reveal">⚡ Execute: Swap / DCA / Limit Order / Stop Loss</div>
-    <div class="flow-arrow">▼</div>
-    <div class="flow-node notify reveal">📱 Telegram Alert → Confirmed</div>
-    <div class="flow-arrow">▼</div>
-    <div class="flow-node conscious reveal">🌌 Ecosystem Consciousness → Self-Aware</div>
+    <div class="flow-node primary reveal">
+      <div class="flow-icon">📡</div>
+      <div class="flow-step">STEP 01</div>
+      <div class="flow-label">Market Data<br>Dim 1–5</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node action reveal">
+      <div class="flow-icon">📈</div>
+      <div class="flow-step">STEP 02</div>
+      <div class="flow-label">Sentiment<br>BUY/SELL/HOLD</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node primary reveal">
+      <div class="flow-icon">🧠</div>
+      <div class="flow-step">STEP 03</div>
+      <div class="flow-label">Claude AI<br>Decision Engine</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node execute reveal">
+      <div class="flow-icon">⚡</div>
+      <div class="flow-step">STEP 04</div>
+      <div class="flow-label">Execute<br>Swap/DCA/SL</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node notify reveal">
+      <div class="flow-icon">📱</div>
+      <div class="flow-step">STEP 05</div>
+      <div class="flow-label">Telegram<br>Alert</div>
+    </div>
+    <div class="flow-arrow"></div>
+    <div class="flow-node conscious reveal">
+      <div class="flow-icon">🌌</div>
+      <div class="flow-step">STEP 06</div>
+      <div class="flow-label">Ecosystem<br>Consciousness</div>
+    </div>
   </div>
 </section>
 
