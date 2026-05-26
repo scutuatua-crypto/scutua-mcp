@@ -7,7 +7,6 @@ WARNING: This tool moves real funds. Always verify parameters before executing.
 """
 
 import os
-import json
 import base64
 import httpx
 from fastmcp import FastMCP
@@ -15,11 +14,10 @@ from fastmcp import FastMCP
 mcp = FastMCP("swap-executor")
 
 SOLANA_RPC = os.getenv("SOLANA_API", "https://api.mainnet-beta.solana.com")
-JUPITER_API = "https://quote-api.jup.ag/v6"
+JUPITER_API = "https://lite-api.jup.ag/v6"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "")
 
-# Common token mints
 TOKEN_MINTS = {
     "SOL": "So11111111111111111111111111111111111111112",
     "USDC": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -31,25 +29,22 @@ TOKEN_MINTS = {
 
 
 async def send_telegram(message: str) -> None:
-    """Notify Telegram after execution."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHANNEL_ID:
         return
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": TELEGRAM_CHANNEL_ID,
-        "text": message,
-        "parse_mode": "HTML",
-    }
     async with httpx.AsyncClient(timeout=10) as client:
-        await client.post(url, json=payload)
+        await client.post(url, json={
+            "chat_id": TELEGRAM_CHANNEL_ID,
+            "text": message,
+            "parse_mode": "HTML",
+        })
 
 
 def resolve_mint(token: str) -> str:
-    """Resolve token symbol or mint address."""
     upper = token.upper()
     if upper in TOKEN_MINTS:
         return TOKEN_MINTS[upper]
-    return token  # Assume it's already a mint address
+    return token
 
 
 @mcp.tool()
@@ -75,7 +70,6 @@ async def get_swap_quote(
         input_mint = resolve_mint(input_token)
         output_mint = resolve_mint(output_token)
 
-        # Convert to lamports/smallest unit (SOL = 9 decimals, most SPL = 6)
         decimals = 9 if input_token.upper() == "SOL" else 6
         amount_raw = int(amount_ui * (10 ** decimals))
 
@@ -143,7 +137,6 @@ async def execute_swap(
         Transaction result or simulation details
     """
     try:
-        # Step 1: Get quote
         quote_result = await get_swap_quote(
             input_token, output_token, amount_ui, slippage_bps
         )
@@ -159,7 +152,6 @@ async def execute_swap(
                 "safety_check": "✅ Passed",
             }
 
-        # Step 2: Get wallet private key from env
         wallet_key = os.getenv("SOLANA_WALLET_PRIVATE_KEY", "")
         if not wallet_key:
             return {
@@ -167,14 +159,12 @@ async def execute_swap(
                 "hint": "Add it in Render → Environment → SOLANA_WALLET_PRIVATE_KEY",
             }
 
-        # Step 3: Build swap transaction via Jupiter
         input_mint = resolve_mint(input_token)
         output_mint = resolve_mint(output_token)
         decimals = 9 if input_token.upper() == "SOL" else 6
         amount_raw = int(amount_ui * (10 ** decimals))
 
         async with httpx.AsyncClient(timeout=20) as client:
-            # Get quote data for swap
             quote_resp = await client.get(f"{JUPITER_API}/quote", params={
                 "inputMint": input_mint,
                 "outputMint": output_mint,
@@ -184,12 +174,10 @@ async def execute_swap(
             quote_resp.raise_for_status()
             quote_data = quote_resp.json()
 
-            # Derive public key from private key
             from solders.keypair import Keypair  # type: ignore
             keypair = Keypair.from_base58_string(wallet_key)
             public_key = str(keypair.pubkey())
 
-            # Get swap transaction
             swap_resp = await client.post(f"{JUPITER_API}/swap", json={
                 "quoteResponse": quote_data,
                 "userPublicKey": public_key,
@@ -200,14 +188,11 @@ async def execute_swap(
             swap_resp.raise_for_status()
             swap_data = swap_resp.json()
 
-        # Step 4: Sign and send transaction
         tx_bytes = base64.b64decode(swap_data["swapTransaction"])
 
         from solders.transaction import VersionedTransaction  # type: ignore
         tx = VersionedTransaction.from_bytes(tx_bytes)
-        signed_tx = keypair.sign_message(bytes(tx))
 
-        # Send to RPC
         async with httpx.AsyncClient(timeout=30) as client:
             send_resp = await client.post(SOLANA_RPC, json={
                 "jsonrpc": "2.0",
@@ -222,7 +207,6 @@ async def execute_swap(
 
         tx_sig = send_data.get("result", "unknown")
 
-        # Notify Telegram
         await send_telegram(
             f"✅ <b>SWAP EXECUTED</b>\n\n"
             f"💱 {amount_ui} {input_token.upper()} → {output_token.upper()}\n"
