@@ -652,6 +652,30 @@
 
 })();
 </script>
+<script>
+(function(){
+  const LINKS = {
+    'Solana Monitor':     'https://scutuatua-crypto.github.io/solana-monitor/',
+    'CzoneDive Core':     'https://scutuatua-crypto.github.io/czonedive-core/',
+    'Blog':               'https://scutuatua-iorbh.wordpress.com/',
+    'Telegram':           'https://t.me/scutua01',
+    'WhaleTrucker Elite': 'https://whale-trucker-command-center.vercel.app/',
+    'AssetFlow':          'https://assetflow-app-iota.vercel.app/',
+    'Asset Platform':     'https://asset-platform-cj10b7ikr-whaletrucker-6ad74437.vercel.app/',
+    'WhaleTrucker Reef':  'https://scutuatua-crypto.github.io/whaletrucker-reef/',
+  };
+
+  document.querySelectorAll('.project-card, .card, [class*="card"]').forEach(card => {
+    const title = card.querySelector('h2,h3,h4,[class*="title"]');
+    if (!title) return;
+    const name = title.textContent.trim();
+    const url = Object.entries(LINKS).find(([k]) => name.includes(k))?.[1];
+    if (!url) return;
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => window.open(url, '_blank'));
+  });
+})();
+</script>
   
 </body>
 </html>
