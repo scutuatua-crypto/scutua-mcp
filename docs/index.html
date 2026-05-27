@@ -545,5 +545,113 @@
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
+<script>
+(async function initLiveStats() {
+  const GH = 'https://api.github.com/repos/scutuatua-crypto/scutua-mcp';
+
+  function animCount(el, target) {
+    if (!el) return;
+    const dur = 1400, t0 = performance.now();
+    function tick(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * ease).toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target.toLocaleString();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function addLiveBadge(statEl) {
+    if (!statEl || statEl.querySelector('.live-badge')) return;
+    const badge = document.createElement('div');
+    badge.className = 'live-badge';
+    badge.style.cssText = 'position:absolute;top:8px;right:8px;font-family:Orbitron,monospace;font-size:0.45rem;letter-spacing:0.15em;color:#00e87a;background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.3);padding:2px 6px;border-radius:2px;display:flex;align-items:center;gap:4px;';
+    badge.innerHTML = '<span style="width:5px;height:5px;border-radius:50%;background:#00e87a;box-shadow:0 0 6px #00e87a;animation:pulse 2s ease-in-out infinite;display:inline-block;"></span>LIVE';
+    statEl.style.position = 'relative';
+    statEl.prepend(badge);
+  }
+
+  function findStat(label) {
+    for (const s of document.querySelectorAll('.stat')) {
+      const lbl = s.querySelector('.stat-label');
+      if (lbl && lbl.textContent.toLowerCase().includes(label.toLowerCase()))
+        return { container: s, value: s.querySelector('.stat-value') };
+    }
+    return null;
+  }
+
+  async function getCICD() {
+    try {
+      const r = await fetch(`${GH}/actions/runs?per_page=1`, { headers: { Accept: 'application/vnd.github+json' } });
+      return r.ok ? (await r.json()).total_count : null;
+    } catch { return null; }
+  }
+
+  async function getTools() {
+    try {
+      const r = await fetch(`${GH}/git/trees/main?recursive=1`, { headers: { Accept: 'application/vnd.github+json' } });
+      if (!r.ok) return null;
+      const d = await r.json();
+      const count = (d.tree || []).filter(f =>
+        f.type === 'blob' && f.path.startsWith('src/tools/') &&
+        f.path.endsWith('.py') && !f.path.includes('__init__') && !f.path.endsWith('base.py')
+      ).length;
+      return count > 0 ? count : null;
+    } catch { return null; }
+  }
+
+  async function getSmithery() {
+    try {
+      const r = await fetch('https://registry.smithery.ai/servers/scutuatua/scutua-mcp', { headers: { Accept: 'application/json' } });
+      if (!r.ok) return null;
+      const d = await r.json();
+      return d.score ?? d.smithery_score ?? d.qualityScore ?? null;
+    } catch { return null; }
+  }
+
+  const [cicd, tools, smithery] = await Promise.all([getCICD(), getTools(), getSmithery()]);
+
+  const cicdStat = findStat('CI/CD');
+  if (cicdStat && cicd) {
+    addLiveBadge(cicdStat.container);
+    animCount(cicdStat.value, cicd);
+    document.querySelectorAll('.badge').forEach(b => {
+      if (b.textContent.includes('CI/CD')) b.textContent = `CI/CD ${cicd.toLocaleString()} Runs`;
+    });
+    document.querySelectorAll('.status-item span').forEach(s => {
+      if (s.innerHTML.includes('CI/CD')) s.innerHTML = `<strong>CI/CD</strong> — GitHub Actions, ${cicd.toLocaleString()} Runs`;
+    });
+  }
+
+  const toolsStat = findStat('Total Tools');
+  if (toolsStat && tools) {
+    addLiveBadge(toolsStat.container);
+    animCount(toolsStat.value, tools);
+    document.querySelectorAll('.badge').forEach(b => {
+      if (b.textContent.includes('TOOLS')) b.textContent = `${tools} TOOLS`;
+    });
+  }
+
+  const smithStat = findStat('Smithery');
+  if (smithStat && smithery) {
+    addLiveBadge(smithStat.container);
+    animCount(smithStat.value, smithery);
+    document.querySelectorAll('.badge').forEach(b => {
+      if (b.textContent.includes('Smithery')) b.textContent = `Smithery ${smithery}/100`;
+    });
+  }
+
+  const footer = document.querySelector('footer');
+  if (footer) {
+    const ts = document.createElement('p');
+    ts.style.cssText = 'font-size:0.58rem;color:#1a3a5a;letter-spacing:0.12em;margin-top:16px;';
+    ts.textContent = `⚡ LIVE — ${new Date().toUTCString()}`;
+    footer.appendChild(ts);
+  }
+
+})();
+</script>
+  
 </body>
 </html>
