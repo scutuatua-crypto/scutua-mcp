@@ -657,25 +657,29 @@
   const LINKS = {
     'Solana Monitor':     'https://scutuatua-crypto.github.io/solana-monitor/',
     'CzoneDive Core':     'https://scutuatua-crypto.github.io/czonedive-core/',
-    'Blog':               'https://scutuatua-iorbh.wordpress.com/',
-    'Telegram':           'https://t.me/scutua01',
     'WhaleTrucker Elite': 'https://whale-trucker-command-center.vercel.app/',
+    'WhaleTrucker Reef':  'https://scutuatua-crypto.github.io/whaletrucker-reef/',
     'AssetFlow':          'https://assetflow-app-iota.vercel.app/',
     'Asset Platform':     'https://asset-platform-cj10b7ikr-whaletrucker-6ad74437.vercel.app/',
-    'WhaleTrucker Reef':  'https://scutuatua-crypto.github.io/whaletrucker-reef/',
+    'Blog':               'https://scutuatua-iorbh.wordpress.com/',
+    'Telegram':           'https://t.me/scutua01',
   };
 
-  document.querySelectorAll('.project-card, .card, [class*="card"]').forEach(card => {
-    const title = card.querySelector('h2,h3,h4,[class*="title"]');
+  document.querySelectorAll('.project-card, .card, .tier-card, [class*="card"], [class*="project"]').forEach(card => {
+    const title = card.querySelector('h2,h3,h4,h5,[class*="title"],[class*="name"]');
     if (!title) return;
     const name = title.textContent.trim();
-    const url = Object.entries(LINKS).find(([k]) => name.includes(k))?.[1];
-    if (!url) return;
+    const match = Object.entries(LINKS).find(([k]) => name.includes(k));
+    if (!match) return;
     card.style.cursor = 'pointer';
-    card.addEventListener('click', () => window.open(url, '_blank'));
+    card.style.transition = 'opacity 0.2s';
+    card.addEventListener('mouseenter', () => card.style.opacity = '0.85');
+    card.addEventListener('mouseleave', () => card.style.opacity = '1');
+    card.addEventListener('click', () => window.open(match[1], '_blank'));
   });
 })();
 </script>
+
   
 </body>
 </html>
