@@ -3,27 +3,6 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 
 ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY", "")
-OPTIMISM_API_KEY  = os.getenv("OPTIMISM_API_KEY", "")
-BSC_API_KEY       = os.getenv("BSC_API_KEY", "")
-
-CHAIN_CONFIG = {
-    "ethereum": {
-        "url": "https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasoracle",
-        "key": ETHERSCAN_API_KEY,
-    },
-    "arbitrum": {
-        "url": "https://api.etherscan.io/v2/api?chainid=42161&module=gastracker&action=gasoracle",
-        "key": ETHERSCAN_API_KEY,
-    },
-    "optimism": {
-        "url": "https://api.etherscan.io/v2/api?chainid=10&module=gastracker&action=gasoracle",
-        "key": OPTIMISM_API_KEY,
-    },
-    "bnb": {
-        "url": "https://api.etherscan.io/v2/api?chainid=56&module=gastracker&action=gasoracle",
-        "key": BSC_API_KEY,
-    },
-}
 
 
 async def _fetch_evm_gas(url: str, api_key: str) -> dict:
@@ -47,9 +26,43 @@ async def _fetch_evm_gas(url: str, api_key: str) -> dict:
         return {"error": str(e)}
 
 
+async def _fetch_rpc_gas(rpc_url: str) -> dict:
+    """ดึง gas ผ่าน JSON-RPC — ใช้กับ chain ที่ Etherscan free ไม่รองรับ"""
+    try:
+        payload = {"jsonrpc": "2.0", "method": "eth_gasPrice", "params": [], "id": 1}
+        async with httpx.AsyncClient() as client:
+            r = await client.post(rpc_url, json=payload, timeout=10)
+            data = r.json()
+        hex_price = data.get("result", "0x0")
+        gwei = int(hex_price, 16) / 1e9
+        gwei_str = f"{gwei:.4f}"
+        return {
+            "slow":     gwei_str,
+            "standard": gwei_str,
+            "fast":     gwei_str,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
 async def _format_gas_response(chain: str) -> dict:
-    config = CHAIN_CONFIG[chain]
-    result = await _fetch_evm_gas(config["url"], config["key"])
+    if chain == "optimism":
+        result = await _fetch_rpc_gas("https://mainnet.optimism.io")
+    elif chain == "bnb":
+        result = await _fetch_rpc_gas("https://bsc-dataseed.binance.org")
+    elif chain == "ethereum":
+        result = await _fetch_evm_gas(
+            "https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasoracle",
+            ETHERSCAN_API_KEY,
+        )
+    elif chain == "arbitrum":
+        result = await _fetch_evm_gas(
+            "https://api.etherscan.io/v2/api?chainid=42161&module=gastracker&action=gasoracle",
+            ETHERSCAN_API_KEY,
+        )
+    else:
+        return {"status": "fail", "chain": chain, "error": "unknown chain"}
+
     if "error" in result:
         return {"status": "fail", "chain": chain, "error": result["error"]}
     return {"status": "success", "chain": chain, "data": result}
