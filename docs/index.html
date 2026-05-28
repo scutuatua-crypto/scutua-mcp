@@ -326,46 +326,62 @@
   .proj-featured .proj-icon { font-size: 2.2rem; }
   .proj-featured .proj-desc { font-size: 0.84rem; color: #a0c0e0; }
 
-  /* --- Added Animations --- */
-  @keyframes float {
-    0%, 100% { transform: translateY(0) scale(1.05); }
-    50% { transform: translateY(-15px) scale(1.1); }
+  /* --- Improved Animations --- */
+  @keyframes whaleSwim {
+    0% { transform: translateY(0) rotate(0deg) scale(1); }
+    25% { transform: translateY(-10px) rotate(-1deg) scale(1.02); }
+    50% { transform: translateY(5px) rotate(1deg) scale(1); }
+    75% { transform: translateY(-5px) rotate(-0.5deg) scale(1.01); }
+    100% { transform: translateY(0) rotate(0deg) scale(1); }
   }
 
   .hero-bg {
-    animation: float 8s ease-in-out infinite;
+    animation: whaleSwim 12s ease-in-out infinite;
     transform-origin: center;
-    transition: transform 0.5s ease-out;
+    transition: transform 0.8s ease-out;
+    will-change: transform;
   }
 
   .waves {
     position: absolute;
-    bottom: 0;
+    bottom: -1px; /* Slight overlap to prevent gap */
     left: 0;
     width: 100%;
-    height: 120px;
+    height: 150px;
     z-index: 4;
     pointer-events: none;
+    overflow: hidden;
   }
 
   .editorial {
     display: block;
     width: 100%;
-    height: 120px;
+    height: 100%;
     margin: 0;
   }
 
   .parallax > use {
     animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
   }
-  .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; }
-  .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
-  .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
-  .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+  .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 9s; opacity: 0.3; }
+  .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 12s; opacity: 0.5; }
+  .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 15s; opacity: 0.7; }
+  .parallax > use:nth-child(4) { 
+    animation-delay: -5s; 
+    animation-duration: 22s; 
+    fill: #03060f; /* Match the exact background color */
+  }
 
   @keyframes move-forever {
     0% { transform: translate3d(-90px, 0, 0); }
     100% { transform: translate3d(85px, 0, 0); }
+  }
+
+  /* Smooth reveal for content */
+  .hero-content {
+    backdrop-filter: blur(2px);
+    border-radius: 20px;
+    padding: 20px;
   }
 
 </style>
@@ -407,10 +423,10 @@
           <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
         </defs>
         <g class="parallax">
-          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(0, 229, 255, 0.2)" />
-          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(77, 159, 255, 0.2)" />
-          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(155, 107, 255, 0.2)" />
-          <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(3, 6, 15, 0.9)" />
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(0, 229, 255, 0.3)" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(77, 159, 255, 0.4)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(155, 107, 255, 0.5)" />
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="#03060f" />
         </g>
       </svg>
     </div>
