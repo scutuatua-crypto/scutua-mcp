@@ -11,6 +11,7 @@ logger = get_logger(__name__)
 BIRDEYE_API_KEY = os.getenv("BIRDEYE_API_KEY", "")
 BASE_URL = "https://public-api.birdeye.so"
 
+
 async def _birdeye_get(endpoint: str, params: dict = {}) -> dict:
     cache_key = f"birdeye:{endpoint}:{str(params)}"
     cached = get_cached(cache_key)
@@ -28,8 +29,8 @@ async def _birdeye_get(endpoint: str, params: dict = {}) -> dict:
         logger.error(f"Birdeye error: {e}")
         return {"error": str(e)}
 
-def register_birdeye_tools(app):
 
+def register_birdeye_tools(app):
     @app.tool()
     async def get_token_price_birdeye(token_address: str) -> dict:
         """Get real-time token price from Birdeye"""
@@ -38,7 +39,7 @@ def register_birdeye_tools(app):
     @app.tool()
     async def get_token_trending_birdeye() -> dict:
         """Get trending tokens on Solana from Birdeye"""
-        return await _birdeye_get("/defi/trending_tokens")
+        return await _birdeye_get("/defi/token_trending")
 
     @app.tool()
     async def get_wallet_portfolio_birdeye(wallet_address: str) -> dict:
