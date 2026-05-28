@@ -7,7 +7,6 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-# ✅ แก้ URL จาก curve.fi → curve.finance
 BASE_URL = "https://api.curve.finance/api"
 
 
@@ -44,7 +43,10 @@ def register_curve_tools(app):
             {
                 "name": p.get("name"),
                 "tvl": p.get("usdTotal"),
-                "apy": p.get("latestDailyApy"),
+                # ✅ ใช้ gaugeCrvApy[0] แทน latestDailyApy
+                "apy_crv": p.get("gaugeCrvApy", [None])[0],
+                "apy_base": p.get("latestWeeklyApy"),
+                "gauge": p.get("gaugeAddress"),
             }
             for p in pools[:10]
         ]
