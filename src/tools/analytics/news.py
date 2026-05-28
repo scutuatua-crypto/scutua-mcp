@@ -1,65 +1,66 @@
 """
 Crypto News Tools — Scutua-MCP
-Uses CryptoPanic (with API key) + CoinGecko news as fallback
+Uses RSS feeds (CoinDesk + Decrypt + Cointelegraph) — no API key needed
 """
 import os
 import httpx
+import xml.etree.ElementTree as ET
 from mcp.server.fastmcp import FastMCP
 
-CRYPTOPANIC_API_KEY = os.getenv("CRYPTOPANIC_API_KEY", "")
-COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY", "")
+logger_import = None
+try:
+    from src.utils.logger import get_logger
+    logger_import = get_logger(__name__)
+except Exception:
+    pass
+
+
+RSS_FEEDS = [
+    ("CoinDesk",      "https://www.coindesk.com/arc/outboundfeeds/rss/"),
+    ("Cointelegraph", "https://cointelegraph.com/rss"),
+    ("Decrypt",       "https://decrypt.co/feed"),
+]
+
+
+async def _fetch_rss(name: str, url: str, limit: int = 4) -> list[str]:
+    """Fetch and parse RSS feed, return list of formatted strings"""
+    try:
+        async with httpx.AsyncClient(
+            follow_redirects=True,
+            headers={"User-Agent": "Mozilla/5.0 ScutuaMCP/1.0"},
+            timeout=10,
+        ) as client:
+            r = await client.get(url)
+            r.raise_for_status()
+
+        root = ET.fromstring(r.text)
+        items = root.findall(".//item")[:limit]
+        results = []
+        for item in items:
+            title = item.findtext("title", "").strip()
+            if title:
+                results.append(f"• {title} [{name}]")
+        return results
+    except Exception as e:
+        return []
 
 
 def register_news_tools(app: FastMCP):
 
     @app.tool()
     async def get_crypto_news() -> str:
-        """Get latest crypto news"""
+        """Get latest crypto news from RSS feeds (CoinDesk, Cointelegraph, Decrypt)"""
         try:
-            # ✅ ถ้ามี CryptoPanic key → ใช้ก่อน
-            if CRYPTOPANIC_API_KEY:
-                url = (
-                    f"https://cryptopanic.com/api/v1/posts/"
-                    f"?auth_token={CRYPTOPANIC_API_KEY}&kind=news&limit=7&public=true"
-                )
-                async with httpx.AsyncClient() as client:
-                    r = await client.get(url, timeout=10)
-                    r.raise_for_status()
-                    data = r.json()
-                posts = data.get("results", [])
-                if posts:
-                    result = ["📰 Latest Crypto News (CryptoPanic):"]
-                    for i, post in enumerate(posts[:7], 1):
-                        title = post.get("title", "N/A")
-                        source = post.get("source", {}).get("title", "")
-                        source_str = f" — {source}" if source else ""
-                        result.append(f"{i}. {title}{source_str}")
-                    return "\n".join(result)
+            all_news = []
+            for name, url in RSS_FEEDS:
+                items = await _fetch_rss(name, url, limit=3)
+                all_news.extend(items)
 
-            # 🔄 Fallback → CoinGecko news (ใส่ API key ใน header แก้ 429)
-            headers = {"accept": "application/json"}
-            if COINGECKO_API_KEY:
-                headers["x-cg-demo-api-key"] = COINGECKO_API_KEY
+            if not all_news:
+                return "❌ Could not fetch news — all RSS feeds failed"
 
-            async with httpx.AsyncClient() as client:
-                r = await client.get(
-                    "https://api.coingecko.com/api/v3/news",
-                    headers=headers,
-                    timeout=10,
-                )
-                r.raise_for_status()
-                data = r.json()
-
-            articles = data if isinstance(data, list) else data.get("data", [])
-            if not articles:
-                return "❌ No news available"
-
-            result = ["📰 Latest Crypto News (CoinGecko):"]
-            for i, article in enumerate(articles[:7], 1):
-                title = article.get("title") or article.get("name", "N/A")
-                author = article.get("author") or article.get("news_site", "")
-                author_str = f" — {author}" if author else ""
-                result.append(f"{i}. {title}{author_str}")
+            result = ["📰 Latest Crypto News:\n"]
+            result.extend(all_news[:9])
             return "\n".join(result)
 
         except Exception as e:
