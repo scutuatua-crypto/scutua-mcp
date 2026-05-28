@@ -18,7 +18,7 @@ async def _curve_get(endpoint: str) -> dict:
         return cached
     try:
         async with httpx.AsyncClient(
-            follow_redirects=True,  # ✅ follow redirect อัตโนมัติด้วย
+            follow_redirects=True,
             timeout=10,
         ) as client:
             r = await client.get(f"{BASE_URL}{endpoint}")
@@ -66,4 +66,15 @@ def register_curve_tools(app):
     @app.tool()
     async def get_curve_tvl() -> dict:
         """Get total TVL across all Curve pools"""
-        return await _curve_get("/getTVL")
+        data = await _curve_get("/getPools/ethereum/main")
+        if "error" in data:
+            return data
+
+        pools = data.get("data", {}).get("poolData", [])
+        total_tvl = sum(p.get("usdTotal", 0) for p in pools)
+
+        return {
+            "tvl": round(total_tvl, 2),
+            "pool_count": len(pools),
+            "protocol": "curve"
+        }
