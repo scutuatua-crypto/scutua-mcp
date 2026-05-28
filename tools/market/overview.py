@@ -13,28 +13,41 @@ COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY", "")
 CG_BASE = "https://api.coingecko.com/api/v3"
 
 
-async def _cg_get(endpoint: str) -> dict:
+async def _cg_get(endpoint: str, bust_cache: bool = False) -> dict:
     """CoinGecko GET with API key + cache"""
     cache_key = f"cg_market:{endpoint}"
-    cached = get_cached(cache_key)
-    if cached:
-        return cached
+
+    if not bust_cache:
+        cached = get_cached(cache_key)
+        if cached:
+            return cached
+
     try:
-        headers = {}
+        headers = {"accept": "application/json"}
         if COINGECKO_API_KEY:
             headers["x-cg-demo-api-key"] = COINGECKO_API_KEY
+
         async with httpx.AsyncClient() as client:
             r = await client.get(
                 f"{CG_BASE}{endpoint}",
                 headers=headers,
-                timeout=10
+                timeout=10,
             )
             r.raise_for_status()
             data = r.json()
+
+        # ✅ ตรวจว่า data มีค่าจริงๆ ก่อน cache
+        inner = data.get("data", {})
+        mcap = inner.get("total_market_cap", {}).get("usd", 0) if inner else 0
+        if mcap and mcap > 0:
             set_cached(cache_key, data, ttl=120)
-            return data
+        else:
+            logger.warning(f"CoinGecko returned zero/empty data for {endpoint} — skip cache")
+
+        return data
+
     except Exception as e:
-        logger.error(f"CoinGecko market_overview error: {e}")
+        logger.error(f"CoinGecko _cg_get error [{endpoint}]: {e}")
         return {"error": str(e)}
 
 
@@ -43,7 +56,10 @@ def register_market_overview_tools(app):
     @app.tool()
     async def get_market_overview() -> str:
         """Get global crypto market overview — total market cap, volume, dominance"""
+
+        # ลอง fetch ปกติก่อน ถ้าได้ 0 → bust cache แล้ว retry
         data = await _cg_get("/global")
+
         if "error" in data:
             return f"❌ Market overview error: {data['error']}"
 
@@ -52,6 +68,18 @@ def register_market_overview_tools(app):
             return "❌ No market data returned"
 
         total_mcap = m.get("total_market_cap", {}).get("usd", 0) or 0
+
+        # 🔄 ถ้าได้ 0 → bust cache แล้ว retry 1 ครั้ง
+        if total_mcap == 0:
+            logger.warning("Market cap is 0 — busting cache and retrying...")
+            data = await _cg_get("/global", bust_cache=True)
+            if "error" in data:
+                return f"❌ Market overview error (retry): {data['error']}"
+            m = data.get("data", {})
+            if not m:
+                return "❌ No market data returned after retry"
+            total_mcap = m.get("total_market_cap", {}).get("usd", 0) or 0
+
         total_vol   = m.get("total_volume", {}).get("usd", 0) or 0
         change_24h  = m.get("market_cap_change_percentage_24h_usd", 0) or 0
         btc_dom     = m.get("market_cap_percentage", {}).get("btc", 0) or 0
@@ -77,7 +105,6 @@ def register_market_overview_tools(app):
     @app.tool()
     async def get_market_sentiment() -> str:
         """Get overall crypto market sentiment — combines Fear & Greed + market cap change"""
-        # CoinGecko global
         cg_data = await _cg_get("/global")
         change_24h = 0.0
         if "error" not in cg_data:
@@ -85,7 +112,6 @@ def register_market_overview_tools(app):
                 "market_cap_change_percentage_24h_usd", 0
             ) or 0
 
-        # Alternative.me Fear & Greed
         fg_value = None
         fg_label = "Unknown"
         try:
@@ -100,7 +126,6 @@ def register_market_overview_tools(app):
         except Exception as e:
             logger.warning(f"Fear & Greed fetch failed: {e}")
 
-        # Sentiment score
         if fg_value is not None:
             if fg_value >= 75:
                 mood = "🟢 Extreme Greed"
