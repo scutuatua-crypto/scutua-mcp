@@ -3,6 +3,7 @@ Cross-chain Arbitrage Scanner
 Dimension: Agentic / src/tools/agentic/arbitrage_scanner.py
 """
 
+import os
 import time
 import random
 import httpx
@@ -28,9 +29,8 @@ BRIDGE_COSTS = {
     ("optimism", "base"):     1.0,
 }
 
-# Simple in-memory cache
 _cache: dict = {}
-CACHE_TTL = 300  # 5 นาที
+CACHE_TTL = 300
 
 
 def _get_cache(key: str):
@@ -46,7 +46,6 @@ def _set_cache(key: str, value):
 
 
 async def fetch_price(token_id: str) -> dict:
-    """Fetch token price via CoinGecko with cache."""
     cache_key = f"price_{token_id}"
     cached = _get_cache(cache_key)
     if cached:
@@ -62,20 +61,19 @@ async def fetch_price(token_id: str) -> dict:
         headers["x-cg-pro-api-key"] = COINGECKO_API_KEY
 
     async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.get(
+        r = await client.get(
             "https://api.coingecko.com/api/v3/simple/price",
             params=params,
             headers=headers,
         )
-        # 429 — คืน stale cache ถ้ามี
-        if resp.status_code == 429:
+        if r.status_code == 429:
             stale = _cache.get(cache_key)
             if stale:
                 return stale[0]
             return {"error": "CoinGecko rate limit — retry later"}
 
-        resp.raise_for_status()
-        data = resp.json()
+        r.raise_for_status()
+        data = r.json()
         _set_cache(cache_key, data)
         return data
 
@@ -123,7 +121,7 @@ async def scan_arbitrage(
                 if buy_chain == sell_chain:
                     continue
 
-                buy_price = chain_prices[buy_chain]
+                buy_price  = chain_prices[buy_chain]
                 sell_price = chain_prices[sell_chain]
 
                 if sell_price <= buy_price:
@@ -131,7 +129,6 @@ async def scan_arbitrage(
 
                 token_amount = amount_usd / buy_price
                 gross_profit = token_amount * (sell_price - buy_price)
-
                 key = tuple(sorted([buy_chain, sell_chain]))
                 bridge_cost = BRIDGE_COSTS.get(key, 2.0)
                 net_profit = gross_profit - bridge_cost
@@ -140,15 +137,15 @@ async def scan_arbitrage(
                     continue
 
                 opportunities.append({
-                    "buy_on":          buy_chain,
-                    "sell_on":         sell_chain,
-                    "buy_price":       buy_price,
-                    "sell_price":      sell_price,
-                    "spread_pct":      round(((sell_price - buy_price) / buy_price) * 100, 3),
+                    "buy_on":           buy_chain,
+                    "sell_on":          sell_chain,
+                    "buy_price":        buy_price,
+                    "sell_price":       sell_price,
+                    "spread_pct":       round(((sell_price - buy_price) / buy_price) * 100, 3),
                     "gross_profit_usd": round(gross_profit, 2),
-                    "bridge_cost_usd": bridge_cost,
-                    "net_profit_usd":  round(net_profit, 2),
-                    "roi_pct":         round((net_profit / amount_usd) * 100, 3),
+                    "bridge_cost_usd":  bridge_cost,
+                    "net_profit_usd":   round(net_profit, 2),
+                    "roi_pct":          round((net_profit / amount_usd) * 100, 3),
                 })
 
         opportunities.sort(key=lambda x: x["net_profit_usd"], reverse=True)
