@@ -7,7 +7,9 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-BASE_URL = "https://api.curve.fi/api"
+# ✅ แก้ URL จาก curve.fi → curve.finance
+BASE_URL = "https://api.curve.finance/api"
+
 
 async def _curve_get(endpoint: str) -> dict:
     cache_key = f"curve:{endpoint}"
@@ -15,8 +17,11 @@ async def _curve_get(endpoint: str) -> dict:
     if cached:
         return cached
     try:
-        async with httpx.AsyncClient() as client:
-            r = await client.get(f"{BASE_URL}{endpoint}", timeout=10)
+        async with httpx.AsyncClient(
+            follow_redirects=True,  # ✅ follow redirect อัตโนมัติด้วย
+            timeout=10,
+        ) as client:
+            r = await client.get(f"{BASE_URL}{endpoint}")
             r.raise_for_status()
             data = r.json()
             set_cached(cache_key, data, ttl=120)
@@ -24,6 +29,7 @@ async def _curve_get(endpoint: str) -> dict:
     except Exception as e:
         logger.error(f"Curve error: {e}")
         return {"error": str(e)}
+
 
 def register_curve_tools(app):
 
@@ -34,7 +40,14 @@ def register_curve_tools(app):
         if "error" in data:
             return data
         pools = data.get("data", {}).get("poolData", [])
-        top = [{"name": p.get("name"), "tvl": p.get("usdTotal"), "apy": p.get("latestDailyApy")} for p in pools[:10]]
+        top = [
+            {
+                "name": p.get("name"),
+                "tvl": p.get("usdTotal"),
+                "apy": p.get("latestDailyApy"),
+            }
+            for p in pools[:10]
+        ]
         return {"pools": top, "protocol": "curve"}
 
     @app.tool()
@@ -44,7 +57,10 @@ def register_curve_tools(app):
         if "error" in data:
             return data
         pools = data.get("data", {}).get("poolData", [])
-        pool = next((p for p in pools if p.get("address", "").lower() == pool_address.lower()), None)
+        pool = next(
+            (p for p in pools if p.get("address", "").lower() == pool_address.lower()),
+            None,
+        )
         return pool or {"error": "Pool not found"}
 
     @app.tool()
