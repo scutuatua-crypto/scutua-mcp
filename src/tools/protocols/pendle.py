@@ -7,7 +7,8 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-BASE_URL = "https://api-v2.pendle.finance/core/v1/1"
+BASE_URL = "https://api-v2.pendle.finance/core"
+
 
 async def _pendle_get(endpoint: str) -> dict:
     cache_key = f"pendle:{endpoint}"
@@ -25,20 +26,37 @@ async def _pendle_get(endpoint: str) -> dict:
         logger.error(f"Pendle error: {e}")
         return {"error": str(e)}
 
+
 def register_pendle_tools(app):
 
     @app.tool()
     async def get_pendle_markets() -> dict:
         """Get active Pendle yield markets with fixed APY"""
-        data = await _pendle_get("/markets?order_by=volume%3A-1&limit=10")
+        # ✅ เปลี่ยนเป็น /v2/markets/all + filter is_active=true
+        data = await _pendle_get("/v2/markets/all?is_active=true&order_by=liquidity%3A-1&limit=10")
         if "error" in data:
             return data
-        return {"markets": data.get("results", []), "protocol": "pendle"}
+
+        results = data.get("results", [])
+        markets = [
+            {
+                "name": m.get("name"),
+                "address": m.get("address"),
+                "expiry": m.get("expiry"),
+                "implied_apy": m.get("impliedApy"),
+                "liquidity_usd": m.get("liquidity", {}).get("usd"),
+                "volume_usd": m.get("tradingVolume", {}).get("usd"),
+                "underlying_apy": m.get("underlyingApy"),
+                "protocol": m.get("protocol"),
+            }
+            for m in results
+        ]
+        return {"markets": markets, "count": len(markets), "protocol": "pendle"}
 
     @app.tool()
     async def get_pendle_assets() -> dict:
         """Get all Pendle supported yield-bearing assets"""
-        data = await _pendle_get("/assets/all")
+        data = await _pendle_get("/v1/1/assets/all")
         if "error" in data:
             return data
         return {"assets": data, "protocol": "pendle"}
@@ -46,4 +64,4 @@ def register_pendle_tools(app):
     @app.tool()
     async def get_pendle_pt_price(market_address: str) -> dict:
         """Get Principal Token price for a Pendle market"""
-        return await _pendle_get(f"/markets/{market_address}")
+        return await _pendle_get(f"/v1/1/markets/{market_address}")
