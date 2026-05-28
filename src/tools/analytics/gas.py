@@ -8,7 +8,7 @@ ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY", "")
 async def _fetch_evm_gas(url: str) -> dict:
     try:
         if ETHERSCAN_API_KEY:
-            url += f"&apikey={ETHERSCAN_API_KEY}"  # ✅ ใส่ key
+            url += f"&apikey={ETHERSCAN_API_KEY}"
         async with httpx.AsyncClient() as client:
             r = await client.get(url, timeout=10)
             raw = r.json()
@@ -35,10 +35,10 @@ async def _format_gas_response(chain: str) -> dict:
 
 async def _fetch_evm_gas_by_chain(chain: str) -> dict:
     urls = {
-        "ethereum": "https://api.etherscan.io/api?module=gastracker&action=gasoracle",
-        "arbitrum": "https://api.arbiscan.io/api?module=gastracker&action=gasoracle",
-        "optimism": "https://api-optimistic.etherscan.io/api?module=gastracker&action=gasoracle",
-        "bnb":      "https://api.bscscan.com/api?module=gastracker&action=gasoracle",
+        "ethereum": "https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasoracle",
+        "arbitrum": "https://api.etherscan.io/v2/api?chainid=42161&module=gastracker&action=gasoracle",
+        "optimism": "https://api.etherscan.io/v2/api?chainid=10&module=gastracker&action=gasoracle",
+        "bnb":      "https://api.etherscan.io/v2/api?chainid=56&module=gastracker&action=gasoracle",
     }
     return await _fetch_evm_gas(urls[chain])
 
