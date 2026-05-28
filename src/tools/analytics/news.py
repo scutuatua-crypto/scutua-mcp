@@ -7,6 +7,7 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 
 CRYPTOPANIC_API_KEY = os.getenv("CRYPTOPANIC_API_KEY", "")
+COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY", "")
 
 
 def register_news_tools(app: FastMCP):
@@ -15,7 +16,7 @@ def register_news_tools(app: FastMCP):
     async def get_crypto_news() -> str:
         """Get latest crypto news"""
         try:
-            # 🔧 FIX 1: ถ้ามี API key ใช้ CryptoPanic v1
+            # ✅ ถ้ามี CryptoPanic key → ใช้ก่อน
             if CRYPTOPANIC_API_KEY:
                 url = (
                     f"https://cryptopanic.com/api/v1/posts/"
@@ -35,17 +36,23 @@ def register_news_tools(app: FastMCP):
                         result.append(f"{i}. {title}{source_str}")
                     return "\n".join(result)
 
-            # 🔧 FIX 2: fallback → CoinGecko news (ไม่ต้องใช้ key)
-            url = "https://api.coingecko.com/api/v3/news"
+            # 🔄 Fallback → CoinGecko news (ใส่ API key ใน header แก้ 429)
+            headers = {"accept": "application/json"}
+            if COINGECKO_API_KEY:
+                headers["x-cg-demo-api-key"] = COINGECKO_API_KEY
+
             async with httpx.AsyncClient() as client:
-                r = await client.get(url, timeout=10)
+                r = await client.get(
+                    "https://api.coingecko.com/api/v3/news",
+                    headers=headers,
+                    timeout=10,
+                )
                 r.raise_for_status()
                 data = r.json()
 
-            # CoinGecko news response: {"data": [...]}
             articles = data if isinstance(data, list) else data.get("data", [])
             if not articles:
-                return "❌ No news available — add CRYPTOPANIC_API_KEY for better results"
+                return "❌ No news available"
 
             result = ["📰 Latest Crypto News (CoinGecko):"]
             for i, article in enumerate(articles[:7], 1):
@@ -62,9 +69,10 @@ def register_news_tools(app: FastMCP):
     async def get_fear_greed_index() -> str:
         """Get Crypto Fear & Greed Index"""
         try:
-            url = "https://api.alternative.me/fng/"
             async with httpx.AsyncClient() as client:
-                r = await client.get(url, timeout=10)
+                r = await client.get(
+                    "https://api.alternative.me/fng/", timeout=10
+                )
                 data = r.json()
             result = data.get("data", [{}])[0]
             value = int(result.get("value", 0))
