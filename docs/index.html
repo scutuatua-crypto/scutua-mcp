@@ -325,6 +325,49 @@
   .proj-featured .proj-name { font-size: 1.2rem; }
   .proj-featured .proj-icon { font-size: 2.2rem; }
   .proj-featured .proj-desc { font-size: 0.84rem; color: #a0c0e0; }
+
+  /* --- Added Animations --- */
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1.05); }
+    50% { transform: translateY(-15px) scale(1.1); }
+  }
+
+  .hero-bg {
+    animation: float 8s ease-in-out infinite;
+    transform-origin: center;
+    transition: transform 0.5s ease-out;
+  }
+
+  .waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  .editorial {
+    display: block;
+    width: 100%;
+    height: 120px;
+    margin: 0;
+  }
+
+  .parallax > use {
+    animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+  }
+  .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; }
+  .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; }
+  .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; }
+  .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; }
+
+  @keyframes move-forever {
+    0% { transform: translate3d(-90px, 0, 0); }
+    100% { transform: translate3d(85px, 0, 0); }
+  }
+
 </style>
 </head>
 <body>
@@ -356,7 +399,23 @@
     <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1L6 7L11 1" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/></svg>
   </div>
   <div class="hero-border"></div>
-</header>
+
+    <!-- Waves Animation -->
+    <div class="waves">
+      <svg class="editorial" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none">
+        <defs>
+          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(0, 229, 255, 0.2)" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(77, 159, 255, 0.2)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(155, 107, 255, 0.2)" />
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(3, 6, 15, 0.9)" />
+        </g>
+      </svg>
+    </div>
+
+  </header>
 
 <div style="position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:40px 32px 0;background:#03060f;">
   <div class="stat-row reveal">
