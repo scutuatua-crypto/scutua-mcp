@@ -32,8 +32,8 @@ def register_pendle_tools(app):
     @app.tool()
     async def get_pendle_markets() -> dict:
         """Get active Pendle yield markets with fixed APY"""
-        # ✅ เปลี่ยนเป็น /v2/markets/all + filter is_active=true
-        data = await _pendle_get("/v2/markets/all?is_active=true&order_by=liquidity%3A-1&limit=10")
+        # ✅ ใช้ /markets/active — endpoint จริงสำหรับ active markets เท่านั้น
+        data = await _pendle_get("/v1/1/markets/active?order_by=liquidity%3A-1&limit=10")
         if "error" in data:
             return data
 
@@ -44,8 +44,8 @@ def register_pendle_tools(app):
                 "address": m.get("address"),
                 "expiry": m.get("expiry"),
                 "implied_apy": m.get("impliedApy"),
-                "liquidity_usd": m.get("liquidity", {}).get("usd"),
-                "volume_usd": m.get("tradingVolume", {}).get("usd"),
+                "liquidity_usd": m.get("liquidity", {}).get("usd") if isinstance(m.get("liquidity"), dict) else m.get("liquidity"),
+                "volume_usd": m.get("tradingVolume", {}).get("usd") if isinstance(m.get("tradingVolume"), dict) else m.get("tradingVolume"),
                 "underlying_apy": m.get("underlyingApy"),
                 "protocol": m.get("protocol"),
             }
