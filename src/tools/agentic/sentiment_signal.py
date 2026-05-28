@@ -1,12 +1,10 @@
 """
 On-chain Sentiment Signal
 Dimension: Agentic / src/tools/agentic/sentiment_signal.py
-
-Combines: Fear & Greed + Whale Activity + Price Momentum
-→ Outputs unified BUY / SELL / HOLD signal
 """
 
 import os
+import asyncio
 import httpx
 from fastmcp import FastMCP
 
@@ -14,26 +12,54 @@ mcp = FastMCP("sentiment-signal")
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "")
+COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY", "")  # ใส่ถ้ามี Pro plan
 
 FEAR_GREED_URL = "https://api.alternative.me/fng/"
 COINGECKO_URL = "https://api.coingecko.com/api/v3"
 
+# Simple in-memory cache
+_cache: dict = {}
+CACHE_TTL = 300  # 5 นาที
+
+
+def _get_cache(key: str):
+    import time
+    if key in _cache:
+        value, ts = _cache[key]
+        if time.time() - ts < CACHE_TTL:
+            return value
+    return None
+
+
+def _set_cache(key: str, value):
+    import time
+    _cache[key] = (value, time.time())
+
 
 async def fetch_fear_greed() -> dict:
-    """Fetch Fear & Greed Index from alternative.me."""
+    cached = _get_cache("fear_greed")
+    if cached:
+        return cached
+
     async with httpx.AsyncClient(timeout=10) as client:
         resp = await client.get(f"{FEAR_GREED_URL}?limit=1")
         resp.raise_for_status()
         data = resp.json()
         entry = data["data"][0]
-        return {
+        result = {
             "value": int(entry["value"]),
             "classification": entry["value_classification"],
         }
+        _set_cache("fear_greed", result)
+        return result
 
 
 async def fetch_market_data(token_ids: list[str]) -> dict:
-    """Fetch price + volume + market data."""
+    cache_key = f"market_{'_'.join(sorted(token_ids))}"
+    cached = _get_cache(cache_key)
+    if cached:
+        return cached
+
     ids = ",".join(token_ids)
     params = {
         "ids": ids,
@@ -42,10 +68,27 @@ async def fetch_market_data(token_ids: list[str]) -> dict:
         "include_24hr_vol": "true",
         "include_market_cap": "true",
     }
+    headers = {}
+    if COINGECKO_API_KEY:
+        headers["x-cg-pro-api-key"] = COINGECKO_API_KEY
+
     async with httpx.AsyncClient(timeout=10) as client:
-        resp = await client.get(f"{COINGECKO_URL}/simple/price", params=params)
+        resp = await client.get(
+            f"{COINGECKO_URL}/simple/price",
+            params=params,
+            headers=headers,
+        )
+        # ถ้า 429 คืน cache เก่าถ้ามี หรือ error ชัดๆ
+        if resp.status_code == 429:
+            stale = _cache.get(cache_key)
+            if stale:
+                return stale[0]
+            return {"error": "CoinGecko rate limit — retry later"}
+
         resp.raise_for_status()
-        return resp.json()
+        data = resp.json()
+        _set_cache(cache_key, data)
+        return data
 
 
 def calculate_signal(
@@ -53,41 +96,19 @@ def calculate_signal(
     price_change_24h: float,
     volume_change_pct: float = 0,
 ) -> dict:
-    """
-    Combine multiple signals into one BUY/SELL/HOLD recommendation.
-
-    Scoring system (0-100):
-    - Fear & Greed: 40% weight
-    - Price momentum: 40% weight
-    - Volume: 20% weight
-    """
-    # Fear & Greed score (0-100 already)
-    fg_score = fear_greed_value  # Higher = more greedy = more bullish
-
-    # Price momentum score (0-100)
-    # +10% change → 80 score, -10% → 20 score
+    fg_score = fear_greed_value
     price_score = max(0, min(100, 50 + (price_change_24h * 3)))
-
-    # Volume score (0-100)
-    # Higher volume = more conviction
     vol_score = max(0, min(100, 50 + (volume_change_pct * 2)))
-
-    # Weighted composite
     composite = (fg_score * 0.4) + (price_score * 0.4) + (vol_score * 0.2)
 
-    # Signal thresholds
     if composite >= 65:
-        signal = "BUY"
+        signal, emoji = "BUY", "🟢"
         confidence = "HIGH" if composite >= 75 else "MEDIUM"
-        emoji = "🟢"
     elif composite <= 35:
-        signal = "SELL"
+        signal, emoji = "SELL", "🔴"
         confidence = "HIGH" if composite <= 25 else "MEDIUM"
-        emoji = "🔴"
     else:
-        signal = "HOLD"
-        confidence = "MEDIUM"
-        emoji = "🟡"
+        signal, confidence, emoji = "HOLD", "MEDIUM", "🟡"
 
     return {
         "signal": signal,
@@ -125,47 +146,44 @@ async def get_sentiment_signal(
 ) -> dict:
     """
     Generate unified BUY/SELL/HOLD signal from on-chain sentiment data.
-
-    Combines Fear & Greed Index + Price Momentum + Volume
-    for each token and outputs actionable signal.
+    Combines Fear & Greed Index + Price Momentum + Volume.
 
     Args:
         tokens: CoinGecko token IDs (default: bitcoin, ethereum, solana)
         notify_telegram: Send signal report to Telegram
-
-    Returns:
-        Signals per token + market overview
     """
     if tokens is None:
         tokens = ["bitcoin", "ethereum", "solana"]
 
     try:
-        # Fetch all data in parallel
         fg_data, market_data = await asyncio.gather(
             fetch_fear_greed(),
             fetch_market_data(tokens),
         )
 
+        # ถ้า market_data error ให้ return ชัดๆ
+        if "error" in market_data:
+            return {"error": market_data["error"]}
+
         signals = {}
         for token_id in tokens:
             if token_id not in market_data:
                 continue
-
             td = market_data[token_id]
             price_change = td.get("usd_24h_change", 0)
-
             sig = calculate_signal(
                 fear_greed_value=fg_data["value"],
                 price_change_24h=price_change,
             )
-
             signals[token_id] = {
                 "price_usd": td.get("usd", 0),
                 "change_24h_pct": round(price_change, 2),
                 **sig,
             }
 
-        # Overall market signal (average composite)
+        if not signals:
+            return {"error": "No signal data available"}
+
         avg_composite = sum(s["composite_score"] for s in signals.values()) / len(signals)
         if avg_composite >= 65:
             market_signal = "🟢 BULLISH"
@@ -181,31 +199,23 @@ async def get_sentiment_signal(
             "signals": signals,
         }
 
-        # Telegram notification
         if notify_telegram:
-            lines = []
-            for token_id, s in signals.items():
-                lines.append(
-                    f"{s['emoji']} <b>{token_id.upper()}</b>: {s['signal']} "
-                    f"({s['confidence']}) | ${s['price_usd']:,.2f} "
-                    f"({s['change_24h_pct']:+.2f}%)"
-                )
-
+            lines = [
+                f"{s['emoji']} <b>{tid.upper()}</b>: {s['signal']} "
+                f"({s['confidence']}) | ${s['price_usd']:,.2f} "
+                f"({s['change_24h_pct']:+.2f}%)"
+                for tid, s in signals.items()
+            ]
             message = (
                 f"📡 <b>Sentiment Signal Report</b>\n\n"
                 f"😨 Fear & Greed: <b>{fg_data['value']} — {fg_data['classification']}</b>\n"
                 f"🌍 Market: <b>{market_signal}</b>\n\n"
                 + "\n".join(lines)
-                + f"\n\n🤖 Scutua-MCP Agentic Layer"
+                + "\n\n🤖 Scutua-MCP Agentic Layer"
             )
-            tg_result = await send_telegram(message)
-            result["telegram"] = tg_result
+            result["telegram"] = await send_telegram(message)
 
         return result
 
     except Exception as e:
         return {"error": f"Signal generation failed: {str(e)}"}
-
-
-# asyncio needed for gather
-import asyncio
