@@ -9,7 +9,10 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY", "")
-BASE_URL = "https://api.etherscan.io/api"
+
+# 🔧 FIX: เปลี่ยนจาก V1 → V2 + เพิ่ม chainid=1 (Ethereum Mainnet)
+BASE_URL = "https://api.etherscan.io/v2/api"
+CHAIN_ID = 1
 
 
 async def _etherscan_get(params: dict) -> dict:
@@ -18,8 +21,10 @@ async def _etherscan_get(params: dict) -> dict:
     if cached:
         return cached
     try:
+        # 🔧 FIX: V2 ต้องใส่ chainid ทุก request
+        params_v2 = {"chainid": CHAIN_ID, **params}
         async with httpx.AsyncClient() as client:
-            r = await client.get(BASE_URL, params=params, timeout=10)
+            r = await client.get(BASE_URL, params=params_v2, timeout=10)
             r.raise_for_status()
             data = r.json()
             set_cached(cache_key, data, ttl=60)
@@ -56,15 +61,12 @@ def register_ethereum_tools(app):
         })
         if "error" in data:
             return data
-
-        # 🔧 FIX: result อาจเป็น str (error msg) หรือ dict — ต้อง guard ก่อน .get()
         result = data.get("result")
         if not isinstance(result, dict):
             return {
                 "error": f"Unexpected Etherscan response: {result}",
                 "chain": "ethereum"
             }
-
         return {
             "slow": result.get("SafeGasPrice"),
             "standard": result.get("ProposeGasPrice"),
@@ -98,8 +100,6 @@ def register_ethereum_tools(app):
         })
         if "error" in data:
             return data
-
-        # 🔧 FIX: result อาจเป็น str ถ้า address ไม่ valid หรือ API error
         txs = data.get("result")
         if not isinstance(txs, list):
             return {
@@ -107,7 +107,6 @@ def register_ethereum_tools(app):
                 "address": address,
                 "chain": "ethereum"
             }
-
         return {
             "address": address,
             "transactions": txs[:limit],
