@@ -8,8 +8,8 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-def register_sentiment_tools(app):
 
+def register_sentiment_tools(app):
     @app.tool()
     @mcp_safe_executor("get_market_sentiment")
     async def get_market_sentiment() -> dict:
@@ -18,13 +18,18 @@ def register_sentiment_tools(app):
         cached = cache.get(cache_key)
         if cached:
             return cached
-        async with httpx.AsyncClient() as client:
-            r = await client.get(
-                "https://api.alternative.me/fng/",
-                params={"limit": 7},
-                timeout=10
-            )
-            data = r.json()
-            cache.set(cache_key, data, ttl=3600)
-            return data
 
+        try:
+            async with httpx.AsyncClient() as client:
+                r = await client.get(
+                    "https://api.alternative.me/fng/",
+                    params={"limit": 7},
+                    timeout=10,
+                )
+                r.raise_for_status()
+                data = r.json()
+                cache.set(cache_key, data, ttl=3600)
+                return data
+        except Exception as e:
+            logger.error(f"Market sentiment error: {e}")
+            return {"error": str(e)}
