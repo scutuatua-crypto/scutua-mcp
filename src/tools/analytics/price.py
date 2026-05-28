@@ -1,65 +1,74 @@
+"""💰 Price Tool — Token Realtime Prices"""
 import os
 import httpx
 from mcp.server.fastmcp import FastMCP
+from src.utils.logger import get_logger
+from src.utils.formatters import format_usd
 
-ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY", "")
+logger = get_logger(__name__)
 
+COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY", "")
 
-async def _fetch_evm_gas(url: str) -> dict:
-    try:
-        if ETHERSCAN_API_KEY:
-            url += f"&apikey={ETHERSCAN_API_KEY}"  # ✅ ใส่ key
-        async with httpx.AsyncClient() as client:
-            r = await client.get(url, timeout=10)
-            raw = r.json()
-        if not isinstance(raw, dict):
-            return {"error": "unexpected response format"}
-        result = raw.get("result", {})
-        if not isinstance(result, dict):
-            return {"error": result}
-        return {
-            "slow":     result.get("SafeGasPrice"),
-            "standard": result.get("ProposeGasPrice"),
-            "fast":     result.get("FastGasPrice"),
-        }
-    except Exception as e:
-        return {"error": str(e)}
-
-
-async def _format_gas_response(chain: str) -> dict:
-    result = await _fetch_evm_gas_by_chain(chain)
-    if "error" in result:
-        return {"status": "fail", "chain": chain, "error": result["error"]}
-    return {"status": "success", "chain": chain, "data": result}
+SYMBOL_MAP = {
+    "BTC": "bitcoin",
+    "ETH": "ethereum",
+    "SOL": "solana",
+    "BNB": "binancecoin",
+    "XRP": "ripple",
+    "DOT": "polkadot",
+    "REEF": "reef-finance",
+    "TON": "the-open-network",
+    "ATOM": "cosmos",
+    "AVAX": "avalanche-2",
+    "MATIC": "matic-network",
+    "LINK": "chainlink",
+    "UNI": "uniswap",
+    "NEAR": "near",
+    "ARB": "arbitrum",
+    "OP": "optimism",
+}
 
 
-async def _fetch_evm_gas_by_chain(chain: str) -> dict:
-    urls = {
-        "ethereum": "https://api.etherscan.io/api?module=gastracker&action=gasoracle",
-        "arbitrum": "https://api.arbiscan.io/api?module=gastracker&action=gasoracle",
-        "optimism": "https://api-optimistic.etherscan.io/api?module=gastracker&action=gasoracle",
-        "bnb":      "https://api.bscscan.com/api?module=gastracker&action=gasoracle",
-    }
-    return await _fetch_evm_gas(urls[chain])
-
-
-def register_gas_tools(app: FastMCP):
+def register_price_tools(app: FastMCP):
     @app.tool()
-    async def get_eth_gas() -> dict:
-        """Get Ethereum gas prices"""
-        return await _format_gas_response("ethereum")
+    async def get_token_price(symbol: str) -> dict:
+        """Get realtime token price from CoinGecko"""
+        try:
+            coin_id = SYMBOL_MAP.get(symbol.upper(), symbol.lower())
 
-    @app.tool()
-    async def get_arbitrum_gas_price() -> dict:
-        """Get Arbitrum gas prices"""
-        return await _format_gas_response("arbitrum")
+            headers = {"accept": "application/json"}
+            if COINGECKO_API_KEY:
+                headers["x-cg-demo-api-key"] = COINGECKO_API_KEY
 
-    @app.tool()
-    async def get_optimism_gas_price() -> dict:
-        """Get Optimism gas prices"""
-        return await _format_gas_response("optimism")
+            async with httpx.AsyncClient() as client:
+                r = await client.get(
+                    "https://api.coingecko.com/api/v3/simple/price",
+                    headers=headers,
+                    params={
+                        "ids": coin_id,
+                        "vs_currencies": "usd",
+                        "include_24hr_change": "true",
+                        "include_market_cap": "true",
+                    },
+                    timeout=10,
+                )
+                r.raise_for_status()
+                data = r.json()
 
-    @app.tool()
-    async def get_bnb_gas_price() -> dict:
-        """Get BNB gas prices"""
-        return await _format_gas_response("bnb")
+            if coin_id not in data:
+                return {"error": f"Token '{symbol}' not found"}
+
+            price  = data[coin_id]["usd"]
+            change = data[coin_id].get("usd_24h_change", 0) or 0
+            mcap   = data[coin_id].get("usd_market_cap", 0) or 0
+
+            logger.info(f"💰 {symbol}: ${price}")
+            return {
+                "symbol":     symbol.upper(),
+                "price_usd":  format_usd(price),
+                "change_24h": f"{change:+.2f}%",
+                "market_cap": format_usd(mcap),
+            }
+        except Exception as e:
+            logger.error(f"Price error: {str(e)}")
+            return {"error": str(e)}
