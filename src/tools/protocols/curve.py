@@ -35,27 +35,29 @@ def register_curve_tools(app):
     @app.tool()
     async def get_curve_pools() -> dict:
         """Get top Curve Finance liquidity pools with APY"""
-        data = await _curve_get("/getPools/ethereum/main")
+        # ✅ เปลี่ยนเป็น factory-stable-ng — pools ที่ active มี APY จริง
+        data = await _curve_get("/getPools/ethereum/factory-stable-ng")
         if "error" in data:
             return data
         pools = data.get("data", {}).get("poolData", [])
+        # เรียงตาม TVL มากสุด แล้วเอา top 10
+        pools_sorted = sorted(pools, key=lambda p: p.get("usdTotal", 0), reverse=True)
         top = [
             {
                 "name": p.get("name"),
                 "tvl": p.get("usdTotal"),
-                # ✅ ใช้ gaugeCrvApy[0] แทน latestDailyApy
-                "apy_crv": p.get("gaugeCrvApy", [None])[0],
                 "apy_base": p.get("latestWeeklyApy"),
-                "gauge": p.get("gaugeAddress"),
+                "apy_crv": p.get("gaugeCrvApy", [None])[0] if p.get("gaugeCrvApy") else None,
+                "address": p.get("address"),
             }
-            for p in pools[:10]
+            for p in pools_sorted[:10]
         ]
         return {"pools": top, "protocol": "curve"}
 
     @app.tool()
     async def get_curve_pool_detail(pool_address: str) -> dict:
         """Get detailed info for a specific Curve pool"""
-        data = await _curve_get("/getPools/ethereum/main")
+        data = await _curve_get("/getPools/ethereum/factory-stable-ng")
         if "error" in data:
             return data
         pools = data.get("data", {}).get("poolData", [])
@@ -68,13 +70,11 @@ def register_curve_tools(app):
     @app.tool()
     async def get_curve_tvl() -> dict:
         """Get total TVL across all Curve pools"""
-        data = await _curve_get("/getPools/ethereum/main")
+        data = await _curve_get("/getPools/ethereum/factory-stable-ng")
         if "error" in data:
             return data
-
         pools = data.get("data", {}).get("poolData", [])
         total_tvl = sum(p.get("usdTotal", 0) for p in pools)
-
         return {
             "tvl": round(total_tvl, 2),
             "pool_count": len(pools),
