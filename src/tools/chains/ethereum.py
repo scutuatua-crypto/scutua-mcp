@@ -11,6 +11,7 @@ logger = get_logger(__name__)
 ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY", "")
 BASE_URL = "https://api.etherscan.io/api"
 
+
 async def _etherscan_get(params: dict) -> dict:
     cache_key = f"etherscan:{str(params)}"
     cached = get_cached(cache_key)
@@ -27,6 +28,7 @@ async def _etherscan_get(params: dict) -> dict:
         logger.error(f"Etherscan error: {e}")
         return {"error": str(e)}
 
+
 def register_ethereum_tools(app):
 
     @app.tool()
@@ -39,7 +41,11 @@ def register_ethereum_tools(app):
         })
         if "error" in data:
             return data
-        return {"address": address, "balance_wei": data.get("result"), "chain": "ethereum"}
+        return {
+            "address": address,
+            "balance_wei": data.get("result"),
+            "chain": "ethereum"
+        }
 
     @app.tool()
     async def get_eth_gas_price() -> dict:
@@ -50,13 +56,36 @@ def register_ethereum_tools(app):
         })
         if "error" in data:
             return data
-        result = data.get("result", {})
+
+        # 🔧 FIX: result อาจเป็น str (error msg) หรือ dict — ต้อง guard ก่อน .get()
+        result = data.get("result")
+        if not isinstance(result, dict):
+            return {
+                "error": f"Unexpected Etherscan response: {result}",
+                "chain": "ethereum"
+            }
+
         return {
             "slow": result.get("SafeGasPrice"),
             "standard": result.get("ProposeGasPrice"),
             "fast": result.get("FastGasPrice"),
+            "base_fee": result.get("suggestBaseFee"),
             "chain": "ethereum"
         }
+
+    @app.tool()
+    async def get_eth_gas() -> str:
+        """Get Ethereum gas prices"""
+        result = await get_eth_gas_price()
+        if "error" in result:
+            return f"⛽ Gas Error: {result['error']}"
+        return (
+            f"⛽ Ethereum Gas Prices\n"
+            f"🐢 Slow:     {result['slow']} Gwei\n"
+            f"⚡ Standard: {result['standard']} Gwei\n"
+            f"🚀 Fast:     {result['fast']} Gwei\n"
+            f"🔥 Base Fee: {result.get('base_fee', 'N/A')} Gwei"
+        )
 
     @app.tool()
     async def get_eth_tx_history(address: str, limit: int = 10) -> dict:
@@ -69,4 +98,18 @@ def register_ethereum_tools(app):
         })
         if "error" in data:
             return data
-        return {"address": address, "transactions": data.get("result", [])[:limit], "chain": "ethereum"}
+
+        # 🔧 FIX: result อาจเป็น str ถ้า address ไม่ valid หรือ API error
+        txs = data.get("result")
+        if not isinstance(txs, list):
+            return {
+                "error": f"Unexpected response: {txs}",
+                "address": address,
+                "chain": "ethereum"
+            }
+
+        return {
+            "address": address,
+            "transactions": txs[:limit],
+            "chain": "ethereum"
+        }
