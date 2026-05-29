@@ -9,7 +9,7 @@ def register_dashboard_tools(app: FastMCP):
             sites = [
                 ("WhaleTrucker Elite", "https://scutuatua-crypto.github.io"),
                 ("AssetFlow",          "https://assetflow-app-iota.vercel.app"),
-                ("Asset Platform",     "https://asset-platform-iota.vercel.app"),
+                ("Asset Platform", "https://asset-platform-cj10b7ikr-whaletrucker-6ad74437.vercel.app"),
                 ("WhaleTrucker Reef",  "https://scutuatua-crypto.github.io/whaletrucker-reef"),
                 ("CzoneDive Core",     "https://scutuatua-crypto.github.io/czonedive-core"),
                 ("Scutua-MCP",         "https://scutua-mcp.onrender.com/mcp"),
