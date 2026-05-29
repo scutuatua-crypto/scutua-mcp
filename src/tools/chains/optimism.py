@@ -8,8 +8,15 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-OPTIMISM_API_KEY = os.getenv("OPTIMISM_API_KEY", "")
-BASE_URL = "https://api-optimistic.etherscan.io/api"
+# Optimism ใช้ Etherscan API V2 (chainid=10) — key เดียวกัน
+OPTIMISM_API_KEY = (
+    os.getenv("OPTIMISM_API_KEY") or
+    os.getenv("ETHERSCAN_API_KEY") or
+    ""
+)
+
+BASE_URL = "https://api.etherscan.io/v2/api"
+CHAIN_ID = 10  # Optimism Mainnet
 
 async def _optimism_get(params: dict) -> dict:
     cache_key = f"optimism:{str(params)}"
@@ -17,8 +24,9 @@ async def _optimism_get(params: dict) -> dict:
     if cached:
         return cached
     try:
+        v2_params = {"chainid": CHAIN_ID, **params}
         async with httpx.AsyncClient() as client:
-            r = await client.get(BASE_URL, params=params, timeout=10)
+            r = await client.get(BASE_URL, params=v2_params, timeout=10)
             r.raise_for_status()
             data = r.json()
             set_cached(cache_key, data, ttl=60)
@@ -39,7 +47,17 @@ def register_optimism_tools(app):
         })
         if "error" in data:
             return data
-        return {"address": address, "balance_wei": data.get("result"), "chain": "optimism"}
+        balance_wei = data.get("result", "0")
+        try:
+            balance_eth = int(balance_wei) / 1e18
+        except:
+            balance_eth = 0
+        return {
+            "address": address,
+            "balance_wei": balance_wei,
+            "balance_eth": f"{balance_eth:.6f}",
+            "chain": "optimism"
+        }
 
     @app.tool()
     async def get_optimism_gas_price() -> dict:
