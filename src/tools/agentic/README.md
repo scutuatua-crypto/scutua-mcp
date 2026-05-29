@@ -10,7 +10,7 @@
 | File | Tool | Description |
 |------|------|-------------|
 | `arbitrage_scanner.py` | `scan_arbitrage` | Cross-chain price diff + net profit after fees |
-| `whale_alert.py` | `monitor_whales`, `test_telegram_alert` | Whale TX monitor → Telegram auto-alert |
+| `whale_alert.py` | `monitor_whales`, `get_whale_alert`, `test_telegram_alert` | Whale TX monitor via Bitquery → Telegram auto-alert |
 | `portfolio_autopilot.py` | `autopilot_analyze` | Portfolio rebalance engine → Telegram report |
 | `sentiment_signal.py` | `get_sentiment_signal` | Fear&Greed + Momentum → BUY/SELL/HOLD signal |
 
@@ -25,9 +25,9 @@ TELEGRAM_BOT_TOKEN=...
 TELEGRAM_CHANNEL_ID=...
 ```
 
-Whale Alert ต้องการเพิ่ม:
+Whale Alert ใช้ Bitquery แทน whale-alert.io (ฟรี):
 ```
-WHALE_ALERT_API_KEY=...   # get at whale-alert.io (free tier available)
+BITQUERY_TOKEN=...   # get at account.bitquery.io → Authorization
 ```
 
 ---
@@ -36,7 +36,7 @@ WHALE_ALERT_API_KEY=...   # get at whale-alert.io (free tier available)
 
 ```python
 from tools.agentic.arbitrage_scanner import scan_arbitrage
-from tools.agentic.whale_alert import monitor_whales, test_telegram_alert
+from tools.agentic.whale_alert import monitor_whales, get_whale_alert, test_telegram_alert
 from tools.agentic.portfolio_autopilot import autopilot_analyze
 from tools.agentic.sentiment_signal import get_sentiment_signal
 ```
