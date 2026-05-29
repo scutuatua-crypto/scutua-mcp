@@ -7,12 +7,13 @@ def register_dashboard_tools(app: FastMCP):
         """Get WhaleTrucker Dashboard summary"""
         try:
             sites = [
-                ("AssetFlow", "https://assetflow-whaletrucker.vercel.app"),
-                ("WhaleTrucker Reef", "https://whaletrucker-reef.vercel.app"),
-                ("Yields Tracker", "https://yield-hunter.vercel.app"),
+                ("AssetFlow",         "https://assetflow-app-iota.vercel.app"),
+                ("Asset Platform",    "https://asset-platform-iota.vercel.app"),
+                ("WhaleTrucker Reef", "https://scutuatua-crypto.github.io/whaletrucker-reef"),
+                ("Scutua-MCP Docs",   "https://scutuatua-crypto.github.io/scutua-mcp"),
             ]
             result = ["🐋 WhaleTrucker Dashboard Status:"]
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(follow_redirects=True) as client:
                 for name, url in sites:
                     try:
                         r = await client.get(url, timeout=5)
