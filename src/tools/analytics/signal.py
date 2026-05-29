@@ -68,7 +68,7 @@ def register_signal_tools(app: FastMCP):
         """Scan trading signals for all major tokens."""
         lines=["📡 Signal Scan\n","Token    RSI   MACD       Overall","-------- ----- ---------- ----------"]
         for t in ["BTC","ETH","SOL","DOT","ATOM"]:
-            c=MOCK_CLOSES.get(t,[])
+            c = await _closes(t) or MOCK_CLOSES.get(t,[])
             if len(c)<14: continue
             rsi=_rsi(c); macd=_macd(c); overall,_=_interpret(rsi,macd)
             lines.append(f"{t:<8} {rsi:>5.1f} {macd['macd']:>10.4f} {overall}")
