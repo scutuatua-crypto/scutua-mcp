@@ -20,6 +20,7 @@ from .heatmap import register_heatmap_tools
 from .etf import register_etf_tools
 from .macro import register_macro_tools
 from .points import register_points_tools
+from .exchange_rates import register_exchange_rates_tools  # ✅ เพิ่ม
 # --- NEW ---
 from .birdeye import register_birdeye_tools
 from .defilama import register_defilama_tools
@@ -49,6 +50,7 @@ def register_analytics_tools(app):
     register_etf_tools(app)
     register_macro_tools(app)
     register_points_tools(app)
+    register_exchange_rates_tools(app)  # ✅ เพิ่ม
     # --- NEW ---
     register_birdeye_tools(app)
     register_defilama_tools(app)
