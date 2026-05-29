@@ -1,11 +1,12 @@
 import httpx
 from mcp.server.fastmcp import FastMCP
 
-# Public Cosmos LCD endpoints — fallback chain
+# Public Cosmos LCD endpoints — updated 2026
 COSMOS_LCD_URLS = [
     "https://cosmos-rest.publicnode.com",
     "https://rest.cosmos.directory/cosmoshub",
-    "https://lcd.cosmos.network",
+    "https://lcd-cosmoshub.keplr.app",
+    "https://api.cosmos.network",
 ]
 
 def register_cosmos_tools(app: FastMCP):
