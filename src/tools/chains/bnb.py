@@ -8,14 +8,16 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-# ใช้ BSC_API_KEY โดยตรง (BscScan API — ไม่ผ่าน Etherscan V2 free plan)
+# BSC ใช้ Etherscan API V2 (chainid=56) — key เดียวกับ ETHERSCAN_API_KEY
 BSCSCAN_API_KEY = (
     os.getenv("BSC_API_KEY") or
     os.getenv("BSCSCAN_API_KEY") or
+    os.getenv("ETHERSCAN_API_KEY") or
     ""
 )
 
-BASE_URL = "https://api.bscscan.com/api"
+BASE_URL = "https://api.etherscan.io/v2/api"
+CHAIN_ID = 56  # BNB Smart Chain
 
 async def _bscscan_get(params: dict) -> dict:
     cache_key = f"bscscan:{str(params)}"
@@ -23,8 +25,9 @@ async def _bscscan_get(params: dict) -> dict:
     if cached:
         return cached
     try:
+        v2_params = {"chainid": CHAIN_ID, **params}
         async with httpx.AsyncClient() as client:
-            r = await client.get(BASE_URL, params=params, timeout=10)
+            r = await client.get(BASE_URL, params=v2_params, timeout=10)
             r.raise_for_status()
             data = r.json()
             set_cached(cache_key, data, ttl=60)
