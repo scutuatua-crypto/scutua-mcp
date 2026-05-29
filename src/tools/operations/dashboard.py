@@ -7,20 +7,19 @@ def register_dashboard_tools(app: FastMCP):
         """Get WhaleTrucker Dashboard summary"""
         try:
             sites = [
-                ("WhaleTrucker Elite", "https://scutuatua-crypto.github.io"),
-                ("AssetFlow",          "https://assetflow-app-iota.vercel.app"),
-                ("Asset Platform", "https://asset-platform-cj10b7ikr-whaletrucker-6ad74437.vercel.app"),
-                ("WhaleTrucker Reef",  "https://scutuatua-crypto.github.io/whaletrucker-reef"),
-                ("CzoneDive Core",     "https://scutuatua-crypto.github.io/czonedive-core"),
-                ("Scutua-MCP",         "https://scutua-mcp.onrender.com/mcp"),
+                ("WhaleTrucker Elite",  "https://github.com/scutuatua-crypto/whaletrucker-reef"),
+                ("AssetFlow",           "https://assetflow-app-iota.vercel.app"),
+                ("Asset Platform",      "https://asset-platform.vercel.app"),
+                ("Scutua Command Hub",  "https://scutuatua-crypto.github.io"),
+                ("Scutua-MCP",          "https://scutua-mcp.onrender.com/health"),
             ]
             result = ["🐋 WhaleTrucker Dashboard Status:"]
             async with httpx.AsyncClient(follow_redirects=True) as client:
                 for name, url in sites:
                     try:
-                        r = await client.get(url, timeout=5)
-                        status = "🟢 Live" if r.status_code == 200 else f"🔴 {r.status_code}"
-                    except:
+                        r = await client.get(url, timeout=8)
+                        status = "🟢 Live" if r.status_code in (200, 201) else f"🔴 {r.status_code}"
+                    except Exception:
                         status = "🔴 Down"
                     result.append(f"{name}: {status}")
             return "\n".join(result)
