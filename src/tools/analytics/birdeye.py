@@ -12,15 +12,23 @@ BIRDEYE_API_KEY = os.getenv("BIRDEYE_API_KEY", "")
 BASE_URL = "https://public-api.birdeye.so"
 
 
-async def _birdeye_get(endpoint: str, params: dict = {}) -> dict:
+async def _birdeye_get(endpoint: str, params: dict = {}, chain: str = "solana") -> dict:
     cache_key = f"birdeye:{endpoint}:{str(params)}"
     cached = get_cached(cache_key)
     if cached:
         return cached
     try:
-        headers = {"X-API-KEY": BIRDEYE_API_KEY}
+        headers = {
+            "X-API-KEY": BIRDEYE_API_KEY,
+            "x-chain": chain,
+        }
         async with httpx.AsyncClient() as client:
-            r = await client.get(f"{BASE_URL}{endpoint}", headers=headers, params=params, timeout=10)
+            r = await client.get(
+                f"{BASE_URL}{endpoint}",
+                headers=headers,
+                params=params,
+                timeout=10
+            )
             r.raise_for_status()
             data = r.json()
             set_cached(cache_key, data, ttl=60)
@@ -31,6 +39,7 @@ async def _birdeye_get(endpoint: str, params: dict = {}) -> dict:
 
 
 def register_birdeye_tools(app):
+
     @app.tool()
     async def get_token_price_birdeye(token_address: str) -> dict:
         """Get real-time token price from Birdeye"""
@@ -39,7 +48,7 @@ def register_birdeye_tools(app):
     @app.tool()
     async def get_token_trending_birdeye() -> dict:
         """Get trending tokens on Solana from Birdeye"""
-        return await _birdeye_get("/defi/token_trending")
+        return await _birdeye_get("/defi/token_trending", {"sort_by": "volume24hUSD", "sort_type": "desc", "offset": 0, "limit": 20})
 
     @app.tool()
     async def get_wallet_portfolio_birdeye(wallet_address: str) -> dict:
