@@ -1,76 +1,85 @@
 """
 BNB Chain Tools — Scutua-MCP
+Uses public BSC RPC — no API key needed
 """
-import os
 import httpx
 from src.utils.cache import get_cached, set_cached
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-# BSC ใช้ Etherscan API V2 (chainid=56) — key เดียวกับ ETHERSCAN_API_KEY
-BSCSCAN_API_KEY = (
-    os.getenv("BSC_API_KEY") or
-    os.getenv("BSCSCAN_API_KEY") or
-    os.getenv("ETHERSCAN_API_KEY") or
-    ""
-)
+# Public BSC RPC endpoints — ฟรี ไม่ต้อง key
+BSC_RPC_URLS = [
+    "https://bsc-dataseed.binance.org/",
+    "https://bsc-dataseed1.defibit.io/",
+    "https://bsc-dataseed1.ninicoin.io/",
+]
 
-BASE_URL = "https://api.etherscan.io/v2/api"
-CHAIN_ID = 56  # BNB Smart Chain
-
-async def _bscscan_get(params: dict) -> dict:
-    cache_key = f"bscscan:{str(params)}"
+async def _rpc_call(method: str, params: list) -> dict:
+    payload = {"jsonrpc": "2.0", "method": method, "params": params, "id": 1}
+    cache_key = f"bnb_rpc:{method}:{str(params)}"
     cached = get_cached(cache_key)
     if cached:
         return cached
-    try:
-        v2_params = {"chainid": CHAIN_ID, **params}
-        async with httpx.AsyncClient() as client:
-            r = await client.get(BASE_URL, params=v2_params, timeout=10)
-            r.raise_for_status()
-            data = r.json()
-            set_cached(cache_key, data, ttl=60)
-            return data
-    except Exception as e:
-        logger.error(f"BscScan error: {e}")
-        return {"error": str(e)}
+    for url in BSC_RPC_URLS:
+        try:
+            async with httpx.AsyncClient() as client:
+                r = await client.post(url, json=payload, timeout=10)
+                r.raise_for_status()
+                data = r.json()
+                if "result" in data:
+                    set_cached(cache_key, data, ttl=30)
+                    return data
+        except Exception as e:
+            logger.warning(f"BSC RPC {url} failed: {e}")
+            continue
+    return {"error": "All BSC RPC endpoints failed"}
+
 
 def register_bnb_tools(app):
 
     @app.tool()
     async def get_bnb_balance(address: str) -> dict:
         """Get BNB balance on BNB Chain"""
-        data = await _bscscan_get({
-            "module": "account", "action": "balance",
-            "address": address, "tag": "latest",
-            "apikey": BSCSCAN_API_KEY
-        })
+        data = await _rpc_call("eth_getBalance", [address, "latest"])
         if "error" in data:
             return data
-        return {"address": address, "balance_wei": data.get("result"), "chain": "bnb"}
+        hex_balance = data.get("result", "0x0")
+        balance_wei = int(hex_balance, 16)
+        balance_bnb = balance_wei / 1e18
+        return {
+            "address": address,
+            "balance_wei": str(balance_wei),
+            "balance_bnb": f"{balance_bnb:.6f}",
+            "chain": "bnb"
+        }
 
     @app.tool()
     async def get_bnb_gas_price() -> dict:
         """Get current BNB Chain gas price"""
-        data = await _bscscan_get({
-            "module": "gastracker", "action": "gasoracle",
-            "apikey": BSCSCAN_API_KEY
-        })
+        data = await _rpc_call("eth_gasPrice", [])
         if "error" in data:
             return data
-        result = data.get("result", {})
-        return {"gas_price": result.get("ProposeGasPrice"), "chain": "bnb"}
+        hex_gas = data.get("result", "0x0")
+        gas_wei = int(hex_gas, 16)
+        gas_gwei = gas_wei / 1e9
+        return {
+            "gas_price": f"{gas_gwei:.4f}",
+            "gas_price_wei": str(gas_wei),
+            "chain": "bnb"
+        }
 
     @app.tool()
     async def get_bnb_tx_history(address: str, limit: int = 10) -> dict:
-        """Get recent transactions on BNB Chain"""
-        data = await _bscscan_get({
-            "module": "account", "action": "txlist",
-            "address": address, "page": 1,
-            "offset": limit, "sort": "desc",
-            "apikey": BSCSCAN_API_KEY
-        })
+        """Get recent transactions on BNB Chain (last block txs only via RPC)"""
+        # RPC ไม่มี tx history โดยตรง — ดึง latest block number แทน
+        data = await _rpc_call("eth_getTransactionCount", [address, "latest"])
         if "error" in data:
             return data
-        return {"address": address, "transactions": data.get("result", [])[:limit], "chain": "bnb"}
+        tx_count = int(data.get("result", "0x0"), 16)
+        return {
+            "address": address,
+            "total_tx_count": tx_count,
+            "note": "Full tx history requires BscScan API — RPC mode shows tx count only",
+            "chain": "bnb"
+        }
