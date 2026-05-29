@@ -1,11 +1,11 @@
-from .arbitrage_scanner import scan_arbitrage
-from .whale_alert import monitor_whales, test_telegram_alert
-from .portfolio_autopilot import autopilot_analyze
-from .sentiment_signal import get_sentiment_signal
+from .arbitrage_scanner import register_arbitrage_tools
+from .whale_alert import register_whale_tools
+from .portfolio_autopilot import register_autopilot_tools
+from .sentiment_signal import register_sentiment_tools
+
 
 def register_agentic_tools(app):
-    app.add_tool(scan_arbitrage)
-    app.add_tool(monitor_whales)
-    app.add_tool(test_telegram_alert)
-    app.add_tool(autopilot_analyze)
-    app.add_tool(get_sentiment_signal)
+    register_arbitrage_tools(app)
+    register_whale_tools(app)
+    register_autopilot_tools(app)
+    register_sentiment_tools(app)
