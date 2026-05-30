@@ -4,10 +4,12 @@
 [![FastMCP](https://img.shields.io/badge/FastMCP-3.3.1-blue?logo=python)](https://github.com/jlowin/fastmcp)
 [![Python](https://img.shields.io/badge/Python-3.11+-yellow?logo=python)](https://python.org)
 [![Tools](https://img.shields.io/badge/Tools-157-orange)](https://github.com/scutuatua-crypto/scutua-mcp)
+[![npm](https://img.shields.io/badge/npm-scutua--mcp-red?logo=npm)](https://www.npmjs.com/package/scutua-mcp)
 [![License](https://img.shields.io/badge/License-MIT-purple)](LICENSE)
 [![Claude](https://img.shields.io/badge/Claude.ai-Connected-orange?logo=anthropic)](https://claude.ai)
 [![smithery badge](https://smithery.ai/badge/scutuatua/scutua-mcp)](https://smithery.ai/servers/scutuatua/scutua-mcp)
 [![Quality](https://img.shields.io/badge/Smithery_Score-84%2F100-brightgreen)](https://smithery.ai/servers/scutuatua/scutua-mcp)
+[![Avalanche](https://img.shields.io/badge/Avalanche-Integration-red?logo=avalanche)](https://build.avax.network/integrations)
 
 > **Model Context Protocol Server** — WhaleTrucker Ecosystem V2  
 > Built with Python | FastMCP 3.3.1 | Streamable HTTP Transport  
@@ -27,9 +29,29 @@ Connected to Claude.ai and Smithery. Deployed from iPad. No PC required. 😤
 
 ---
 
-## 🆕 What's New — Dimension 8 LIVE
+## 🆕 What's New
 
-5 new tools just dropped, bringing the total to **157**:
+### npm Package — Now Available
+
+Install via npx — no setup required:
+
+```bash
+npx scutua-mcp              # Quick connect instructions
+npx scutua-mcp --config     # Claude Desktop JSON config
+npx scutua-mcp --vscode     # VS Code / Cursor JSON config
+npx scutua-mcp --windsurf   # Windsurf JSON config
+npx scutua-mcp --all-configs # All clients at once
+npx scutua-mcp --info       # Full 8 Dimensions breakdown
+npx scutua-mcp --test       # Test if server is live
+```
+
+### Avalanche Ecosystem Integration
+
+Scutua-MCP is now listed in the **official Avalanche integrations directory** at [build.avax.network](https://build.avax.network/integrations) — giving Avalanche developers direct access to live DeFi data through any MCP-compatible AI client.
+
+### Dimension 8 — Ecosystem Consciousness LIVE
+
+5 new tools bringing the total to **157**:
 
 | Tool | Description |
 |------|-------------|
@@ -122,13 +144,33 @@ Every execution tool is built with safety-first design:
 
 ## Quick Connect
 
+### npx (Fastest)
+
+```bash
+npx scutua-mcp --config
+```
+
+Prints the exact JSON to paste into your AI client.
+
 ### Claude.ai
 
-1. Settings → Customize → Connectors → Add custom connector
+1. Settings → Integrations → Add custom connector
 2. Name: `Scutua-MCP`
 3. URL: `https://scutua-mcp.onrender.com/mcp`
 
-### VS Code / Cursor
+### Claude Desktop
+
+```json
+{
+  "mcpServers": {
+    "scutua-mcp": {
+      "url": "https://scutua-mcp.onrender.com/mcp"
+    }
+  }
+}
+```
+
+### VS Code / Cursor / Windsurf
 
 ```json
 {
@@ -153,9 +195,11 @@ Every execution tool is built with safety-first design:
 | Render | ✅ Live |
 | Smithery | ✅ Published (Score: 84/100) |
 | Claude.ai | ✅ Connected (157 tools) |
+| npm | ✅ Published (npx scutua-mcp) |
+| Avalanche Integration | ✅ PR #4244 — ava-labs/builders-hub |
 | Transport | ✅ Streamable HTTP (FastMCP 3.3.1) |
 | Architecture | ✅ 8-Dimensional V2 |
-| CI/CD | ✅ GitHub Actions (1,500+ runs) |
+| CI/CD | ✅ GitHub Actions (2,300+ runs) |
 | Execution Layer | ✅ Live (Swap, DCA, Stop Loss, Sniper) |
 | Ecosystem Consciousness | ✅ Live 🌌 |
 
