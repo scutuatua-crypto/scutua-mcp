@@ -10,6 +10,7 @@
 [![smithery badge](https://smithery.ai/badge/scutuatua/scutua-mcp)](https://smithery.ai/servers/scutuatua/scutua-mcp)
 [![Quality](https://img.shields.io/badge/Smithery_Score-84%2F100-brightgreen)](https://smithery.ai/servers/scutuatua/scutua-mcp)
 [![Avalanche](https://img.shields.io/badge/Avalanche-Integration-red?logo=avalanche)](https://build.avax.network/integrations)
+[![codecov](https://codecov.io/gh/scutuatua-crypto/github-mcp-server/branch/main/graph/badge.svg)](https://codecov.io/gh/scutuatua-crypto/github-mcp-server)
 
 > **Model Context Protocol Server** — WhaleTrucker Ecosystem V2  
 > Built with Python | FastMCP 3.3.1 | Streamable HTTP Transport  
