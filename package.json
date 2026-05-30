@@ -1,0 +1,35 @@
+{
+  "name": "scutua-mcp",
+  "version": "1.0.0",
+  "description": "WhaleTrucker MCP Server — 157 tools for real-time Avalanche & multi-chain DeFi data via Model Context Protocol",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "crypto",
+    "defi",
+    "avalanche",
+    "solana",
+    "whale",
+    "blockchain",
+    "ai",
+    "claude",
+    "whaletrucker"
+  ],
+  "homepage": "https://github.com/scutuatua-crypto/scutua-mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scutuatua-crypto/scutua-mcp.git"
+  },
+  "author": "scutuatua-crypto <scutua@gmail.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "bin": {
+    "scutua-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
