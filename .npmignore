@@ -1,4 +1,4 @@
-# Python source — not needed in npm package
+# Python source
 src/
 tests/
 tools/
@@ -13,11 +13,10 @@ smithery.yaml
 *.py
 *.pyc
 __pycache__/
-.python-version
 venv/
 .venv/
 
-# Dev files
+# Dev & CI
 .github/
 *.log
 .DS_Store
