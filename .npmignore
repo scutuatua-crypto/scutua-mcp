@@ -1,0 +1,23 @@
+# Python source — not needed in npm package
+src/
+tests/
+tools/
+config/
+docs/
+main.py
+pyproject.toml
+requirements.txt
+Dockerfile
+smithery.yaml
+.env
+*.py
+*.pyc
+__pycache__/
+.python-version
+venv/
+.venv/
+
+# Dev files
+.github/
+*.log
+.DS_Store
