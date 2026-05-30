@@ -3,674 +3,360 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WhaleTrucker Ecosystem</title>
+<title>Scutua MCP — Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#080a0f;
-  --bg2:#0d1117;
-  --bg3:#111620;
-  --border:#1e2a3a;
-  --border2:#243344;
-  --c:#00d4aa;
-  --cb:#3d9eff;
-  --cy:#f0c040;
-  --cr:#ff4d6d;
-  --cg:#00d4aa;
-  --text:#e8f0fe;
-  --muted:#4a6080;
-  --sub:#8aa0bc;
+:root {
+  --green: #00FF94;
+  --green-dim: #00FF9420;
+  --green-mid: #00FF9460;
+  --red: #FF4444;
+  --red-dim: #FF444420;
+  --yellow: #FFB800;
+  --yellow-dim: #FFB80020;
+  --bg: #080C0A;
+  --bg2: #0D1210;
+  --bg3: #111815;
+  --border: #1A2820;
+  --border2: #243830;
+  --text: #E8F5F0;
+  --text2: #6B8F80;
+  --text3: #3D5A4F;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--bg)}
-body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;overflow-x:hidden;min-height:100vh}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--text);font-family:var(--sans)}
+body{min-height:100vh;background:var(--bg);overflow-x:hidden}
+
+/* noise overlay */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4;pointer-events:none;z-index:0}
 
 /* grid bg */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:60px 60px;opacity:.35;pointer-events:none;z-index:0
-}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
 
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;height:52px;
-  background:rgba(8,10,15,.92);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border)
-}
-.nav-logo{
-  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;
-  color:var(--c);letter-spacing:.08em;text-decoration:none;
-  display:flex;align-items:center;gap:10px
-}
-.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--c);animation:pulse 2s ease-in-out infinite}
-.nav-links{display:flex;gap:6px;list-style:none}
-.nav-links a{
-  color:var(--muted);text-decoration:none;font-size:10px;letter-spacing:.15em;
-  text-transform:uppercase;padding:6px 12px;border-radius:3px;
-  transition:all .2s;border:1px solid transparent
-}
-.nav-links a:hover{color:var(--c);border-color:var(--border2)}
-.nav-ticker{
-  font-size:10px;color:var(--sub);display:flex;gap:14px;align-items:center
-}
-.ticker-item{display:flex;gap:5px;align-items:center}
-.ticker-name{color:var(--muted)}
-.ticker-up{color:var(--cg)}
-.ticker-dn{color:var(--cr)}
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem}
 
-/* HERO */
-#hero{
-  position:relative;z-index:5;
-  min-height:100vh;display:flex;flex-direction:column;
-  justify-content:center;padding:100px 48px 80px;
-  max-width:1100px;margin:0 auto
-}
-.hero-tag{
-  font-size:10px;letter-spacing:.3em;text-transform:uppercase;
-  color:var(--c);margin-bottom:24px;display:flex;align-items:center;gap:12px
-}
-.hero-tag::after{content:'';flex:1;height:1px;background:var(--border2);max-width:80px}
-.hero-h1{
-  font-family:'IBM Plex Sans',sans-serif;font-weight:300;
-  font-size:clamp(40px,7vw,88px);line-height:1;letter-spacing:-.03em;
-  margin-bottom:20px
-}
-.hero-h1 strong{font-weight:500;color:var(--c)}
-.hero-h1 em{font-style:normal;color:var(--cb)}
-.hero-rule{
-  font-size:12px;color:var(--sub);line-height:1.9;
-  max-width:520px;margin-bottom:40px;border-left:2px solid var(--border2);
-  padding-left:16px
-}
-.hero-rule b{color:var(--c);font-weight:500}
-.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:56px}
-.btn-p{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
-  letter-spacing:.1em;text-transform:uppercase;text-decoration:none;
-  padding:12px 24px;border-radius:2px;
-  background:var(--c);color:var(--bg);transition:all .2s
-}
-.btn-p:hover{background:#fff;transform:translateY(-1px)}
-.btn-g{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;
-  letter-spacing:.1em;text-transform:uppercase;text-decoration:none;
-  padding:12px 24px;border-radius:2px;
-  border:1px solid var(--border2);color:var(--sub);transition:all .2s
-}
-.btn-g:hover{border-color:var(--c);color:var(--c)}
-.stats-bar{
-  display:flex;gap:0;padding-top:32px;
-  border-top:1px solid var(--border)
-}
-.stat{padding:0 32px 0 0;margin-right:32px;border-right:1px solid var(--border)}
-.stat:last-child{border:none}
-.stat-n{font-size:32px;font-weight:600;color:var(--text);line-height:1}
-.stat-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.2em;margin-top:4px}
+/* animations */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.08}}
+@keyframes pulseR{0%,100%{opacity:1}50%{opacity:.15}}
+@keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(2000%)}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px var(--green-mid)}50%{box-shadow:0 0 20px var(--green),0 0 40px var(--green-dim)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes blink{0%,100%{opacity:1}49%{opacity:1}50%{opacity:0}99%{opacity:0}}
 
-/* MARKET TICKER SECTION */
-#market{position:relative;z-index:5;padding:0;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.market-scroll{
-  display:flex;gap:0;
-  animation:scroll-left 30s linear infinite;
-  width:max-content
-}
-.market-scroll:hover{animation-play-state:paused}
-.m-item{
-  display:flex;align-items:center;gap:10px;padding:12px 28px;
-  border-right:1px solid var(--border);white-space:nowrap;min-width:180px
-}
-.m-symbol{font-size:11px;font-weight:600;color:var(--text)}
-.m-price{font-size:11px;color:var(--sub)}
-.m-chg{font-size:10px;padding:2px 6px;border-radius:2px}
-.m-up{background:rgba(0,212,170,.1);color:var(--cg)}
-.m-dn{background:rgba(255,77,109,.1);color:var(--cr)}
+/* header */
+.header{position:relative;overflow:hidden;border:1px solid var(--border2);border-radius:12px;padding:24px 28px;background:var(--bg2);margin-bottom:1.5rem;animation:fadeUp .5s ease both}
+.scan-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green-mid),transparent);animation:scan 4s linear infinite;pointer-events:none}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.logo-area{display:flex;align-items:center;gap:14px}
+.logo-dot{width:14px;height:14px;border-radius:50%;background:var(--green);animation:glow 2s ease-in-out infinite;flex-shrink:0}
+.logo-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.logo-sub{font-size:11px;color:var(--text2);font-family:var(--mono);margin-top:3px}
+.alive-badge{display:flex;align-items:center;gap:6px;background:var(--green-dim);border:1px solid var(--green-mid);border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:.08em;font-family:var(--mono)}
+.alive-badge span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.2s infinite}
 
-/* ARCH SECTION */
-.sec{position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:72px 48px}
-.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:48px}
-.sec-label{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--c)}
-.sec-title{font-family:'IBM Plex Sans',sans-serif;font-weight:300;font-size:clamp(22px,3vw,36px);letter-spacing:-.02em}
-.sec-line{flex:1;height:1px;background:var(--border)}
+.tagline{font-family:var(--mono);font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:14px;display:flex;align-items:center;gap:8px}
+.cursor{display:inline-block;animation:blink 1s infinite;color:var(--green)}
 
-/* ARCH VISUAL */
-.arch-container{display:grid;grid-template-columns:1fr 2px 1fr;gap:0;align-items:start}
-.arch-col{display:flex;flex-direction:column;gap:12px}
-.arch-spine{background:var(--border2)}
-.arch-node{
-  background:var(--bg2);border:1px solid var(--border);
-  padding:20px 22px;position:relative;transition:border-color .2s;
-  cursor:default
-}
-.arch-node:hover{border-color:var(--border2)}
-.arch-node.main-node{border-color:var(--cb);border-left:3px solid var(--cb)}
-.arch-node.defi-node{border-color:var(--c);border-left:3px solid var(--c)}
-.arch-node-tag{font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
-.main-node .arch-node-tag{color:var(--cb)}
-.defi-node .arch-node-tag{color:var(--c)}
-.arch-node-name{font-size:15px;font-weight:500;margin-bottom:6px}
-.arch-node-sub{font-size:11px;color:var(--sub);line-height:1.7;margin-bottom:12px}
-.chip-row{display:flex;flex-wrap:wrap;gap:5px}
-.chip{font-size:9px;padding:3px 8px;border:1px solid var(--border2);color:var(--muted);letter-spacing:.05em}
-.chip-b{border-color:rgba(61,158,255,.3);color:var(--cb)}
-.chip-g{border-color:rgba(0,212,170,.3);color:var(--c)}
+/* ticker */
+.ticker-wrap{overflow:hidden;border:1px solid var(--border);border-radius:8px;background:var(--bg3);padding:8px 0;margin-bottom:1.5rem;animation:fadeUp .5s .1s ease both;opacity:0;animation-fill-mode:forwards}
+.ticker-inner{display:flex;white-space:nowrap;animation:ticker 30s linear infinite}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 28px;font-family:var(--mono);font-size:11px;color:var(--text2);border-right:1px solid var(--border)}
+.ticker-item .val{color:var(--text)}
+.ticker-item .dn{color:var(--red)}
+.ticker-item .up{color:var(--green)}
 
-/* PROJECTS */
-.divider{height:1px;background:var(--border);position:relative;z-index:5;margin:0 48px}
-.tier-label{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-.tier-pill{font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:4px 10px;border-radius:2px}
-.t1-pill{background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:var(--cg)}
-.t2-pill{background:rgba(240,192,64,.08);border:1px solid rgba(240,192,64,.25);color:var(--cy)}
-.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--border);margin-bottom:1px}
-.proj-card{
-  background:var(--bg2);padding:24px;text-decoration:none;
-  color:var(--text);display:block;position:relative;
-  transition:background .2s;overflow:hidden
-}
-.proj-card:hover{background:var(--bg3)}
-.proj-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:var(--c);transform:scaleX(0);transition:transform .3s;transform-origin:left
-}
-.proj-card:hover::before{transform:scaleX(1)}
-.proj-icon{font-size:22px;margin-bottom:14px}
-.proj-name{font-size:14px;font-weight:500;margin-bottom:6px}
-.proj-desc{font-size:11px;color:var(--sub);line-height:1.7;margin-bottom:14px}
-.proj-meta{font-size:9px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.proj-arrow{position:absolute;top:20px;right:20px;font-size:12px;color:var(--muted)}
-.proj-card:hover .proj-arrow{color:var(--c)}
-.warn-bar{
-  background:rgba(240,192,64,.04);border:1px solid rgba(240,192,64,.12);
-  padding:8px 14px;font-size:10px;color:rgba(240,192,64,.6);
-  margin:0 0 20px;
-}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.5rem;animation:fadeUp .5s .15s ease both;opacity:0;animation-fill-mode:forwards}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 10px;text-align:center;position:relative;overflow:hidden;transition:border-color .2s}
+.stat:hover{border-color:var(--green-mid)}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green-dim),transparent)}
+.sn{font-size:22px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.sl{font-size:10px;color:var(--text2);margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
 
-/* CONNECT */
-.connect-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
-.cc{background:var(--bg2);padding:28px}
-.cc h3{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
-.cc p{font-size:11px;color:var(--sub);line-height:1.8;margin-bottom:16px}
-.ep{
-  background:var(--bg);border:1px solid var(--border2);
-  padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;
-  margin-bottom:10px
-}
-.ep-url{font-size:10px;color:var(--cg);word-break:break-all}
-.copy-btn{
-  background:none;border:1px solid var(--border2);color:var(--muted);
-  font-family:'IBM Plex Mono',monospace;font-size:9px;padding:4px 8px;
-  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
-  transition:all .2s;white-space:nowrap
-}
-.copy-btn:hover{border-color:var(--c);color:var(--c)}
-.status-row{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted)}
-.sdot{width:6px;height:6px;border-radius:50%;animation:pulse 2s ease-in-out infinite}
-.sdot-g{background:var(--cg);box-shadow:0 0 0 2px rgba(0,212,170,.2)}
-.sdot-b{background:var(--cb);box-shadow:0 0 0 2px rgba(61,158,255,.2)}
-.sdot-y{background:var(--cy);box-shadow:0 0 0 2px rgba(240,192,64,.2)}
-.code-block{
-  background:var(--bg);border:1px solid var(--border);
-  padding:12px 14px;font-size:10px;color:var(--sub);
-  line-height:1.9;overflow-x:auto;white-space:pre
-}
-.ck{color:var(--cb)}.cu{color:var(--c)}
+/* section label */
+.sec{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin:1.5rem 0 10px;display:flex;align-items:center;gap:8px;font-family:var(--mono)}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* LIVE MARKET PANEL */
-#live{position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:72px 48px}
-.market-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border)}
-.m-card{
-  background:var(--bg2);padding:20px 22px;
-  position:relative;overflow:hidden;transition:background .2s
-}
-.m-card:hover{background:var(--bg3)}
-.m-name{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
-.m-val{font-size:22px;font-weight:600;color:var(--text);line-height:1;margin-bottom:4px;font-family:'IBM Plex Mono',monospace}
-.m-change{font-size:11px;display:flex;align-items:center;gap:6px}
-.up{color:var(--cg)}.dn{color:var(--cr)}
-.m-spark{
-  position:absolute;bottom:0;left:0;right:0;height:32px;opacity:.3
-}
+/* chains */
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.5rem;animation:fadeUp .5s .2s ease both;opacity:0;animation-fill-mode:forwards}
+.pill{font-size:10px;padding:4px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);font-family:var(--mono);letter-spacing:.04em}
 
-/* FOOTER */
-footer{
-  position:relative;z-index:5;border-top:1px solid var(--border);
-  padding:32px 48px;display:flex;align-items:center;justify-content:space-between;
-  max-width:1100px;margin:0 auto
-}
-.footer-id{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.1em}
-.footer-copy{font-size:10px;color:var(--muted)}
+/* dashboards */
+.dcards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;animation:fadeUp .5s .25s ease both;opacity:0;animation-fill-mode:forwards}
+.dc{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:1px solid var(--border);border-radius:10px;background:var(--bg2);transition:border-color .2s,background .2s}
+.dc:hover{border-color:var(--green-mid);background:var(--bg3)}
+.dn{font-size:12px;font-weight:600;color:var(--text)}
+.ds{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:2px}
+.live-row{display:flex;align-items:center;gap:6px}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;flex-shrink:0}
+.lbadge{font-size:10px;font-family:var(--mono);color:var(--green);letter-spacing:.04em}
 
-/* ANIMATIONS */
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@keyframes scroll-left{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes tick{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+/* tokens */
+.toks{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1rem;animation:fadeUp .5s .3s ease both;opacity:0;animation-fill-mode:forwards}
+.tok{border:1px solid var(--border);border-radius:10px;padding:14px 8px;background:var(--bg2);text-align:center;transition:border-color .2s}
+.tok:hover{border-color:var(--border2)}
+.tn{font-size:10px;color:var(--text2);font-family:var(--mono);margin-bottom:8px;letter-spacing:.06em}
+.tr{font-size:22px;font-weight:700;font-family:var(--mono)}
+.tr.low{color:var(--red)}
+.tr.mid{color:var(--yellow)}
+.tr.ok{color:var(--text2)}
+.tm{font-size:9px;color:var(--text3);margin-top:3px;font-family:var(--mono)}
+.tb{font-size:9px;padding:3px 6px;border-radius:4px;margin-top:7px;display:inline-block;font-family:var(--mono);letter-spacing:.04em}
+.tb.br{background:var(--red-dim);color:var(--red);border:1px solid #FF444430}
+.tb.bk{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
 
-.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
-.fade-in.on{opacity:1;transform:none}
+/* signal bars */
+.signal-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;animation:fadeUp .5s .35s ease both;opacity:0;animation-fill-mode:forwards}
+.sig-head{display:grid;grid-template-columns:50px 1fr 50px 80px;gap:12px;padding:8px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.sig-hl{font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.sig-row{display:grid;grid-template-columns:50px 1fr 50px 80px;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border)}
+.sig-row:last-child{border-bottom:none}
+.sig-row:hover{background:var(--bg3)}
+.sig-name{font-size:12px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.sig-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+.sig-fill{height:100%;border-radius:2px}
+.sig-val{font-size:12px;font-family:var(--mono);text-align:right}
+.sig-badge{font-size:9px;padding:3px 8px;border-radius:4px;text-align:center;font-family:var(--mono);letter-spacing:.04em}
 
-#hero .hero-tag,#hero .hero-h1,#hero .hero-rule,#hero .cta-row,#hero .stats-bar{
-  animation:fadeUp .6s ease both
-}
-#hero .hero-h1{animation-delay:.08s}
-#hero .hero-rule{animation-delay:.16s}
-#hero .cta-row{animation-delay:.24s}
-#hero .stats-bar{animation-delay:.32s}
+/* fear */
+.fear{border:1px solid var(--border);border-radius:10px;padding:18px;background:var(--bg2);margin-bottom:1rem;animation:fadeUp .5s .4s ease both;opacity:0;animation-fill-mode:forwards}
+.fear-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+.fn{font-size:52px;font-weight:700;color:var(--red);font-family:var(--mono);line-height:1}
+.fc{font-size:10px;color:var(--text2);margin-bottom:6px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.fear-badge{font-size:10px;padding:4px 10px;border-radius:5px;background:var(--red-dim);color:var(--red);border:1px solid #FF444430;font-family:var(--mono);letter-spacing:.04em}
+.spectrum{display:flex;height:4px;border-radius:2px;overflow:hidden;margin-bottom:14px;gap:2px}
+.s1{flex:2;background:#FF4444;border-radius:2px}
+.s2{flex:2;background:#FF8800;border-radius:2px}
+.s3{flex:2;background:#FFB800;border-radius:2px}
+.s4{flex:2;background:#88CC00;border-radius:2px}
+.s5{flex:2;background:#00FF94;border-radius:2px}
+.mbars{display:flex;gap:6px;align-items:flex-end;height:56px}
+.mbw{flex:1;display:flex;flex-direction:column;align-items:center}
+.mb{width:100%;border-radius:3px 3px 0 0;min-height:4px}
+.mbl{font-size:9px;color:var(--text3);margin-top:4px;font-family:var(--mono)}
 
-@media(max-width:768px){
-  nav{padding:0 16px}
-  .nav-links,.nav-ticker{display:none}
-  #hero,.sec,#live{padding-left:20px;padding-right:20px}
-  .arch-container{grid-template-columns:1fr}
-  .arch-spine{display:none}
-  .connect-grid{grid-template-columns:1fr}
-  .stats-bar{flex-wrap:wrap;gap:20px}
-  .stat{border:none;padding:0;margin:0}
-  footer{flex-direction:column;gap:8px;text-align:center;padding:24px 20px}
-  .divider{margin:0 20px}
-}
+/* whales */
+.whales{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;animation:fadeUp .5s .45s ease both;opacity:0;animation-fill-mode:forwards}
+.whead{display:flex;justify-content:space-between;padding:9px 15px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.whl{font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase}
+.wr{display:flex;align-items:center;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--border)}
+.wr:last-child{border-bottom:none}
+.wr:hover{background:var(--bg3)}
+.wa{font-family:var(--mono);font-size:11px;color:var(--text2)}
+.wv{font-size:13px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.wbar{height:2px;border-radius:1px;background:var(--bg3);margin-top:4px}
+.wfill{height:100%;border-radius:1px;background:var(--green)}
+.wt{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.rk{font-size:11px;color:var(--text3);min-width:24px;font-family:var(--mono)}
+
+/* tools grid */
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:1rem;animation:fadeUp .5s .5s ease both;opacity:0;animation-fill-mode:forwards}
+.tool-cat{border:1px solid var(--border);border-radius:8px;padding:12px 10px;background:var(--bg2);text-align:center;transition:border-color .2s}
+.tool-cat:hover{border-color:var(--green-mid)}
+.tc-n{font-size:11px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tc-c{font-size:10px;color:var(--text2);font-family:var(--mono)}
+.tc-dot{width:5px;height:5px;border-radius:50%;background:var(--green);margin:8px auto 0;animation:pulse 1.4s infinite}
+
+/* telegram */
+.tg{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:10px;background:var(--bg2);border:1px solid var(--green-mid);margin-bottom:1rem;animation:fadeUp .5s .55s ease both;opacity:0;animation-fill-mode:forwards}
+.tgd{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite .5s;flex-shrink:0}
+.tg-t{font-size:13px;font-weight:600;color:var(--text)}
+.tg-s{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:2px}
+.tg-b{margin-left:auto;font-size:10px;padding:4px 10px;border-radius:5px;background:var(--green-dim);color:var(--green);border:1px solid var(--green-mid);font-family:var(--mono);letter-spacing:.04em}
+
+/* footer */
+.foot{font-size:11px;color:var(--text3);text-align:center;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);line-height:2;animation:fadeUp .5s .6s ease both;opacity:0;animation-fill-mode:forwards}
+.foot-hl{color:var(--green)}
+.smithery{display:inline-block;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:3px 10px;font-size:10px;color:var(--text2);font-family:var(--mono)}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">
-    <span class="nav-logo-dot"></span>
-    WT_ECOSYSTEM
-  </a>
-  <ul class="nav-links">
-    <li><a href="#arch">Architecture</a></li>
-    <li><a href="#live">Market</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#connect">Connect</a></li>
-  </ul>
-  <div class="nav-ticker" id="nav-ticker">
-    <span style="color:var(--muted);font-size:9px">loading...</span>
+<!-- HEADER -->
+<div class="header">
+  <div class="scan-line"></div>
+  <div class="header-top">
+    <div class="logo-area">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-title">SCUTUA-MCP</div>
+        <div class="logo-sub">scutuatua-crypto · Command Center</div>
+      </div>
+    </div>
+    <div class="alive-badge"><span></span>ALIVE &amp; BEATING</div>
   </div>
-</nav>
+  <div class="tagline">$ v3.3.1 &nbsp;·&nbsp; 157 tools &nbsp;·&nbsp; 80 repos &nbsp;·&nbsp; 11 chains &nbsp;·&nbsp; no money · no cry · just build 😤 <span class="cursor">█</span></div>
+</div>
 
-<!-- MARKET TICKER STRIP -->
-<div id="market">
-  <div class="market-scroll" id="ticker-strip">
-    <!-- duplicated for seamless loop -->
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <div class="ticker-item">BTC <span class="val">$73,547</span> <span class="up">+0.43%</span></div>
+    <div class="ticker-item">ETH <span class="val">$2,009</span> <span class="up">+1.24%</span></div>
+    <div class="ticker-item">SOL <span class="val">$82.02</span> <span class="up">+1.75%</span></div>
+    <div class="ticker-item">FEAR &amp; GREED <span class="val">23</span> <span class="dn">EXTREME FEAR</span></div>
+    <div class="ticker-item">SMITHERY <span class="val">84/100</span></div>
+    <div class="ticker-item">CI/CD RUNS <span class="val">2,285</span></div>
+    <div class="ticker-item">TOOLS <span class="val">157</span> <span class="up">LIVE</span></div>
+    <div class="ticker-item">REPOS <span class="val">80</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item">BTC <span class="val">$73,547</span> <span class="up">+0.43%</span></div>
+    <div class="ticker-item">ETH <span class="val">$2,009</span> <span class="up">+1.24%</span></div>
+    <div class="ticker-item">SOL <span class="val">$82.02</span> <span class="up">+1.75%</span></div>
+    <div class="ticker-item">FEAR &amp; GREED <span class="val">23</span> <span class="dn">EXTREME FEAR</span></div>
+    <div class="ticker-item">SMITHERY <span class="val">84/100</span></div>
+    <div class="ticker-item">CI/CD RUNS <span class="val">2,285</span></div>
+    <div class="ticker-item">TOOLS <span class="val">157</span> <span class="up">LIVE</span></div>
+    <div class="ticker-item">REPOS <span class="val">80</span></div>
   </div>
 </div>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-tag">WhaleTrucker Ecosystem V2 — Self-aware · Self-improving</div>
-  <h1 class="hero-h1">
-    <strong>Self-aware</strong><br>
-    <em>agentic</em> DeFi<br>
-    command center
-  </h1>
-  <p class="hero-rule">
-    <b>github-mcp-server</b> as the backbone — full GitHub API control.<br>
-    <b>scutua-mcp</b> filling every gap GitHub can't — 157 DeFi tools.<br>
-    Built from iPad. Powered by Claude. $0 infrastructure.
-  </p>
-  <div class="cta-row">
-    <a href="#projects" class="btn-p">↓ View Projects</a>
-    <a href="https://scutua-mcp.onrender.com/mcp" class="btn-g" target="_blank">MCP Endpoint →</a>
-    <a href="https://github.com/scutuatua-crypto" class="btn-g" target="_blank">GitHub →</a>
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="sn">157</div><div class="sl">tools</div></div>
+  <div class="stat"><div class="sn">80</div><div class="sl">repos</div></div>
+  <div class="stat"><div class="sn">11</div><div class="sl">chains</div></div>
+  <div class="stat"><div class="sn">2,285</div><div class="sl">CI/CD runs</div></div>
+  <div class="stat"><div class="sn">84</div><div class="sl">smithery</div></div>
+</div>
+
+<!-- CHAINS -->
+<p class="sec">chains</p>
+<div class="pills">
+  <span class="pill">Solana</span><span class="pill">Ethereum</span><span class="pill">Arbitrum</span><span class="pill">Optimism</span><span class="pill">BNB</span><span class="pill">Reef</span><span class="pill">TON</span><span class="pill">Polkadot</span><span class="pill">Cosmos</span><span class="pill">Base</span><span class="pill">CrossChain</span>
+</div>
+
+<!-- DASHBOARDS -->
+<p class="sec">dashboards</p>
+<div class="dcards">
+  <a class="dc" href="https://scutuatua-crypto.github.io/whaletrucker-reef/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;cursor:pointer"><div><div class="dn">WhaleTrucker Elite</div><div class="ds">whaletrucker-reef</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE ↗</span></div></a>
+  <a class="dc" href="https://assetflow-app-iota.vercel.app" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;cursor:pointer"><div><div class="dn">AssetFlow</div><div class="ds">vercel</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE ↗</span></div></a>
+  <a class="dc" href="https://asset-platform-iota.vercel.app" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;cursor:pointer"><div><div class="dn">Asset Platform</div><div class="ds">vercel</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE ↗</span></div></a>
+  <a class="dc" href="https://scutuatua-crypto.github.io/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;cursor:pointer"><div><div class="dn">Command Hub</div><div class="ds">github pages</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE ↗</span></div></a>
+  <a class="dc" href="https://scutua-mcp.onrender.com/mcp" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;cursor:pointer"><div><div class="dn">Scutua-MCP</div><div class="ds">render · onrender.com</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE ↗</span></div></a>
+</div>
+
+<!-- RSI -->
+<p class="sec">rsi + macd — live coingecko</p>
+<div class="toks">
+  <div class="tok"><div class="tn">BTC</div><div class="tr low">27.4</div><div class="tm">MACD -915.08</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">ETH</div><div class="tr low">31.0</div><div class="tm">MACD -27.13</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">SOL</div><div class="tr mid">38.8</div><div class="tm">MACD -0.91</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">DOT</div><div class="tr low">30.8</div><div class="tm">MACD -0.02</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">ATOM</div><div class="tr ok">50.0</div><div class="tm">MACD -0.21</div><div class="tb bk">⚪ NEUTRAL</div></div>
+</div>
+
+<!-- SIGNAL BARS -->
+<p class="sec">composite score</p>
+<div class="signal-wrap">
+  <div class="sig-head">
+    <span class="sig-hl">TOKEN</span><span class="sig-hl">SCORE</span><span class="sig-hl">VAL</span><span class="sig-hl">SIGNAL</span>
   </div>
-  <div class="stats-bar">
-    <div class="stat"><div class="stat-n" id="s-tools">—</div><div class="stat-l">MCP Tools</div></div>
-    <div class="stat"><div class="stat-n" id="s-dims">—</div><div class="stat-l">Dimensions</div></div>
-    <div class="stat"><div class="stat-n" id="s-score">—</div><div class="stat-l">Smithery Score</div></div>
-    <div class="stat"><div class="stat-n" id="s-chains">—</div><div class="stat-l">Chains</div></div>
-    <div class="stat"><div class="stat-n">$0</div><div class="stat-l">Cost</div></div>
+  <div class="sig-row">
+    <span class="sig-name">BTC</span>
+    <div class="sig-bar"><div class="sig-fill" style="width:39.7%;background:var(--red)"></div></div>
+    <span class="sig-val" style="color:var(--red)">39.7</span>
+    <span class="sig-badge" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">HOLD</span>
   </div>
-</section>
-
-<!-- ARCHITECTURE -->
-<div class="divider"></div>
-<section id="arch" class="sec fade-in">
-  <div class="sec-head">
-    <span class="sec-label">// Architecture</span>
-    <div class="sec-line"></div>
+  <div class="sig-row">
+    <span class="sig-name">ETH</span>
+    <div class="sig-bar"><div class="sig-fill" style="width:40.7%;background:var(--red)"></div></div>
+    <span class="sig-val" style="color:var(--red)">40.7</span>
+    <span class="sig-badge" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">HOLD</span>
   </div>
-  <div class="arch-container">
-    <div class="arch-col">
-      <div class="arch-node main-node">
-        <div class="arch-node-tag">Main Hub · GitHub API</div>
-        <div class="arch-node-name">github-mcp-server</div>
-        <div class="arch-node-sub">Fork of GitHub's official MCP server. Full repo, issues, PRs, Actions, Security control — the backbone everything runs through. 848 commits from upstream.</div>
-        <div class="chip-row">
-          <span class="chip chip-b">Go · MIT</span>
-          <span class="chip chip-b">Repos · Issues · PRs</span>
-          <span class="chip chip-b">Actions · Security</span>
-          <span class="chip chip-b">Notifications</span>
-          <span class="chip chip-b">TypeScript wrapper</span>
-        </div>
-      </div>
-    </div>
-    <div class="arch-spine"></div>
-    <div class="arch-col">
-      <div class="arch-node defi-node">
-        <div class="arch-node-tag">DeFi Layer · The part GitHub can't</div>
-        <div class="arch-node-name">scutua-mcp</div>
-        <div class="arch-node-sub">157 tools covering everything GitHub will never have. DeFi protocols, multi-chain data, whale analytics, swap execution, and ecosystem consciousness — all from one endpoint.</div>
-        <div class="chip-row">
-          <span class="chip chip-g">Python · Render</span>
-          <span class="chip chip-g">26 DeFi protocols</span>
-          <span class="chip chip-g">11 chains</span>
-          <span class="chip chip-g">Whale analytics</span>
-          <span class="chip chip-g">Swap · DCA · Sniper</span>
-          <span class="chip chip-g">Ecosystem consciousness</span>
-        </div>
-      </div>
-      <div class="arch-node" style="border-left:3px solid var(--muted)">
-        <div class="arch-node-tag" style="color:var(--muted)">Orchestrator</div>
-        <div class="arch-node-name" style="font-size:13px">You + Claude</div>
-        <div class="arch-node-sub">iPad only. No PC required. Design → Build → Deploy → Manage — all from one device. Controlling 82 repos from one device</div>
-      </div>
-    </div>
+  <div class="sig-row">
+    <span class="sig-name">SOL</span>
+    <div class="sig-bar"><div class="sig-fill" style="width:41.3%;background:var(--yellow)"></div></div>
+    <span class="sig-val" style="color:var(--yellow)">41.3</span>
+    <span class="sig-badge" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">HOLD</span>
   </div>
-</section>
+</div>
 
-<!-- LIVE MARKET -->
-<div class="divider"></div>
-<section id="live" class="sec fade-in">
-  <div class="sec-head">
-    <span class="sec-label">// Live Market</span>
-    <div class="sec-line"></div>
-    <span id="mkt-updated" style="font-size:9px;color:var(--muted)">updating...</span>
+<!-- FEAR & GREED -->
+<p class="sec">fear &amp; greed — 7 days</p>
+<div class="fear">
+  <div class="fear-top">
+    <div><div class="fc">today</div><div class="fn">23</div></div>
+    <span class="fear-badge">EXTREME FEAR</span>
   </div>
-  <div class="market-grid" id="market-grid">
-    <!-- populated by JS -->
+  <div class="spectrum"><div class="s1"></div><div class="s2"></div><div class="s3"></div><div class="s4"></div><div class="s5"></div></div>
+  <div class="mbars">
+    <div class="mbw"><div class="mb" style="height:22px;background:#FF4444"></div><div class="mbl">MON</div></div>
+    <div class="mbw"><div class="mb" style="height:18px;background:#FF4444"></div><div class="mbl">TUE</div></div>
+    <div class="mbw"><div class="mb" style="height:20px;background:#FF4444"></div><div class="mbl">WED</div></div>
+    <div class="mbw"><div class="mb" style="height:24px;background:#FF8800"></div><div class="mbl">THU</div></div>
+    <div class="mbw"><div class="mb" style="height:28px;background:#FFB800"></div><div class="mbl">FRI</div></div>
+    <div class="mbw"><div class="mb" style="height:18px;background:#FF4444"></div><div class="mbl">SAT</div></div>
+    <div class="mbw"><div class="mb" style="height:18px;background:#FF4444"></div><div class="mbl">SUN</div></div>
   </div>
-</section>
+</div>
 
-<!-- PROJECTS -->
-<div class="divider"></div>
-<section id="projects" class="sec fade-in">
-  <div class="sec-head">
-    <span class="sec-label">// Projects</span>
-    <div class="sec-line"></div>
+<!-- SMART MONEY -->
+<p class="sec">smart money — top 5 wallets (24h)</p>
+<div class="whales">
+  <div class="whead"><span class="whl">rank · wallet</span><span class="whl">volume · txs</span></div>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#01</span><span class="wa">0xcd531ae...ca7b</span></div>
+    <div style="text-align:right"><div class="wv">98,264 ETH</div><div class="wbar"><div class="wfill" style="width:100%"></div></div><div class="wt">24 txs</div></div>
   </div>
-
-  <div class="tier-label">
-    <span class="tier-pill t1-pill">✓ Tier 1 · Safe</span>
-    <span style="font-size:11px;color:var(--muted)">Foundation — Read-only / no execution</span>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#02</span><span class="wa">0x28c6c06...d60</span></div>
+    <div style="text-align:right"><div class="wv">91,975 ETH</div><div class="wbar"><div class="wfill" style="width:94%"></div></div><div class="wt">224 txs</div></div>
   </div>
-  <div class="proj-grid">
-    <a href="https://scutua-mcp.onrender.com/mcp" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">🔌</div>
-      <div class="proj-name">scutua-mcp</div>
-      <div class="proj-desc">Core MCP server. 157 tools, 8 dimensions. The intelligence backbone of the entire ecosystem.</div>
-      <div class="proj-meta"><span>Python · FastMCP · Render</span></div>
-    </a>
-    <a href="https://github.com/scutuatua-crypto/github-mcp-server" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">🐙</div>
-      <div class="proj-name">github-mcp-server</div>
-      <div class="proj-desc">Fork of GitHub's official MCP server. Full repo, issue, PR, Actions control via Claude.</div>
-      <div class="proj-meta"><span>Go · Fork · 848 commits</span></div>
-    </a>
-    <a href="https://whaletrucker-ecosystem.pages.dev" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">🌊</div>
-      <div class="proj-name">whaletrucker-ecosystem</div>
-      <div class="proj-desc">This hub. Central home linking every project, tool, and service in the ecosystem.</div>
-      <div class="proj-meta"><span>HTML · Cloudflare Pages</span></div>
-    </a>
-    <a href="https://smithery.ai/servers/scutuatua/scutua-mcp" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">🏆</div>
-      <div class="proj-name">Smithery Registry</div>
-      <div class="proj-desc">Published on the Smithery MCP registry. Quality score 84/100. One-click install.</div>
-      <div class="proj-meta"><span>Registry · 84/100</span></div>
-    </a>
-    <a href="https://scutuatua-iorbh.wordpress.com" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">📝</div>
-      <div class="proj-name">Blog</div>
-      <div class="proj-desc">Crypto insights, project updates, and ecosystem news from WhaleTrucker.</div>
-      <div class="proj-meta"><span>WordPress · Content</span></div>
-    </a>
-    <a href="https://t.me/scutua01" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">✈️</div>
-      <div class="proj-name">Telegram</div>
-      <div class="proj-desc">Community hub and live trade alerts. Every execution notified in real-time.</div>
-      <div class="proj-meta"><span>Community · Live Alerts</span></div>
-    </a>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#03</span><span class="wa">0xb5d85cb...511</span></div>
+    <div style="text-align:right"><div class="wv">71,262 ETH</div><div class="wbar"><div class="wfill" style="width:73%"></div></div><div class="wt">493 txs</div></div>
   </div>
-
-  <div style="margin-top:32px"></div>
-  <div class="warn-bar">⚠ These projects involve live trading. Always use a dedicated wallet. Never use your main wallet.</div>
-  <div class="tier-label">
-    <span class="tier-pill t2-pill">⚠ Tier 2 · Caution</span>
-    <span style="font-size:11px;color:var(--muted)">Execution — Live trading / use dedicated wallet</span>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#04</span><span class="wa">0xed0c607...312</span></div>
+    <div style="text-align:right"><div class="wv">70,002 ETH</div><div class="wbar"><div class="wfill" style="width:71%"></div></div><div class="wt">4 txs</div></div>
   </div>
-  <div class="proj-grid">
-    <a href="#" class="proj-card">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">🐋</div>
-      <div class="proj-name">WhaleTrucker Elite</div>
-      <div class="proj-desc">Bitcoin command center. Live price, portfolio valuation, DeFi radar, mission control.</div>
-      <div class="proj-meta"><span>BTC · Portfolio · DeFi</span></div>
-    </a>
-    <a href="https://assetflow-app-iota.vercel.app" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">💼</div>
-      <div class="proj-name">AssetFlow</div>
-      <div class="proj-desc">Asset management and portfolio tracker built on the scutua-mcp platform.</div>
-      <div class="proj-meta"><span>Vercel · Portfolio</span></div>
-    </a>
-    <a href="https://asset-platform-iota.vercel.app" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">📊</div>
-      <div class="proj-name">Asset Platform</div>
-      <div class="proj-desc">Advanced asset tracking and analytics with real-time data from 11 chains.</div>
-      <div class="proj-meta"><span>Vercel · Analytics · 11 chains</span></div>
-    </a>
-    <a href="https://scutuatua-crypto.github.io/whaletrucker-reef/" class="proj-card" target="_blank">
-      <span class="proj-arrow">↗</span>
-      <div class="proj-icon">🌿</div>
-      <div class="proj-name">WhaleTrucker Reef</div>
-      <div class="proj-desc">DeFi Yield Hunter. Finds the best APY for $500 across all supported protocols.</div>
-      <div class="proj-meta"><span>DeFi · Yield · APY</span></div>
-    </a>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#05</span><span class="wa">0x3606f0f...665</span></div>
+    <div style="text-align:right"><div class="wv">52,701 ETH</div><div class="wbar"><div class="wfill" style="width:54%"></div></div><div class="wt">6 txs</div></div>
   </div>
-</section>
+</div>
 
-<!-- CONNECT -->
-<div class="divider"></div>
-<section id="connect" class="sec fade-in">
-  <div class="sec-head">
-    <span class="sec-label">// Connect</span>
-    <div class="sec-line"></div>
+<!-- TOOL CATS -->
+<p class="sec">tool categories — 157 tools</p>
+<div class="tools-grid">
+  <div class="tool-cat"><div class="tc-n">Price &amp; Market</div><div class="tc-c">20 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">DeFi &amp; Yields</div><div class="tc-c">25 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Wallet &amp; Portfolio</div><div class="tc-c">20 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Whale &amp; Smart Money</div><div class="tc-c">10 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Trading &amp; Arbitrage</div><div class="tc-c">19 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Portfolio Mgmt</div><div class="tc-c">12 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Bridge &amp; Crosschain</div><div class="tc-c">5 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">NFT &amp; Launchpad</div><div class="tc-c">8 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Dune &amp; Analytics</div><div class="tc-c">8 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Ecosystem &amp; Infra</div><div class="tc-c">12 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">News &amp; Social</div><div class="tc-c">18 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Staking &amp; Lending</div><div class="tc-c">9 tools</div><div class="tc-dot"></div></div>
+</div>
+
+<!-- TELEGRAM -->
+<div class="tg">
+  <div class="tgd"></div>
+  <div>
+    <div class="tg-t">Telegram channel connected</div>
+    <div class="tg-s">channel -1003820929559 · signal sent ✓</div>
   </div>
-  <div class="connect-grid">
-    <div class="cc">
-      <h3>scutua-mcp Endpoint</h3>
-      <p>Connect Claude, VS Code, Cursor, or any MCP-compatible tool directly to 157 tools.</p>
-      <div class="ep">
-        <span class="ep-url">https://scutua-mcp.onrender.com/mcp</span>
-        <button class="copy-btn" onclick="cp(this,'https://scutua-mcp.onrender.com/mcp')">Copy</button>
-      </div>
-      <div class="status-row"><div class="sdot sdot-g"></div><span>Live · Render · FastMCP 3.3.1</span></div>
-    </div>
-    <div class="cc">
-      <h3>VS Code / Cursor Config</h3>
-      <p>Add to your MCP settings file for instant access to all 157 tools.</p>
-      <div class="code-block"><span class="ck">{
-  "mcpServers"</span>: {
-    <span class="ck">"scutua-mcp"</span>: {
-      <span class="ck">"url"</span>: <span class="cu">"https://scutua-mcp.onrender.com/mcp"</span>
-    }
-  }
-}</div>
-    </div>
-    <div class="cc">
-      <h3>GitHub MCP Hub</h3>
-      <p>Fork of GitHub's official MCP. Full repo, issue, PR, Actions and security control.</p>
-      <div class="ep">
-        <span class="ep-url">github.com/scutuatua-crypto/github-mcp-server</span>
-        <a href="https://github.com/scutuatua-crypto/github-mcp-server" class="copy-btn" target="_blank">Open →</a>
-      </div>
-      <div class="status-row"><div class="sdot sdot-b"></div><span>Fork · Go · 848 commits</span></div>
-    </div>
-    <div class="cc">
-      <h3>Smithery Registry</h3>
-      <p>Discover and one-click install via the Smithery MCP registry.</p>
-      <div class="ep">
-        <span class="ep-url">smithery.ai/servers/scutuatua/scutua-mcp</span>
-        <a href="https://smithery.ai/servers/scutuatua/scutua-mcp" class="copy-btn" target="_blank">Open →</a>
-      </div>
-      <div class="status-row"><div class="sdot sdot-y"></div><span>Published · Score 84/100</span></div>
-    </div>
-  </div>
-</section>
+  <span class="tg-b">LIVE ✓</span>
+</div>
 
-<footer>
-  <div class="footer-id">WT_ECOSYSTEM V2 · You + Claude · iPad only</div>
-  <div class="footer-copy">"no money · no cry · just build" 🚚 · Powered by Claude 💙</div>
-</footer>
+<!-- FOOTER -->
+<div class="foot">
+  <span class="foot-hl">scutuatua-crypto</span> · deployed from iPad · no PC required 😤<br>
+  CI/CD <span class="foot-hl">2,285</span> runs · projects live <span class="foot-hl">6</span><br>
+  <span class="smithery">Smithery Score 84 / 100</span><br>
+  no money · no cry · just build
+</div>
 
-<script>
-// ── LIVE STATS from scutua-mcp ────────────────────────────────────────
-async function fetchStats(){
-  try{
-    const r=await fetch("https://scutua-mcp.onrender.com/mcp",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:1,method:"tools/list",params:{}})});
-    if(!r.ok)throw new Error();
-    const d=await r.json();
-    const tools=d?.result?.tools;
-    if(tools&&tools.length){
-      animCount("s-tools",tools.length);
-      animCount("s-dims",8);
-      animCount("s-chains",11);
-    }
-  }catch(e){
-    animCount("s-tools",157);
-    animCount("s-dims",8);
-    animCount("s-chains",11);
-  }
-  animCount("s-score",84);
-}
-function animCount(id,target){
-  const el=document.getElementById(id);
-  if(!el)return;
-  let cur=0;const step=Math.ceil(target/40);
-  const t=setInterval(()=>{
-    cur=Math.min(cur+step,target);
-    el.textContent=cur;
-    if(cur>=target)clearInterval(t);
-  },30);
-}
-fetchStats();
-
-// ── CRYPTO PRICES via CoinGecko public API ──────────────────────────────
-const COINS=[
-  {id:'bitcoin',sym:'BTC'},
-  {id:'ethereum',sym:'ETH'},
-  {id:'solana',sym:'SOL'},
-  {id:'binancecoin',sym:'BNB'},
-  {id:'ripple',sym:'XRP'},
-  {id:'cardano',sym:'ADA'},
-  {id:'avalanche-2',sym:'AVAX'},
-  {id:'chainlink',sym:'LINK'},
-];
-
-let priceCache={};
-
-function fmt(n){
-  if(n>=1000)return '$'+n.toLocaleString('en',{maximumFractionDigits:0});
-  if(n>=1)return '$'+n.toFixed(2);
-  return '$'+n.toFixed(4);
-}
-function fmtChg(n){return(n>=0?'+':'')+n.toFixed(2)+'%'}
-
-async function fetchPrices(){
-  try{
-    const ids=COINS.map(c=>c.id).join(',');
-    const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
-    if(!r.ok)return;
-    const d=await r.json();
-    priceCache=d;
-    renderMarket(d);
-    renderTicker(d);
-    renderNavTicker(d);
-    const el=document.getElementById('mkt-updated');
-    if(el)el.textContent='updated '+new Date().toLocaleTimeString();
-  }catch(e){}
-}
-
-function renderMarket(d){
-  const g=document.getElementById('market-grid');
-  if(!g)return;
-  g.innerHTML=COINS.map(c=>{
-    const data=d[c.id];
-    if(!data)return '';
-    const p=data.usd,chg=data.usd_24h_change||0;
-    const up=chg>=0;
-    return `<div class="m-card">
-      <div class="m-name">${c.sym}/USD</div>
-      <div class="m-val" id="mv-${c.sym}">${fmt(p)}</div>
-      <div class="m-change ${up?'up':'dn'}">${up?'▲':'▼'} ${fmtChg(Math.abs(chg))} 24h</div>
-    </div>`;
-  }).join('');
-}
-
-function renderTicker(d){
-  const strip=document.getElementById('ticker-strip');
-  if(!strip)return;
-  const items=COINS.map(c=>{
-    const data=d[c.id];
-    if(!data)return '';
-    const p=data.usd,chg=data.usd_24h_change||0;
-    const up=chg>=0;
-    return `<div class="m-item">
-      <span class="m-symbol">${c.sym}</span>
-      <span class="m-price">${fmt(p)}</span>
-      <span class="m-chg ${up?'m-up':'m-dn'}">${up?'+':''}${chg.toFixed(2)}%</span>
-    </div>`;
-  }).join('');
-  strip.innerHTML=items+items; // duplicate for seamless loop
-}
-
-function renderNavTicker(d){
-  const el=document.getElementById('nav-ticker');
-  if(!el)return;
-  const show=COINS.slice(0,3);
-  el.innerHTML=show.map(c=>{
-    const data=d[c.id];
-    if(!data)return '';
-    const chg=data.usd_24h_change||0;
-    const up=chg>=0;
-    return `<span class="ticker-item">
-      <span class="ticker-name">${c.sym}</span>
-      <span class="${up?'ticker-up':'ticker-dn'}">${fmt(data.usd)}</span>
-    </span>`;
-  }).join('');
-}
-
-fetchPrices();
-setInterval(fetchPrices,60000);
-
-// ── COPY ──────────────────────────────────────────────────────────────────
-function cp(btn,text){
-  navigator.clipboard.writeText(text).then(()=>{
-    const orig=btn.textContent;
-    btn.textContent='Copied!';
-    btn.style.borderColor='var(--c)';
-    btn.style.color='var(--c)';
-    setTimeout(()=>{btn.textContent=orig;btn.style.borderColor='';btn.style.color=''},2000);
-  });
-}
-
-// ── SCROLL REVEAL ─────────────────────────────────────────────────────────
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')});
-},{threshold:.06});
-document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
-</script>
+</div>
 </body>
 </html>
