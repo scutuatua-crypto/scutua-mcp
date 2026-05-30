@@ -13,12 +13,16 @@
     "blockchain",
     "ai",
     "claude",
-    "whaletrucker"
+    "whaletrucker",
+    "web3"
   ],
   "homepage": "https://github.com/scutuatua-crypto/scutua-mcp",
   "repository": {
     "type": "git",
     "url": "https://github.com/scutuatua-crypto/scutua-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/scutuatua-crypto/scutua-mcp/issues"
   },
   "author": "scutuatua-crypto <scutua@gmail.com>",
   "license": "MIT",
@@ -27,9 +31,15 @@
     "scutua-mcp": "./index.js"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node index.js --test"
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ]
 }
