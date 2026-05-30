@@ -2,817 +2,361 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#00d4ff">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Scutua">
-<meta name="description" content="Scutua + WhaleTrucker Ecosystem Dashboard">
-<title>Scutua Ecosystem</title>
-<link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scutua MCP — Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0a0a0f;--bg2:#0e0e17;--card:#13131e;--card2:#191926;--card3:#1f1f30;
-  --border:#252538;--border2:#32324a;--border3:#3e3e5a;
-  --text:#eeeeff;--sub:#9090b8;--muted:#505068;
-  --cyan:#00d4ff;--cyan2:#00a8cc;
-  --green:#00e87a;--green2:#00b85e;
-  --red:#ff3d5a;--orange:#ff9500;
-  --yellow:#ffd60a;--violet:#9b6bff;--blue:#4488ff;--pink:#ff6eb4;
-  --t1:Tier1;
+:root {
+  --green: #00FF94;
+  --green-dim: #00FF9420;
+  --green-mid: #00FF9460;
+  --red: #FF4444;
+  --red-dim: #FF444420;
+  --yellow: #FFB800;
+  --yellow-dim: #FFB80020;
+  --bg: #080C0A;
+  --bg2: #0D1210;
+  --bg3: #111815;
+  --border: #1A2820;
+  --border2: #243830;
+  --text: #E8F5F0;
+  --text2: #6B8F80;
+  --text3: #3D5A4F;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Syne', sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth;background:var(--bg)}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;
-  overflow-x:hidden;min-height:100vh;
-  padding-bottom:env(safe-area-inset-bottom)
-}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 80% 40% at 50% -10%,rgba(0,212,255,.07) 0%,transparent 70%),
-    linear-gradient(rgba(0,212,255,.02) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,212,255,.02) 1px,transparent 1px);
-  background-size:auto,48px 48px,48px 48px
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);color:var(--text);font-family:var(--sans)}
+body{min-height:100vh;background:var(--bg);overflow-x:hidden}
 
-/* ── Layout ── */
-.z1{position:relative;z-index:1}
-.wrap{max-width:960px;margin:0 auto;padding:0 1rem}
+/* noise overlay */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4;pointer-events:none;z-index:0}
 
-/* ── Header ── */
-.header{
-  position:sticky;top:0;z-index:100;
-  background:rgba(10,10,15,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  padding:.75rem 1rem
-}
-.header-inner{display:flex;justify-content:space-between;align-items:center}
-.logo{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1rem;color:var(--cyan);letter-spacing:.06em}
-.header-right{display:flex;align-items:center;gap:.75rem}
-.pwa-btn{
-  display:none;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);
-  color:var(--cyan);padding:.3rem .7rem;border-radius:8px;font-size:.65rem;font-weight:600;
-  cursor:pointer;letter-spacing:.04em;transition:all .2s
-}
-.pwa-btn:hover{background:rgba(0,212,255,.2)}
-#ts{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted)}
+/* grid bg */
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
 
-/* ── Hero ── */
-.hero{padding:2rem 1rem 1.5rem;position:relative;z-index:1}
-.alive-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
-.pulse{
-  width:8px;height:8px;background:var(--green);border-radius:50%;flex-shrink:0;
-  box-shadow:0 0 0 0 rgba(0,232,122,.4);
-  animation:ripple 2s ease-in-out infinite
-}
-@keyframes ripple{0%{box-shadow:0 0 0 0 rgba(0,232,122,.4)}70%{box-shadow:0 0 0 8px rgba(0,232,122,0)}100%{box-shadow:0 0 0 0 rgba(0,232,122,0)}}
-.alive-text{font-size:.7rem;color:var(--green);font-weight:600;letter-spacing:.08em}
-.hero-title{
-  font-size:1.6rem;font-weight:800;line-height:1.2;margin-bottom:.4rem;
-  background:linear-gradient(135deg,var(--cyan) 0%,var(--blue) 50%,var(--violet) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
-}
-.hero-sub{font-size:.78rem;color:var(--sub);margin-bottom:1.25rem}
-.version-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
-.vtag{
-  padding:.22rem .65rem;border-radius:6px;font-size:.65rem;font-weight:600;
-  font-family:'JetBrains Mono',monospace;letter-spacing:.04em
-}
-.vtag.v{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:var(--cyan)}
-.vtag.s{background:rgba(155,107,255,.1);border:1px solid rgba(155,107,255,.3);color:var(--violet)}
-.vtag.m{background:rgba(255,110,180,.1);border:1px solid rgba(255,110,180,.3);color:var(--pink)}
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem}
 
-/* Stats */
-.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-bottom:1.25rem}
-.stat{
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:.85rem .6rem;text-align:center;transition:all .25s;cursor:default
-}
-.stat:hover{border-color:var(--border3);background:var(--card2);transform:translateY(-1px)}
-.stat-n{
-  font-size:1.45rem;font-weight:700;font-family:'JetBrains Mono',monospace;
-  color:var(--cyan);line-height:1;margin-bottom:.3rem
-}
-.stat-l{font-size:.58rem;color:var(--muted);text-transform:lowercase;letter-spacing:.04em}
+/* animations */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.08}}
+@keyframes pulseR{0%,100%{opacity:1}50%{opacity:.15}}
+@keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(2000%)}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px var(--green-mid)}50%{box-shadow:0 0 20px var(--green),0 0 40px var(--green-dim)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes blink{0%,100%{opacity:1}49%{opacity:1}50%{opacity:0}99%{opacity:0}}
 
-/* Chains */
-.chains{display:flex;flex-wrap:wrap;gap:.35rem}
-.chain{
-  padding:.2rem .6rem;border:1px solid var(--border);border-radius:999px;
-  font-size:.63rem;color:var(--sub);cursor:default;transition:all .2s
-}
-.chain:hover{border-color:var(--cyan);color:var(--cyan)}
+/* header */
+.header{position:relative;overflow:hidden;border:1px solid var(--border2);border-radius:12px;padding:24px 28px;background:var(--bg2);margin-bottom:1.5rem;animation:fadeUp .5s ease both}
+.scan-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green-mid),transparent);animation:scan 4s linear infinite;pointer-events:none}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.logo-area{display:flex;align-items:center;gap:14px}
+.logo-dot{width:14px;height:14px;border-radius:50%;background:var(--green);animation:glow 2s ease-in-out infinite;flex-shrink:0}
+.logo-title{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.logo-sub{font-size:11px;color:var(--text2);font-family:var(--mono);margin-top:3px}
+.alive-badge{display:flex;align-items:center;gap:6px;background:var(--green-dim);border:1px solid var(--green-mid);border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:.08em;font-family:var(--mono)}
+.alive-badge span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.2s infinite}
 
-/* ── Section ── */
-.sec{border-top:1px solid var(--border);padding:1.5rem 1rem;position:relative;z-index:1}
-.sec-hd{
-  display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem
-}
-.sec-title{
-  font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--sub);display:flex;align-items:center;gap:.5rem
-}
-.sdot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 5px var(--green)}
-.sec-meta{font-size:.6rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.tagline{font-family:var(--mono);font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:14px;display:flex;align-items:center;gap:8px}
+.cursor{display:inline-block;animation:blink 1s infinite;color:var(--green)}
 
-/* ── MACRO ── */
-.macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem}
-.macro-card{
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:1rem;transition:all .25s
-}
-.macro-card:hover{border-color:var(--border2);background:var(--card2)}
-.macro-label{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
-.macro-val{font-size:1.15rem;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text)}
-.macro-sub{font-size:.65rem;color:var(--sub);margin-top:.2rem}
-.macro-card.fear .macro-val{color:var(--red)}
-.macro-card.btcd .macro-val{color:var(--orange)}
-.macro-card.mcap .macro-val{color:var(--cyan)}
-.macro-card.vol  .macro-val{color:var(--green)}
+/* ticker */
+.ticker-wrap{overflow:hidden;border:1px solid var(--border);border-radius:8px;background:var(--bg3);padding:8px 0;margin-bottom:1.5rem;animation:fadeUp .5s .1s ease both;opacity:0;animation-fill-mode:forwards}
+.ticker-inner{display:flex;white-space:nowrap;animation:ticker 30s linear infinite}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 28px;font-family:var(--mono);font-size:11px;color:var(--text2);border-right:1px solid var(--border)}
+.ticker-item .val{color:var(--text)}
+.ticker-item .dn{color:var(--red)}
+.ticker-item .up{color:var(--green)}
 
-/* ── PROJECTS ── */
-.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
-.proj-card{
-  background:var(--card);border:1px solid var(--border);border-radius:14px;
-  padding:1.1rem;text-decoration:none;color:inherit;
-  transition:all .3s;display:flex;flex-direction:column;gap:.5rem;
-  position:relative;overflow:hidden
-}
-.proj-card::before{
-  content:'';position:absolute;inset:0;border-radius:14px;
-  background:linear-gradient(135deg,rgba(0,212,255,.04),transparent);
-  opacity:0;transition:opacity .3s
-}
-.proj-card:hover{border-color:var(--cyan);background:var(--card2);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,212,255,.12)}
-.proj-card:hover::before{opacity:1}
-.proj-card:active{transform:translateY(-1px)}
-.proj-top{display:flex;justify-content:space-between;align-items:flex-start}
-.proj-icon{font-size:1.4rem;line-height:1}
-.proj-live{display:flex;align-items:center;gap:.3rem;font-size:.6rem;color:var(--green);font-weight:600}
-.lv{width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 4px var(--green);animation:ripple 2s infinite}
-.proj-name{font-size:.92rem;font-weight:700;color:var(--text)}
-.proj-desc{font-size:.7rem;color:var(--sub);line-height:1.4}
-.proj-footer{display:flex;justify-content:space-between;align-items:center;margin-top:.25rem}
-.proj-tier{font-size:.58rem;font-family:'JetBrains Mono',monospace;color:var(--muted)}
-.proj-dim{font-size:.58rem;padding:.15rem .45rem;border-radius:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.dim-core{background:rgba(0,212,255,.12);color:var(--cyan)}
-.dim-hub{background:rgba(68,136,255,.12);color:var(--blue)}
-.dim-chain{background:rgba(0,232,122,.12);color:var(--green)}
-.dim-portfolio{background:rgba(155,107,255,.12);color:var(--violet)}
-.dim-defi{background:rgba(255,149,0,.12);color:var(--orange)}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.5rem;animation:fadeUp .5s .15s ease both;opacity:0;animation-fill-mode:forwards}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 10px;text-align:center;position:relative;overflow:hidden;transition:border-color .2s}
+.stat:hover{border-color:var(--green-mid)}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green-dim),transparent)}
+.sn{font-size:22px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.sl{font-size:10px;color:var(--text2);margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
 
-/* ── RSI ── */
-.rsi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.65rem}
-.rsi-card{
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:.9rem .7rem;text-align:center;transition:all .25s
-}
-.rsi-card:hover{border-color:var(--border2);background:var(--card2)}
-.rsi-sym{font-size:.62rem;font-weight:700;color:var(--muted);letter-spacing:.06em;margin-bottom:.35rem}
-.rsi-val{font-size:1.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:.1rem}
-.rsi-price{font-size:.68rem;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-bottom:.08rem}
-.rsi-macd{font-size:.58rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:.45rem}
-.pill{display:inline-flex;align-items:center;gap:.2rem;padding:.18rem .45rem;border-radius:5px;font-size:.58rem;font-weight:700;letter-spacing:.04em}
-.pill-bear{background:rgba(255,61,90,.15);color:var(--red)}
-.pill-bull{background:rgba(0,232,122,.15);color:var(--green)}
-.pill-neut{background:rgba(80,80,104,.2);color:var(--sub)}
+/* section label */
+.sec{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin:1.5rem 0 10px;display:flex;align-items:center;gap:8px;font-family:var(--mono)}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ── SIGNALS ── */
-.signal-row{display:flex;align-items:center;gap:.85rem;padding:.7rem 0;border-bottom:1px solid rgba(37,37,56,.6)}
-.signal-row:last-child{border-bottom:none}
-.sig-sym{font-weight:700;width:44px;font-size:.9rem;font-family:'JetBrains Mono',monospace}
-.sig-price{width:76px;font-size:.68rem;color:var(--sub);font-family:'JetBrains Mono',monospace}
-.track{flex:1;height:5px;background:var(--card2);border-radius:3px;overflow:hidden}
-.fill{height:100%;border-radius:3px;transition:width .8s ease}
-.sig-n{width:34px;text-align:right;font-size:.82rem;font-weight:600;font-family:'JetBrains Mono',monospace}
-.sbadge{
-  width:44px;text-align:center;padding:.18rem .4rem;border:1px solid;
-  border-radius:5px;font-size:.6rem;font-weight:700;letter-spacing:.04em
-}
-.sb-hold{border-color:var(--orange);color:var(--orange)}
-.sb-buy {border-color:var(--green); color:var(--green)}
-.sb-sell{border-color:var(--red);   color:var(--red)}
+/* chains */
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.5rem;animation:fadeUp .5s .2s ease both;opacity:0;animation-fill-mode:forwards}
+.pill{font-size:10px;padding:4px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);font-family:var(--mono);letter-spacing:.04em}
 
-/* ── FEAR & GREED ── */
-.fg-layout{display:grid;grid-template-columns:140px 1fr;gap:1.5rem;align-items:start}
-.fg-date{font-size:.62rem;color:var(--muted);margin-bottom:.3rem}
-.fg-num{font-size:4rem;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:.4rem}
-.fg-cls{display:inline-block;padding:.22rem .65rem;border-radius:7px;font-size:.68rem;font-weight:700}
-.c-ef{background:rgba(255,61,90,.15);color:var(--red)}
-.c-f {background:rgba(255,149,0,.15);color:var(--orange)}
-.c-n {background:rgba(80,80,104,.2); color:var(--sub)}
-.c-g {background:rgba(0,232,122,.15);color:var(--green)}
-.fg-scale{
-  height:8px;border-radius:4px;position:relative;margin-bottom:.6rem;
-  background:linear-gradient(90deg,#ff3d5a 0%,#ff9500 25%,#ffd60a 50%,#84cc16 75%,#00e87a 100%)
-}
-.fg-needle{position:absolute;top:-5px;width:3px;height:18px;background:var(--text);border-radius:2px;transform:translateX(-50%);box-shadow:0 0 6px rgba(255,255,255,.4)}
-.fg-bars{display:flex;gap:4px;align-items:flex-end;height:72px;margin-top:.9rem}
-.fg-bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
-.fg-bar{width:100%;border-radius:3px 3px 0 0}
-.fg-bv{font-size:.52rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
-.fg-bd{font-size:.52rem;color:var(--muted)}
+/* dashboards */
+.dcards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;animation:fadeUp .5s .25s ease both;opacity:0;animation-fill-mode:forwards}
+.dc{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:1px solid var(--border);border-radius:10px;background:var(--bg2);transition:border-color .2s,background .2s}
+.dc:hover{border-color:var(--green-mid);background:var(--bg3)}
+.dn{font-size:12px;font-weight:600;color:var(--text)}
+.ds{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:2px}
+.live-row{display:flex;align-items:center;gap:6px}
+.ldot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;flex-shrink:0}
+.lbadge{font-size:10px;font-family:var(--mono);color:var(--green);letter-spacing:.04em}
 
-/* ── WALLETS ── */
-.w-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.w-tbl{width:100%;border-collapse:collapse}
-.w-tbl th{
-  padding:.65rem 1rem;font-size:.6rem;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.1em;font-weight:600;
-  border-bottom:1px solid var(--border);background:var(--card2);text-align:left
-}
-.w-tbl td{padding:.75rem 1rem;border-bottom:1px solid rgba(37,37,56,.4)}
-.w-tbl tr:last-child td{border-bottom:none}
-.w-tbl tr:hover td{background:rgba(0,212,255,.025)}
-.w-rank{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--cyan);margin-right:.5rem;font-size:.8rem}
-.w-addr{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--sub)}
-.w-eth{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.9rem}
-.w-bar{height:2px;background:var(--card3);border-radius:1px;margin:.3rem 0}
-.w-bar-f{height:100%;border-radius:1px;background:linear-gradient(90deg,var(--cyan),var(--green))}
-.w-txs{font-size:.62rem;color:var(--green);font-family:'JetBrains Mono',monospace}
+/* tokens */
+.toks{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1rem;animation:fadeUp .5s .3s ease both;opacity:0;animation-fill-mode:forwards}
+.tok{border:1px solid var(--border);border-radius:10px;padding:14px 8px;background:var(--bg2);text-align:center;transition:border-color .2s}
+.tok:hover{border-color:var(--border2)}
+.tn{font-size:10px;color:var(--text2);font-family:var(--mono);margin-bottom:8px;letter-spacing:.06em}
+.tr{font-size:22px;font-weight:700;font-family:var(--mono)}
+.tr.low{color:var(--red)}
+.tr.mid{color:var(--yellow)}
+.tr.ok{color:var(--text2)}
+.tm{font-size:9px;color:var(--text3);margin-top:3px;font-family:var(--mono)}
+.tb{font-size:9px;padding:3px 6px;border-radius:4px;margin-top:7px;display:inline-block;font-family:var(--mono);letter-spacing:.04em}
+.tb.br{background:var(--red-dim);color:var(--red);border:1px solid #FF444430}
+.tb.bk{background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
 
-/* ── ROADMAP ── */
-.road-list{display:flex;flex-direction:column;gap:.65rem}
-.road-item{
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.9rem;transition:all .25s
-}
-.road-item:hover{border-color:var(--border2);background:var(--card2)}
-.road-num{
-  width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;flex-shrink:0
-}
-.rn1{background:rgba(255,61,90,.15);color:var(--red);border:1px solid rgba(255,61,90,.3)}
-.rn2{background:rgba(255,149,0,.15);color:var(--orange);border:1px solid rgba(255,149,0,.3)}
-.rn3{background:rgba(68,136,255,.15);color:var(--blue);border:1px solid rgba(68,136,255,.3)}
-.rn4{background:rgba(155,107,255,.15);color:var(--violet);border:1px solid rgba(155,107,255,.3)}
-.road-body{flex:1}
-.road-action{font-size:.85rem;font-weight:600;margin-bottom:.25rem}
-.road-why{font-size:.72rem;color:var(--sub);line-height:1.4}
-.road-footer{display:flex;gap:.5rem;margin-top:.4rem}
-.effort-tag{font-size:.58rem;padding:.15rem .45rem;border-radius:4px;font-weight:600}
-.ef-low{background:rgba(0,232,122,.1);color:var(--green)}
-.ef-med{background:rgba(255,149,0,.1);color:var(--orange)}
-.road-tag{font-size:.58rem;padding:.15rem .45rem;border-radius:4px;background:rgba(255,255,255,.05);color:var(--muted);font-family:'JetBrains Mono',monospace}
+/* signal bars */
+.signal-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;animation:fadeUp .5s .35s ease both;opacity:0;animation-fill-mode:forwards}
+.sig-head{display:grid;grid-template-columns:50px 1fr 50px 80px;gap:12px;padding:8px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.sig-hl{font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.sig-row{display:grid;grid-template-columns:50px 1fr 50px 80px;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border)}
+.sig-row:last-child{border-bottom:none}
+.sig-row:hover{background:var(--bg3)}
+.sig-name{font-size:12px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.sig-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+.sig-fill{height:100%;border-radius:2px}
+.sig-val{font-size:12px;font-family:var(--mono);text-align:right}
+.sig-badge{font-size:9px;padding:3px 8px;border-radius:4px;text-align:center;font-family:var(--mono);letter-spacing:.04em}
 
-/* ── IQ BANNER ── */
-.iq-banner{
-  background:linear-gradient(135deg,rgba(68,136,255,.08),rgba(155,107,255,.08));
-  border:1px solid rgba(155,107,255,.2);border-radius:12px;
-  padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:1rem
-}
-.iq-left{display:flex;align-items:center;gap:.75rem}
-.iq-icon{font-size:1.5rem}
-.iq-label{font-size:.6rem;color:var(--muted);margin-bottom:.15rem}
-.iq-val{font-size:1rem;font-weight:700;color:var(--blue)}
-.iq-rec{font-size:.72rem;color:var(--sub);font-style:italic;max-width:60%;text-align:right;line-height:1.4}
+/* fear */
+.fear{border:1px solid var(--border);border-radius:10px;padding:18px;background:var(--bg2);margin-bottom:1rem;animation:fadeUp .5s .4s ease both;opacity:0;animation-fill-mode:forwards}
+.fear-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+.fn{font-size:52px;font-weight:700;color:var(--red);font-family:var(--mono);line-height:1}
+.fc{font-size:10px;color:var(--text2);margin-bottom:6px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.fear-badge{font-size:10px;padding:4px 10px;border-radius:5px;background:var(--red-dim);color:var(--red);border:1px solid #FF444430;font-family:var(--mono);letter-spacing:.04em}
+.spectrum{display:flex;height:4px;border-radius:2px;overflow:hidden;margin-bottom:14px;gap:2px}
+.s1{flex:2;background:#FF4444;border-radius:2px}
+.s2{flex:2;background:#FF8800;border-radius:2px}
+.s3{flex:2;background:#FFB800;border-radius:2px}
+.s4{flex:2;background:#88CC00;border-radius:2px}
+.s5{flex:2;background:#00FF94;border-radius:2px}
+.mbars{display:flex;gap:6px;align-items:flex-end;height:56px}
+.mbw{flex:1;display:flex;flex-direction:column;align-items:center}
+.mb{width:100%;border-radius:3px 3px 0 0;min-height:4px}
+.mbl{font-size:9px;color:var(--text3);margin-top:4px;font-family:var(--mono)}
 
-/* ── CATS ── */
-.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
-.cat{
-  background:var(--card);border:1px solid var(--border);border-radius:10px;
-  padding:.8rem .9rem;transition:all .25s
-}
-.cat:hover{border-color:var(--border2);background:var(--card2)}
-.cat-n{font-size:.8rem;font-weight:600;margin-bottom:.2rem}
-.cat-c{font-size:.62rem;color:var(--muted);display:flex;align-items:center;gap:.3rem}
-.cat-c::before{content:'';width:4px;height:4px;background:var(--green);border-radius:50%;opacity:.5;flex-shrink:0}
+/* whales */
+.whales{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;animation:fadeUp .5s .45s ease both;opacity:0;animation-fill-mode:forwards}
+.whead{display:flex;justify-content:space-between;padding:9px 15px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.whl{font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase}
+.wr{display:flex;align-items:center;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--border)}
+.wr:last-child{border-bottom:none}
+.wr:hover{background:var(--bg3)}
+.wa{font-family:var(--mono);font-size:11px;color:var(--text2)}
+.wv{font-size:13px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.wbar{height:2px;border-radius:1px;background:var(--bg3);margin-top:4px}
+.wfill{height:100%;border-radius:1px;background:var(--green)}
+.wt{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.rk{font-size:11px;color:var(--text3);min-width:24px;font-family:var(--mono)}
 
-/* ── TELEGRAM ── */
-.tg{
-  background:linear-gradient(135deg,rgba(68,136,255,.07),rgba(0,212,255,.05));
-  border:1px solid rgba(68,136,255,.25);border-radius:14px;
-  padding:1.1rem 1.25rem;display:flex;justify-content:space-between;align-items:center
-}
-.tg-left h3{font-size:.9rem;font-weight:600;margin-bottom:.25rem}
-.tg-left p{font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
-.tg-live{
-  display:flex;align-items:center;gap:.4rem;
-  background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.25);
-  color:var(--green);padding:.35rem .8rem;border-radius:8px;font-size:.65rem;font-weight:700;letter-spacing:.06em
-}
+/* tools grid */
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:1rem;animation:fadeUp .5s .5s ease both;opacity:0;animation-fill-mode:forwards}
+.tool-cat{border:1px solid var(--border);border-radius:8px;padding:12px 10px;background:var(--bg2);text-align:center;transition:border-color .2s}
+.tool-cat:hover{border-color:var(--green-mid)}
+.tc-n{font-size:11px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tc-c{font-size:10px;color:var(--text2);font-family:var(--mono)}
+.tc-dot{width:5px;height:5px;border-radius:50%;background:var(--green);margin:8px auto 0;animation:pulse 1.4s infinite}
 
-/* ── MOTTO ── */
-.motto{
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:1rem 1.25rem;text-align:center;
-  font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--sub);font-style:italic;
-  margin-bottom:1rem
-}
+/* telegram */
+.tg{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:10px;background:var(--bg2);border:1px solid var(--green-mid);margin-bottom:1rem;animation:fadeUp .5s .55s ease both;opacity:0;animation-fill-mode:forwards}
+.tgd{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite .5s;flex-shrink:0}
+.tg-t{font-size:13px;font-weight:600;color:var(--text)}
+.tg-s{font-size:10px;color:var(--text2);font-family:var(--mono);margin-top:2px}
+.tg-b{margin-left:auto;font-size:10px;padding:4px 10px;border-radius:5px;background:var(--green-dim);color:var(--green);border:1px solid var(--green-mid);font-family:var(--mono);letter-spacing:.04em}
 
-/* ── FOOTER ── */
-footer{
-  border-top:1px solid var(--border);padding:1.5rem 1rem;
-  text-align:center;color:var(--muted);font-size:.7rem;line-height:2;
-  position:relative;z-index:1
-}
-.footer-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-top:.5rem}
-.footer-links a{color:var(--sub);text-decoration:none;font-size:.65rem;transition:color .2s}
-.footer-links a:hover{color:var(--cyan)}
-
-/* ── LOADING SKELETON ── */
-.skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* ── RESPONSIVE ── */
-@media(max-width:640px){
-  .hero-title{font-size:1.3rem}
-  .stats-grid{grid-template-columns:repeat(3,1fr)}
-  .macro-grid{grid-template-columns:repeat(2,1fr)}
-  .proj-grid{grid-template-columns:1fr}
-  .rsi-grid{grid-template-columns:repeat(3,1fr)}
-  .cat-grid{grid-template-columns:repeat(2,1fr)}
-  .fg-layout{grid-template-columns:1fr}
-  .iq-rec{max-width:100%;text-align:left;margin-top:.5rem}
-  .iq-banner{flex-direction:column;align-items:flex-start;gap:.5rem}
-  .tg{flex-direction:column;align-items:flex-start;gap:.75rem}
-}
+/* footer */
+.foot{font-size:11px;color:var(--text3);text-align:center;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);line-height:2;animation:fadeUp .5s .6s ease both;opacity:0;animation-fill-mode:forwards}
+.foot-hl{color:var(--green)}
+.smithery{display:inline-block;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:3px 10px;font-size:10px;color:var(--text2);font-family:var(--mono)}
 </style>
 </head>
 <body>
-
-<!-- ══ STICKY HEADER ══ -->
-<header class="header">
-  <div class="wrap">
-    <div class="header-inner">
-      <div class="logo">SCUTUA ·MCP</div>
-      <div class="header-right">
-        <button class="pwa-btn" id="pwa-btn">📲 ติดตั้ง App</button>
-        <div id="ts">—</div>
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- ══ HERO ══ -->
-<div class="hero z1">
 <div class="wrap">
-  <div class="alive-row">
-    <div class="pulse"></div>
-    <span class="alive-text">● ALIVE &amp; BEATING</span>
-  </div>
-  <div class="hero-title">Scutua + WhaleTrucker<br>Ecosystem</div>
-  <div class="hero-sub" id="hero-sub">no money · no cry · just build · iPad only 🥳</div>
-  <div class="version-row">
-    <span class="vtag v" id="vtag-v">v3.3.1</span>
-    <span class="vtag s">Smithery 84/100</span>
-    <span class="vtag m">💗 ALIVE</span>
-  </div>
 
-  <div class="stats-grid" id="stats-grid">
-    <div class="stat"><div class="stat-n" id="sn-tools">157</div><div class="stat-l">tools</div></div>
-    <div class="stat"><div class="stat-n" id="sn-repos">80</div><div class="stat-l">repos</div></div>
-    <div class="stat"><div class="stat-n" id="sn-chains">11</div><div class="stat-l">chains</div></div>
-    <div class="stat"><div class="stat-n">1,300</div><div class="stat-l">CI/CD runs</div></div>
-    <div class="stat"><div class="stat-n" id="sn-sm">84</div><div class="stat-l">smithery</div></div>
-  </div>
-
-  <div class="chains" id="chains-row"></div>
-</div>
-</div>
-
-<!-- ══ MACRO ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>Crypto Macro — Live Overview</div>
-    <div class="sec-meta" id="macro-ts">—</div>
-  </div>
-  <div class="macro-grid">
-    <div class="macro-card mcap">
-      <div class="macro-label">Total Market Cap</div>
-      <div class="macro-val" id="m-mcap">$2.55T</div>
-      <div class="macro-sub" id="m-chg">24h: +0.00%</div>
-    </div>
-    <div class="macro-card vol">
-      <div class="macro-label">24H Volume</div>
-      <div class="macro-val" id="m-vol">$88.9B</div>
-      <div class="macro-sub" id="m-coins">17,410 active coins</div>
-    </div>
-    <div class="macro-card btcd">
-      <div class="macro-label">BTC Dominance</div>
-      <div class="macro-val" id="m-btcd">57.6%</div>
-      <div class="macro-sub" id="m-ethd">ETH: 9.5%</div>
-    </div>
-    <div class="macro-card fear">
-      <div class="macro-label">Fear &amp; Greed</div>
-      <div class="macro-val" id="m-fg">23</div>
-      <div class="macro-sub" id="m-fgl">Extreme Fear</div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ══ PROJECTS ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>Projects — All Live</div>
-    <div class="sec-meta">6 healthy / 6 total</div>
-  </div>
-  <div class="proj-grid" id="proj-grid"></div>
-</div>
-</div>
-
-<!-- ══ RSI + MACD ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>RSI + MACD — Live Signals</div>
-    <div class="sec-meta" id="rsi-ts">CoinGecko</div>
-  </div>
-  <div class="rsi-grid" id="rsi-grid"></div>
-</div>
-</div>
-
-<!-- ══ MARKET SIGNALS ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>Market Signals — Composite Score</div>
-  </div>
-  <div id="signals-wrap"></div>
-</div>
-</div>
-
-<!-- ══ FEAR & GREED ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>Fear &amp; Greed — 7 Days History</div>
-  </div>
-  <div id="fg-wrap"></div>
-</div>
-</div>
-
-<!-- ══ SMART MONEY ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>Smart Money — Top 5 Wallets (24H)</div>
-  </div>
-  <div class="w-wrap">
-    <table class="w-tbl">
-      <thead><tr><th>Wallet</th><th style="text-align:right">ETH Volume / TXS</th></tr></thead>
-      <tbody id="wallets-body"></tbody>
-    </table>
-  </div>
-</div>
-</div>
-
-<!-- ══ ROADMAP ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>Roadmap — Next Moves</div>
-  </div>
-  <div class="iq-banner">
-    <div class="iq-left">
-      <div class="iq-icon">🧠</div>
+<!-- HEADER -->
+<div class="header">
+  <div class="scan-line"></div>
+  <div class="header-top">
+    <div class="logo-area">
+      <div class="logo-dot"></div>
       <div>
-        <div class="iq-label">Ecosystem IQ</div>
-        <div class="iq-val">HIGH — 3 insights</div>
+        <div class="logo-title">SCUTUA-MCP</div>
+        <div class="logo-sub">scutuatua-crypto · Command Center</div>
       </div>
     </div>
-    <div class="iq-rec">"You're building what no one else is building. Keep going. 🛸"</div>
+    <div class="alive-badge"><span></span>ALIVE &amp; BEATING</div>
   </div>
-  <div class="road-list" id="road-list"></div>
-</div>
+  <div class="tagline">$ v3.3.1 &nbsp;·&nbsp; 157 tools &nbsp;·&nbsp; 80 repos &nbsp;·&nbsp; 11 chains &nbsp;·&nbsp; no money · no cry · just build 😤 <span class="cursor">█</span></div>
 </div>
 
-<!-- ══ TOOL CATEGORIES ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="sec-hd">
-    <div class="sec-title"><span class="sdot"></span>Tool Categories — 157 Tools</div>
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <div class="ticker-item">BTC <span class="val">$73,547</span> <span class="up">+0.43%</span></div>
+    <div class="ticker-item">ETH <span class="val">$2,009</span> <span class="up">+1.24%</span></div>
+    <div class="ticker-item">SOL <span class="val">$82.02</span> <span class="up">+1.75%</span></div>
+    <div class="ticker-item">FEAR &amp; GREED <span class="val">23</span> <span class="dn">EXTREME FEAR</span></div>
+    <div class="ticker-item">SMITHERY <span class="val">84/100</span></div>
+    <div class="ticker-item">CI/CD RUNS <span class="val">2,285</span></div>
+    <div class="ticker-item">TOOLS <span class="val">157</span> <span class="up">LIVE</span></div>
+    <div class="ticker-item">REPOS <span class="val">80</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item">BTC <span class="val">$73,547</span> <span class="up">+0.43%</span></div>
+    <div class="ticker-item">ETH <span class="val">$2,009</span> <span class="up">+1.24%</span></div>
+    <div class="ticker-item">SOL <span class="val">$82.02</span> <span class="up">+1.75%</span></div>
+    <div class="ticker-item">FEAR &amp; GREED <span class="val">23</span> <span class="dn">EXTREME FEAR</span></div>
+    <div class="ticker-item">SMITHERY <span class="val">84/100</span></div>
+    <div class="ticker-item">CI/CD RUNS <span class="val">2,285</span></div>
+    <div class="ticker-item">TOOLS <span class="val">157</span> <span class="up">LIVE</span></div>
+    <div class="ticker-item">REPOS <span class="val">80</span></div>
   </div>
-  <div class="cat-grid" id="cat-grid"></div>
-</div>
 </div>
 
-<!-- ══ TELEGRAM ══ -->
-<div class="sec z1">
-<div class="wrap">
-  <div class="tg">
-    <div class="tg-left">
-      <h3>📡 Telegram channel connected</h3>
-      <p>signal sent ✓ · channel -1003820929559</p>
-    </div>
-    <div class="tg-live"><div class="lv"></div>LIVE</div>
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="sn">157</div><div class="sl">tools</div></div>
+  <div class="stat"><div class="sn">80</div><div class="sl">repos</div></div>
+  <div class="stat"><div class="sn">11</div><div class="sl">chains</div></div>
+  <div class="stat"><div class="sn">2,285</div><div class="sl">CI/CD runs</div></div>
+  <div class="stat"><div class="sn">84</div><div class="sl">smithery</div></div>
+</div>
+
+<!-- CHAINS -->
+<p class="sec">chains</p>
+<div class="pills">
+  <span class="pill">Solana</span><span class="pill">Ethereum</span><span class="pill">Arbitrum</span><span class="pill">Optimism</span><span class="pill">BNB</span><span class="pill">Reef</span><span class="pill">TON</span><span class="pill">Polkadot</span><span class="pill">Cosmos</span><span class="pill">Base</span><span class="pill">CrossChain</span>
+</div>
+
+<!-- DASHBOARDS -->
+<p class="sec">dashboards</p>
+<div class="dcards">
+  <div class="dc"><div><div class="dn">WhaleTrucker Elite</div><div class="ds">whaletrucker-reef</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE</span></div></div>
+  <div class="dc"><div><div class="dn">AssetFlow</div><div class="ds">vercel</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE</span></div></div>
+  <div class="dc"><div><div class="dn">Asset Platform</div><div class="ds">vercel</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE</span></div></div>
+  <div class="dc"><div><div class="dn">Command Hub</div><div class="ds">github pages</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE</span></div></div>
+  <div class="dc"><div><div class="dn">Scutua-MCP</div><div class="ds">render · onrender.com</div></div><div class="live-row"><div class="ldot"></div><span class="lbadge">LIVE</span></div></div>
+</div>
+
+<!-- RSI -->
+<p class="sec">rsi + macd — live coingecko</p>
+<div class="toks">
+  <div class="tok"><div class="tn">BTC</div><div class="tr low">27.4</div><div class="tm">MACD -915.08</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">ETH</div><div class="tr low">31.0</div><div class="tm">MACD -27.13</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">SOL</div><div class="tr mid">38.8</div><div class="tm">MACD -0.91</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">DOT</div><div class="tr low">30.8</div><div class="tm">MACD -0.02</div><div class="tb br">🔴 BEARISH</div></div>
+  <div class="tok"><div class="tn">ATOM</div><div class="tr ok">50.0</div><div class="tm">MACD -0.21</div><div class="tb bk">⚪ NEUTRAL</div></div>
+</div>
+
+<!-- SIGNAL BARS -->
+<p class="sec">composite score</p>
+<div class="signal-wrap">
+  <div class="sig-head">
+    <span class="sig-hl">TOKEN</span><span class="sig-hl">SCORE</span><span class="sig-hl">VAL</span><span class="sig-hl">SIGNAL</span>
+  </div>
+  <div class="sig-row">
+    <span class="sig-name">BTC</span>
+    <div class="sig-bar"><div class="sig-fill" style="width:39.7%;background:var(--red)"></div></div>
+    <span class="sig-val" style="color:var(--red)">39.7</span>
+    <span class="sig-badge" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">HOLD</span>
+  </div>
+  <div class="sig-row">
+    <span class="sig-name">ETH</span>
+    <div class="sig-bar"><div class="sig-fill" style="width:40.7%;background:var(--red)"></div></div>
+    <span class="sig-val" style="color:var(--red)">40.7</span>
+    <span class="sig-badge" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">HOLD</span>
+  </div>
+  <div class="sig-row">
+    <span class="sig-name">SOL</span>
+    <div class="sig-bar"><div class="sig-fill" style="width:41.3%;background:var(--yellow)"></div></div>
+    <span class="sig-val" style="color:var(--yellow)">41.3</span>
+    <span class="sig-badge" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border)">HOLD</span>
   </div>
 </div>
-</div>
 
-<!-- ══ FOOTER ══ -->
-<footer class="z1">
-<div class="wrap">
-  <div class="motto">"Too fast for the API, too safe for the chain. 🚚💿"</div>
-  <div>scutuatua-crypto · deployed from iPad · CI/CD 1,300 runs</div>
-  <div>Smithery Score 84/100 · 80 repos · 11 chains · 157 tools</div>
-  <div class="footer-links">
-    <a href="https://scutuatua-crypto.github.io" target="_blank" rel="noopener">Command Hub</a>
-    <a href="https://scutua-mcp.onrender.com/mcp" target="_blank" rel="noopener">Scutua-MCP API</a>
-    <a href="https://assetflow-app-iota.vercel.app" target="_blank" rel="noopener">AssetFlow</a>
-    <a href="https://github.com/scutuatua-crypto" target="_blank" rel="noopener">GitHub</a>
-    <a href="ecosystem.json" target="_blank" rel="noopener">ecosystem.json</a>
+<!-- FEAR & GREED -->
+<p class="sec">fear &amp; greed — 7 days</p>
+<div class="fear">
+  <div class="fear-top">
+    <div><div class="fc">today</div><div class="fn">23</div></div>
+    <span class="fear-badge">EXTREME FEAR</span>
   </div>
-  <div style="margin-top:.5rem">no money · no cry · just build 🥳</div>
+  <div class="spectrum"><div class="s1"></div><div class="s2"></div><div class="s3"></div><div class="s4"></div><div class="s5"></div></div>
+  <div class="mbars">
+    <div class="mbw"><div class="mb" style="height:22px;background:#FF4444"></div><div class="mbl">MON</div></div>
+    <div class="mbw"><div class="mb" style="height:18px;background:#FF4444"></div><div class="mbl">TUE</div></div>
+    <div class="mbw"><div class="mb" style="height:20px;background:#FF4444"></div><div class="mbl">WED</div></div>
+    <div class="mbw"><div class="mb" style="height:24px;background:#FF8800"></div><div class="mbl">THU</div></div>
+    <div class="mbw"><div class="mb" style="height:28px;background:#FFB800"></div><div class="mbl">FRI</div></div>
+    <div class="mbw"><div class="mb" style="height:18px;background:#FF4444"></div><div class="mbl">SAT</div></div>
+    <div class="mbw"><div class="mb" style="height:18px;background:#FF4444"></div><div class="mbl">SUN</div></div>
+  </div>
 </div>
-</footer>
 
-<script>
-'use strict';
+<!-- SMART MONEY -->
+<p class="sec">smart money — top 5 wallets (24h)</p>
+<div class="whales">
+  <div class="whead"><span class="whl">rank · wallet</span><span class="whl">volume · txs</span></div>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#01</span><span class="wa">0xcd531ae...ca7b</span></div>
+    <div style="text-align:right"><div class="wv">98,264 ETH</div><div class="wbar"><div class="wfill" style="width:100%"></div></div><div class="wt">24 txs</div></div>
+  </div>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#02</span><span class="wa">0x28c6c06...d60</span></div>
+    <div style="text-align:right"><div class="wv">91,975 ETH</div><div class="wbar"><div class="wfill" style="width:94%"></div></div><div class="wt">224 txs</div></div>
+  </div>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#03</span><span class="wa">0xb5d85cb...511</span></div>
+    <div style="text-align:right"><div class="wv">71,262 ETH</div><div class="wbar"><div class="wfill" style="width:73%"></div></div><div class="wt">493 txs</div></div>
+  </div>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#04</span><span class="wa">0xed0c607...312</span></div>
+    <div style="text-align:right"><div class="wv">70,002 ETH</div><div class="wbar"><div class="wfill" style="width:71%"></div></div><div class="wt">4 txs</div></div>
+  </div>
+  <div class="wr">
+    <div style="display:flex;align-items:center;gap:10px"><span class="rk">#05</span><span class="wa">0x3606f0f...665</span></div>
+    <div style="text-align:right"><div class="wv">52,701 ETH</div><div class="wbar"><div class="wfill" style="width:54%"></div></div><div class="wt">6 txs</div></div>
+  </div>
+</div>
 
-// ══ DATA — from ecosystem.json (static fallback, refreshed by API) ══
-let ECO = {
-  meta:{name:'Scutua + WhaleTrucker Ecosystem',version:'3.3.1',smithery:84,tagline:'no money · no cry · just build · iPad only 🥳',motto:'Too fast for the API, too safe for the chain. 🚚💿'},
-  stats:{tools:157,repos:80,chains:11,cicd_runs:1300},
-  chains:['Solana','Ethereum','Arbitrum','Optimism','BNB','Reef','TON','Polkadot','Cosmos','Base','CrossChain'],
-  projects:[
-    {id:'scutua-mcp',name:'Scutua-MCP',description:'The World\'s First Self-Aware Agentic DeFi MCP Server',tier:'Tier 1',dimension:'core',status:'live',url:'https://scutua-mcp.onrender.com/mcp',icon:'🧠'},
-    {id:'command-hub',name:'Command Hub',description:'Ecosystem command center & navigation hub',tier:'Tier 1',dimension:'hub',status:'live',url:'https://scutuatua-crypto.github.io',icon:'🛸'},
-    {id:'solana-monitor',name:'Solana Monitor',description:'Real-time Solana chain monitoring & alerts',tier:'Tier 1',dimension:'chain',status:'live',url:'https://github.com/scutuatua-crypto/solana-monitor',icon:'⚡'},
-    {id:'assetflow',name:'AssetFlow',description:'Portfolio tracking & asset flow visualization',tier:'Tier 2',dimension:'portfolio',status:'live',url:'https://assetflow-app-iota.vercel.app',icon:'📊'},
-    {id:'asset-platform',name:'Asset Platform',description:'Multi-chain asset management platform',tier:'Tier 2',dimension:'portfolio',status:'live',url:'https://asset-platform-vercel.app',icon:'💼'},
-    {id:'whaletrucker-elite',name:'WhaleTrucker Elite',description:'Whale wallet tracking & DeFi intelligence dashboard',tier:'Tier 2',dimension:'defi',status:'live',url:'https://github.com/scutuatua-crypto/whaletrucker-reef',icon:'🐋'}
-  ],
-  tool_categories:[
-    {name:'Price & Market',count:20},{name:'DeFi & Yields',count:25},{name:'Wallet & Portfolio',count:20},
-    {name:'Whale & Smart Money',count:10},{name:'Trading & Arbitrage',count:19},{name:'Portfolio Mgmt',count:12},
-    {name:'Bridge & Crosschain',count:5},{name:'NFT & Launchpad',count:8},{name:'Dune & Analytics',count:8},
-    {name:'Ecosystem & Infra',count:12},{name:'News & Social',count:18},{name:'Staking & Lending',count:9}
-  ],
-  roadmap:[
-    {priority:1,action:'Dimension 8 — Ecosystem Consciousness',why:'Makes Scutua-MCP truly self-aware and self-describing',effort:'Low',tag:'self-aware'},
-    {priority:2,action:'Add configSchema to MCP server',why:'Push Smithery score from 84 → 90+',effort:'Low',tag:'smithery'},
-    {priority:3,action:'Connect Command Hub to ecosystem.json',why:'Single source of truth — update once, reflect everywhere',effort:'Medium',tag:'infra'},
-    {priority:4,action:'Add Sui + Aptos chain support',why:'Move ecosystem coverage — growing fast',effort:'Medium',tag:'expansion'}
-  ],
-  market_snapshot:{
-    market_cap_usd:2554130622082,volume_24h_usd:88883531620,
-    btc_dominance:57.6,eth_dominance:9.5,
-    fear_greed:23,fear_greed_label:'Extreme Fear',
-    signals:[
-      {sym:'BTC',price:73360,rsi:28.77,macd:-890.87,overall:'NEUTRAL'},
-      {sym:'ETH',price:2004.14,rsi:31.83,macd:-26.21,overall:'BEARISH'},
-      {sym:'SOL',price:150.00,rsi:50.0,macd:-3.00,overall:'NEUTRAL'},
-      {sym:'DOT',price:8.30,rsi:50.0,macd:-0.26,overall:'NEUTRAL'},
-      {sym:'ATOM',price:8.70,rsi:50.0,macd:-0.21,overall:'NEUTRAL'}
-    ],
-    fg_history:[
-      {v:28,day:'จ'},{v:29,day:'อ'},{v:27,day:'พ'},
-      {v:25,day:'พฤ'},{v:28,day:'ศ'},{v:22,day:'ส'},{v:23,day:'อา'}
-    ],
-    smart_money:[
-      {rank:1,addr:'0xcd531ae...ca7b',eth:'98,264',txs:24,pct:100},
-      {rank:2,addr:'0x28c6c06...d60', eth:'91,975',txs:224,pct:94},
-      {rank:3,addr:'0xb5d85cb...511', eth:'71,262',txs:493,pct:73},
-      {rank:4,addr:'0xed0c607...312', eth:'70,002',txs:4,  pct:71},
-      {rank:5,addr:'0x3606f0f...665', eth:'52,701',txs:6,  pct:54}
-    ]
-  }
-};
+<!-- TOOL CATS -->
+<p class="sec">tool categories — 157 tools</p>
+<div class="tools-grid">
+  <div class="tool-cat"><div class="tc-n">Price &amp; Market</div><div class="tc-c">20 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">DeFi &amp; Yields</div><div class="tc-c">25 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Wallet &amp; Portfolio</div><div class="tc-c">20 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Whale &amp; Smart Money</div><div class="tc-c">10 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Trading &amp; Arbitrage</div><div class="tc-c">19 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Portfolio Mgmt</div><div class="tc-c">12 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Bridge &amp; Crosschain</div><div class="tc-c">5 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">NFT &amp; Launchpad</div><div class="tc-c">8 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Dune &amp; Analytics</div><div class="tc-c">8 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Ecosystem &amp; Infra</div><div class="tc-c">12 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">News &amp; Social</div><div class="tc-c">18 tools</div><div class="tc-dot"></div></div>
+  <div class="tool-cat"><div class="tc-n">Staking &amp; Lending</div><div class="tc-c">9 tools</div><div class="tc-dot"></div></div>
+</div>
 
-// ── Helpers ──
-const $ = id => document.getElementById(id);
-const pFmt = p => p>=1e6?'$'+p.toLocaleString('en-US',{maximumFractionDigits:0}):p>=1?'$'+p.toFixed(2):'$'+p.toFixed(4);
-const nFmt = n => n>=1e12?'$'+(n/1e12).toFixed(2)+'T':n>=1e9?'$'+(n/1e9).toFixed(1)+'B':n>=1e6?'$'+(n/1e6).toFixed(1)+'M':'$'+n.toLocaleString();
-const fgColor = v => v<=25?'#ff3d5a':v<=45?'#ff9500':v<=55?'#ffd60a':v<=75?'#84cc16':'#00e87a';
-const rsiColor = r => r<30?'#ff3d5a':r<45?'#ff9500':r<70?'#00e87a':'#4488ff';
-function fgCls(c){ return c.includes('Extreme Fear')?'c-ef':c.includes('Fear')?'c-f':c.includes('Greed')?'c-g':'c-n'; }
-function sigOf(o){ return o==='BEARISH'?{t:'SELL',c:'sb-sell'}:o==='BULLISH'?{t:'BUY',c:'sb-buy'}:{t:'HOLD',c:'sb-hold'}; }
-function pillCls(o){ return o==='BEARISH'||o==='SELL'?'pill-bear':o==='BULLISH'||o==='BUY'?'pill-bull':'pill-neut'; }
-function pillDot(o){ return o==='BEARISH'||o==='SELL'?'🔴':o==='BULLISH'||o==='BUY'?'🟢':'⚪'; }
-function barColor(t){ return t==='BUY'?'#00e87a':t==='SELL'?'#ff3d5a':'#ff9500'; }
-function efClass(e){ return e==='Low'?'ef-low':'ef-med'; }
-function rnClass(p){ return ['','rn1','rn2','rn3','rn4'][p]||'rn4'; }
+<!-- TELEGRAM -->
+<div class="tg">
+  <div class="tgd"></div>
+  <div>
+    <div class="tg-t">Telegram channel connected</div>
+    <div class="tg-s">channel -1003820929559 · signal sent ✓</div>
+  </div>
+  <span class="tg-b">LIVE ✓</span>
+</div>
 
-// ── Render Chains ──
-function renderChains(){
-  $('chains-row').innerHTML = ECO.chains.map(c=>`<span class="chain">${c}</span>`).join('');
-}
+<!-- FOOTER -->
+<div class="foot">
+  <span class="foot-hl">scutuatua-crypto</span> · deployed from iPad · no PC required 😤<br>
+  CI/CD <span class="foot-hl">2,285</span> runs · projects live <span class="foot-hl">6</span><br>
+  <span class="smithery">Smithery Score 84 / 100</span><br>
+  no money · no cry · just build
+</div>
 
-// ── Render Macro ──
-function renderMacro(){
-  const m = ECO.market_snapshot;
-  $('m-mcap').textContent = nFmt(m.market_cap_usd);
-  $('m-vol').textContent  = nFmt(m.volume_24h_usd);
-  $('m-btcd').textContent = m.btc_dominance+'%';
-  $('m-ethd').textContent = 'ETH: '+m.eth_dominance+'%';
-  $('m-fg').textContent   = m.fear_greed;
-  $('m-fgl').textContent  = m.fear_greed_label;
-  $('macro-ts').textContent = new Date().toLocaleTimeString('th-TH');
-}
-
-// ── Render Projects ──
-function renderProjects(){
-  $('proj-grid').innerHTML = ECO.projects.map(p=>`
-    <a class="proj-card" href="${p.url}" target="_blank" rel="noopener">
-      <div class="proj-top">
-        <div class="proj-icon">${p.icon}</div>
-        <div class="proj-live"><div class="lv"></div>Live</div>
-      </div>
-      <div class="proj-name">${p.name}</div>
-      <div class="proj-desc">${p.description}</div>
-      <div class="proj-footer">
-        <span class="proj-tier">${p.tier}</span>
-        <span class="proj-dim dim-${p.dimension}">${p.dimension}</span>
-      </div>
-    </a>`).join('');
-}
-
-// ── Render RSI ──
-function renderRSI(){
-  $('rsi-grid').innerHTML = ECO.market_snapshot.signals.map(d=>`
-    <div class="rsi-card">
-      <div class="rsi-sym">${d.sym}</div>
-      <div class="rsi-val" style="color:${rsiColor(d.rsi)}">${d.rsi.toFixed(1)}</div>
-      <div class="rsi-price">${pFmt(d.price)}</div>
-      <div class="rsi-macd">MACD ${d.macd.toFixed(2)}</div>
-      <span class="pill ${pillCls(d.overall)}">${pillDot(d.overall)} ${d.overall}</span>
-    </div>`).join('');
-}
-
-// ── Render Signals ──
-function renderSignals(){
-  $('signals-wrap').innerHTML = ECO.market_snapshot.signals.slice(0,3).map(d=>{
-    const score = Math.min(100,Math.max(0,50+Math.min(30,(d.rsi-50)*.6)));
-    const sig = sigOf(d.overall);
-    return `<div class="signal-row">
-      <div class="sig-sym">${d.sym}</div>
-      <div class="sig-price">${pFmt(d.price)}</div>
-      <div class="track"><div class="fill" style="width:${score.toFixed(0)}%;background:${barColor(sig.t)}"></div></div>
-      <div class="sig-n" style="color:${barColor(sig.t)}">${score.toFixed(1)}</div>
-      <div class="sbadge ${sig.c}">${sig.t}</div>
-    </div>`;
-  }).join('');
-}
-
-// ── Render Fear & Greed ──
-function renderFG(){
-  const m = ECO.market_snapshot;
-  const maxV = Math.max(...m.fg_history.map(d=>d.v));
-  const bars = m.fg_history.map(d=>{
-    const h = Math.max(5,Math.round((d.v/maxV)*64));
-    return `<div class="fg-bcol">
-      <div class="fg-bar" style="height:${h}px;background:${fgColor(d.v)}"></div>
-      <div class="fg-bv">${d.v}</div>
-      <div class="fg-bd">${d.day}</div>
-    </div>`;
-  }).join('');
-
-  $('fg-wrap').innerHTML = `
-    <div class="fg-layout">
-      <div>
-        <div class="fg-date">วันนี้</div>
-        <div class="fg-num" style="color:${fgColor(m.fear_greed)}">${m.fear_greed}</div>
-        <span class="fg-cls ${fgCls(m.fear_greed_label)}">${m.fear_greed_label}</span>
-      </div>
-      <div>
-        <div class="fg-scale">
-          <div class="fg-needle" style="left:${m.fear_greed}%"></div>
-        </div>
-        <div class="fg-bars">${bars}</div>
-      </div>
-    </div>`;
-}
-
-// ── Render Wallets ──
-function renderWallets(){
-  $('wallets-body').innerHTML = ECO.market_snapshot.smart_money.map(w=>`
-    <tr>
-      <td><span class="w-rank">#${w.rank}</span><span class="w-addr">${w.addr}</span></td>
-      <td style="text-align:right">
-        <div class="w-eth">${w.eth} ETH</div>
-        <div class="w-bar"><div class="w-bar-f" style="width:${w.pct}%"></div></div>
-        <div class="w-txs">${w.txs} txs</div>
-      </td>
-    </tr>`).join('');
-}
-
-// ── Render Roadmap ──
-function renderRoadmap(){
-  $('road-list').innerHTML = ECO.roadmap.map(r=>`
-    <div class="road-item">
-      <div class="road-num ${rnClass(r.priority)}">${r.priority}</div>
-      <div class="road-body">
-        <div class="road-action">${r.action}</div>
-        <div class="road-why">${r.why}</div>
-        <div class="road-footer">
-          <span class="effort-tag ${efClass(r.effort)}">Effort: ${r.effort}</span>
-          <span class="road-tag">#${r.tag}</span>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-// ── Render Categories ──
-function renderCats(){
-  $('cat-grid').innerHTML = ECO.tool_categories.map(c=>`
-    <div class="cat">
-      <div class="cat-n">${c.name}</div>
-      <div class="cat-c">${c.count} tools</div>
-    </div>`).join('');
-}
-
-// ── Stamp time ──
-function stamp(){
-  const t = new Date().toLocaleTimeString('th-TH');
-  $('ts').textContent = '⏱ '+t;
-}
-
-// ── Try load ecosystem.json (if hosted) ──
-async function loadEcosystem(){
-  try{
-    const res = await fetch('ecosystem.json');
-    if(res.ok){ const d=await res.json(); if(d.meta) ECO=d; }
-  }catch(e){}
-  renderAll();
-}
-
-// ── Refresh market data via Anthropic API ──
-async function refreshMarket(){
-  try{
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{role:'user',content:
-          'Give me current live data. Respond ONLY with valid JSON, no markdown, no explanation:\n'+
-          '{"btc":{"price":0,"rsi":0},"eth":{"price":0,"rsi":0},"sol":{"price":0,"rsi":0},'+
-          '"dot":{"price":0,"rsi":0},"atom":{"price":0,"rsi":0},'+
-          '"market":{"cap":0,"vol":0,"btc_dom":0,"eth_dom":0},'+
-          '"fg":{"value":0,"classification":""}}'
-        }]
-      })
-    });
-    if(!res.ok) return;
-    const data = await res.json();
-    const txt = (data.content?.find(b=>b.type==='text')?.text||'').replace(/```[\w]*|```/g,'').trim();
-    const d = JSON.parse(txt);
-
-    const map={BTC:'btc',ETH:'eth',SOL:'sol',DOT:'dot',ATOM:'atom'};
-    ECO.market_snapshot.signals.forEach(s=>{
-      const k=map[s.sym]; if(!k||!d[k]) return;
-      if(d[k].price) s.price=d[k].price;
-      if(d[k].rsi)   s.rsi=d[k].rsi;
-    });
-    if(d.market){
-      if(d.market.cap)     ECO.market_snapshot.market_cap_usd=d.market.cap;
-      if(d.market.vol)     ECO.market_snapshot.volume_24h_usd=d.market.vol;
-      if(d.market.btc_dom) ECO.market_snapshot.btc_dominance=d.market.btc_dom;
-      if(d.market.eth_dom) ECO.market_snapshot.eth_dominance=d.market.eth_dom;
-    }
-    if(d.fg){
-      ECO.market_snapshot.fear_greed=d.fg.value;
-      ECO.market_snapshot.fear_greed_label=d.fg.classification;
-    }
-
-    renderMacro(); renderRSI(); renderSignals(); renderFG();
-    $('rsi-ts').textContent='Updated '+new Date().toLocaleTimeString('th-TH');
-  }catch(e){ /* keep cached */ }
-}
-
-// ── PWA Install ──
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault(); deferredPrompt=e;
-  $('pwa-btn').style.display='block';
-});
-$('pwa-btn').addEventListener('click',async()=>{
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const {outcome}=await deferredPrompt.userChoice;
-  if(outcome==='accepted') $('pwa-btn').style.display='none';
-  deferredPrompt=null;
-});
-
-// ── Service Worker ──
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
-
-// ── Render All ──
-function renderAll(){
-  renderChains(); renderMacro(); renderProjects(); renderRSI();
-  renderSignals(); renderFG(); renderWallets(); renderRoadmap(); renderCats();
-  stamp();
-}
-
-// ── Init ──
-document.addEventListener('DOMContentLoaded',()=>{
-  loadEcosystem();
-  setTimeout(refreshMarket, 2000);
-  setInterval(()=>{ refreshMarket(); stamp(); }, 60000);
-});
-</script>
+</div>
 </body>
 </html>
