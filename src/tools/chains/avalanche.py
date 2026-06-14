@@ -61,9 +61,11 @@ def register_avalanche_tools(app):
             "module": "gastracker", "action": "gasoracle",
             "apikey": SNOWTRACE_API_KEY
         })
-        if "error" in data:
-            return data
-        result = data.get("result", {})
+        if data.get("status") == "0" or "error" in data:
+            return {"error": data.get("result") or data.get("error") or "Failed to get gas price"}
+        result = data.get("result")
+        if not isinstance(result, dict):
+            return {"error": "Unexpected response format"}
         return {"gas_price": result.get("ProposeGasPrice"), "chain": "avalanche"}
 
     @app.tool()
