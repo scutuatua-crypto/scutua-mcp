@@ -10,6 +10,7 @@ from .arbitrum import register_arbitrum_tools
 from .optimism import register_optimism_tools
 from .bnb import register_bnb_tools
 from .avalanche import register_avalanche_tools
+from .fantom import register_fantom_tools
 
 def register_chain_tools(mcp_app):
     register_solana_tools(mcp_app)
@@ -24,3 +25,4 @@ def register_chain_tools(mcp_app):
     register_optimism_tools(mcp_app)
     register_bnb_tools(mcp_app)
     register_avalanche_tools(mcp_app)
+    register_fantom_tools(mcp_app)
