@@ -50,8 +50,8 @@ def register_avalanche_tools(app):
             "address": address, "tag": "latest",
             "apikey": SNOWTRACE_API_KEY
         })
-        if "error" in data:
-            return data
+        if data.get("status") == "0" or "error" in data:
+            return {"error": data.get("result") or data.get("error") or "Failed to get balance"}
         return {"address": address, "balance_wei": data.get("result"), "chain": "avalanche"}
 
     @app.tool()
