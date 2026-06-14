@@ -22,7 +22,8 @@ CHAIN_ID = 43114  # Avalanche C-Chain
 
 
 async def _snowtrace_get(params: dict) -> dict:
-    cache_key = f"snowtrace:{str(params)}"
+    cache_params = {k: v for k, v in params.items() if k != "apikey"}
+    cache_key = f"snowtrace:{str(cache_params)}"
     cached = get_cached(cache_key)
     if cached:
         return cached
@@ -33,7 +34,8 @@ async def _snowtrace_get(params: dict) -> dict:
             r = await client.get(BASE_URL_V2, params=v2_params, timeout=10)
             r.raise_for_status()
             data = r.json()
-            set_cached(cache_key, data, ttl=60)
+            if data.get("status") == "1":
+                set_cached(cache_key, data, ttl=60)
             return data
     except Exception as e:
         logger.error(f"Snowtrace error: {e}")
@@ -43,8 +45,13 @@ async def _snowtrace_get(params: dict) -> dict:
 def register_avalanche_tools(app):
 
     @app.tool()
-    async def get_avax_balance(address: str) -> dict:
-        """Get AVAX balance on Avalanche C-Chain"""
+    async def get_avax_balance(
+        address: str,  # Avalanche C-Chain wallet address (0x...)
+    ) -> dict:
+        """
+        Get AVAX balance on Avalanche C-Chain.
+        Returns balance in wei for the specified wallet address.
+        """
         data = await _snowtrace_get({
             "module": "account", "action": "balance",
             "address": address, "tag": "latest",
@@ -56,7 +63,10 @@ def register_avalanche_tools(app):
 
     @app.tool()
     async def get_avax_gas_price() -> dict:
-        """Get current Avalanche C-Chain gas price"""
+        """
+        Get current Avalanche C-Chain gas price.
+        Returns the proposed gas price in Gwei from the Snowtrace gas oracle.
+        """
         data = await _snowtrace_get({
             "module": "gastracker", "action": "gasoracle",
             "apikey": SNOWTRACE_API_KEY
@@ -69,8 +79,15 @@ def register_avalanche_tools(app):
         return {"gas_price": result.get("ProposeGasPrice"), "chain": "avalanche"}
 
     @app.tool()
-    async def get_avax_tx_history(address: str, limit: int = 10) -> dict:
-        """Get recent transactions on Avalanche C-Chain"""
+    async def get_avax_tx_history(
+        address: str,    # Avalanche C-Chain wallet address (0x...)
+        limit: int = 10, # Number of recent transactions to return (default: 10, max: 100)
+    ) -> dict:
+        """
+        Get recent transactions on Avalanche C-Chain.
+        Returns a list of the most recent transactions for the specified wallet address,
+        sorted by block number descending.
+        """
         data = await _snowtrace_get({
             "module": "account", "action": "txlist",
             "address": address, "page": 1,
