@@ -77,6 +77,11 @@ def register_avalanche_tools(app):
             "offset": limit, "sort": "desc",
             "apikey": SNOWTRACE_API_KEY
         })
-        if "error" in data:
-            return data
-        return {"address": address, "transactions": data.get("result", [])[:limit], "chain": "avalanche"}
+        if data.get("status") == "0" or "error" in data:
+            if data.get("message") == "No transactions found":
+                return {"address": address, "transactions": [], "chain": "avalanche"}
+            return {"error": data.get("result") or data.get("error") or "Failed to get transaction history"}
+        result = data.get("result")
+        if not isinstance(result, list):
+            return {"error": "Unexpected response format"}
+        return {"address": address, "transactions": result[:limit], "chain": "avalanche"}
