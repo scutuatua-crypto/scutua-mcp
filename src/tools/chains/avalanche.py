@@ -22,8 +22,8 @@ CHAIN_ID = 43114  # Avalanche C-Chain
 
 
 async def _snowtrace_get(params: dict) -> dict:
-    cache_params = {k: v for k, v in params.items() if k != "apikey"}
-    cache_key = f"snowtrace:{str(cache_params)}"
+    cache_params = sorted((k, v) for k, v in params.items() if k != "apikey")
+    cache_key = f"snowtrace:{cache_params}"
     cached = get_cached(cache_key)
     if cached:
         return cached
