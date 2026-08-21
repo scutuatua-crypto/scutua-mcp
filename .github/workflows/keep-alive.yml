@@ -1,22 +1,11 @@
+# ก็อปทั้งหมดเลยครับ
 # .github/workflows/keep-alive.yml
-# ─────────────────────────────────────────────────────────────────────────────
-# Pings Scutua-MCP every 14 minutes using GitHub Actions scheduled workflow.
-# This is the ZERO-COST option — no extra server needed.
-#
-# Setup:
-#   1. Copy this file to your repo at .github/workflows/keep-alive.yml
-#   2. Go to repo Settings → Secrets → Actions
-#   3. Add secret: MCP_URL = https://scutua-mcp.onrender.com/mcp
-#   4. (Optional) Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID for alerts
-# ─────────────────────────────────────────────────────────────────────────────
-
 name: Keep Scutua-MCP alive
 
 on:
   schedule:
-    # Every 14 minutes (GitHub Actions minimum is 5 min)
     - cron: "*/14 * * * *"
-  workflow_dispatch: # Allow manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -29,30 +18,44 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
     steps:
-      - name: Ping MCP server
+      - name: Ping MCP server (with retry)
         id: ping
         run: |
-          # Fallback to default URL if secret not set
           PING_URL="${MCP_URL:-https://scutua-mcp.onrender.com/mcp}"
           HEALTH_URL="${PING_URL%/mcp}/health"
 
           echo "Pinging: $HEALTH_URL"
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$HEALTH_URL" || echo "000")
-
-          if [ "$STATUS" = "000" ]; then
-            echo "Health endpoint unreachable, trying MCP root..."
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$PING_URL" || echo "000")
-          fi
-
-          echo "status=$STATUS" >> $GITHUB_OUTPUT
-          echo "Response: HTTP $STATUS"
-
-          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 500 ]; then
-            echo "✓ Server alive (HTTP $STATUS)"
-          else
-            echo "✗ Server may be down (HTTP $STATUS)"
-            exit 1
-          fi
+          
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          STATUS="000"
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "Attempt $RETRY_COUNT/$MAX_RETRIES..."
+            
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 --connect-timeout 5 "$HEALTH_URL" || echo "000")
+            
+            if [ "$STATUS" = "000" ]; then
+              echo "Health endpoint unreachable, trying MCP root..."
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 --connect-timeout 5 "$PING_URL" || echo "000")
+            fi
+            
+            echo "Response: HTTP $STATUS"
+            
+            if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+              echo "✓ Server alive (HTTP $STATUS)"
+              exit 0
+            fi
+            
+            if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+              echo "Waiting 5 seconds before retry..."
+              sleep 5
+            fi
+          done
+          
+          echo "✗ Server may be down after $MAX_RETRIES attempts (Last: HTTP $STATUS)"
+          exit 1
 
       - name: Alert on failure (Telegram)
         if: failure() && env.TELEGRAM_BOT_TOKEN != ''
@@ -60,4 +63,4 @@ jobs:
           curl -s -X POST \
             "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d chat_id="${TELEGRAM_CHAT_ID}" \
-            -d text="⚠️ Scutua-MCP keep-alive failed! HTTP ${{ steps.ping.outputs.status }} — check Render dashboard."
+            -d text="⚠️ Scutua-MCP keep-alive failed after 3 retries! Check Render dashboard."
