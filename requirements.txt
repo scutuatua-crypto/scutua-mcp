@@ -1,6 +1,6 @@
 fastmcp==3.4.7
 python-dotenv>=1.2.3
-PyGithub>=2.9.1
+PyGithub>=2.10.0
 httpx>=0.28.1
 solana>=0.40.2
 substrate-interface>=1.8.1
