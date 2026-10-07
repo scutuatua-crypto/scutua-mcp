@@ -1,5 +1,5 @@
 fastmcp==3.4.7
-python-dotenv>=1.2.3
+python-dotenv>=1.2.4
 PyGithub>=2.10.0
 httpx>=0.28.1
 solana>=0.40.3
