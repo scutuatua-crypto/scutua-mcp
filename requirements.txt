@@ -6,6 +6,6 @@ solana>=0.41.0
 substrate-interface>=1.8.1
 rich>=15.0.0
 pydantic>=2.14.2
-pytest>=9.1.1
+pytest>=9.2.0
 pytest-asyncio>=1.4.1
 pytest-cov>=7.1.0
